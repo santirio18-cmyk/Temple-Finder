@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temple Finder - Discover Sacred Places</title>
+    <meta name="description" content="Discover and connect with temples across various locations through AI-powered search and detailed temple information.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #fff7ed 0%, #fef2f2 100%);
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        /* Login Modal Styles */
+        .login-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .login-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+        
+        .login-subtitle {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #ff9933;
+        }
+        
+        .login-btn {
+            width: 100%;
+            background: #ff9933;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .login-btn:hover {
+            background: #ea580c;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        /* Location Section */
+        .location-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .location-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .location-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .location-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+        
+        .location-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+        
+        .location-dot.detecting {
+            background: #f59e0b;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .location-dot.error {
+            background: #ef4444;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .location-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .location-text {
+            flex: 1;
+            font-size: 0.9rem;
+            color: #4b5563;
+        }
+        
+        .location-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .location-btn {
+            background: #f3f4f6;
+            color: #374151;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .location-btn:hover {
+            background: #e5e7eb;
+        }
+        
+        .location-btn.primary {
+            background: #ff9933;
+            color: white;
+        }
+        
+        .location-btn.primary:hover {
+            background: #ea580c;
+        }
+        
+        /* Nearby Temples Section */
+        .nearby-section {
+            margin: 30px 0;
+        }
+        
+        .nearby-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .nearby-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .nearby-count {
+            background: #ff9933;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .nearby-temples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .nearby-temple-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .nearby-temple-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .nearby-temple-image {
+            height: 150px;
+            background: linear-gradient(135deg, #ff9933 0%, #dc143c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+        
+        .nearby-temple-content {
+            padding: 20px;
+        }
+        
+        .nearby-temple-name {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        
+        .nearby-temple-deity {
+            color: #ff9933;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        
+        .nearby-temple-distance {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .nearby-temple-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .nearby-temple-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .nearby-temple-stars {
+            color: #fbbf24;
+        }
+        
+        .nearby-temple-crowd {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .crowd-low {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .crowd-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .crowd-high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .nearby-temple-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .nearby-temple-btn {
+            flex: 1;
+            background: #ff9933;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .nearby-temple-btn:hover {
+            background: #ea580c;
+        }
+        
+        .nearby-temple-btn.outline {
+            background: transparent;
+            color: #ff9933;
+            border: 2px solid #ff9933;
+        }
+        
+        .nearby-temple-btn.outline:hover {
+            background: #ff9933;
+            color: white;
+        }
+        
+        /* User Info */
+        .user-info {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: #ff9933;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .user-name {
+            font-weight: 500;
+            color: #1f2937;
+        }
+        
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background: #f3f4f6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 60px 0;
+            background: linear-gradient(135deg, #ff9933 0%, #dc143c 100%);
+            color: white;
+            margin-bottom: 40px;
+            border-radius: 20px;
+        }
+        
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        .title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 15px;
+            outline: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #ff9933;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .feature-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1f2937;
+        }
+        
+        .feature-desc {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        
+        .temples-section {
+            margin: 60px 0;
+        }
+        
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #1f2937;
+        }
+        
+        .temples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .temple-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .temple-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .temple-image {
+            height: 200px;
+            background: linear-gradient(135deg, #ff9933 0%, #dc143c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+        
+        .temple-content {
+            padding: 25px;
+        }
+        
+        .temple-name {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+        
+        .temple-deity {
+            color: #ff9933;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        
+        .temple-desc {
+            color: #6b7280;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .temple-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .stars {
+            color: #fbbf24;
+        }
+        
+        .crowd-level {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .crowd-low {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .crowd-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .crowd-high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .temple-location {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        .btn {
+            background: #ff9933;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            background: #ea580c;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #ff9933;
+            border: 2px solid #ff9933;
+        }
+        
+        .btn-outline:hover {
+            background: #ff9933;
+            color: white;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            color: #6b7280;
+            margin-top: 60px;
+        }
+        
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .temples-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Modal -->
+    <div id="loginModal" class="login-modal">
+        <div class="login-content">
+            <div class="login-header">
+                <span class="close" onclick="closeLogin()">&times;</span>
+                <h2 class="login-title">Welcome Back</h2>
+                <p class="login-subtitle">Sign in to access your favorites and personalized features</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="email">Email Address</label>
+                    <input type="email" id="email" class="form-input" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="login-btn">Sign In</button>
+            </form>
+            <div style="text-align: center; margin-top: 20px;">
+                <p style="color: #6b7280; font-size: 0.9rem;">
+                    Don't have an account? <a href="#" onclick="showSignup()" style="color: #ff9933; text-decoration: none;">Sign up here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">🕉️</div>
+            <h1 class="title">Temple Finder</h1>
+            <p class="subtitle">Discover Sacred Places</p>
+            
+            <!-- User Info (hidden by default) -->
+            <div id="userInfo" class="user-info">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <span class="user-name" id="userName">User</span>
+                <button class="logout-btn" onclick="logout()" title="Logout">✕</button>
+            </div>
+            
+            <!-- Login Button (shown by default) -->
+            <button id="loginBtn" class="btn" onclick="showLogin()" style="margin-top: 20px;">Sign In</button>
+            
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search temples, deities, or locations...">
+                <button class="search-btn">Search</button>
+            </div>
+        </div>
+        
+        <!-- Location Section -->
+        <div class="location-section">
+            <div class="location-header">
+                <h3 class="location-title">📍 Your Location</h3>
+                <div class="location-status">
+                    <div class="location-dot" id="locationDot"></div>
+                    <span id="locationStatus">Detecting location...</span>
+                </div>
+            </div>
+            <div class="location-info">
+                <div class="location-text" id="locationText">
+                    Please allow location access to find temples near you
+                </div>
+                <div class="location-actions">
+                    <button class="location-btn" onclick="detectLocation()">📍 Detect Location</button>
+                    <button class="location-btn primary" onclick="selectLocation()">🏙️ Select City</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Nearby Temples Section -->
+        <div class="nearby-section" id="nearbySection" style="display: none;">
+            <div class="nearby-header">
+                <h3 class="nearby-title">🏛️ Nearby Temples</h3>
+                <div class="nearby-count" id="nearbyCount">0 temples</div>
+            </div>
+            <div class="nearby-temples" id="nearbyTemples">
+                <!-- Nearby temples will be populated here -->
+            </div>
+        </div>
+        
+        <!-- Features -->
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <h3 class="feature-title">AI-Powered Search</h3>
+                <p class="feature-desc">Find temples using natural language queries powered by advanced AI technology.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📍</div>
+                <h3 class="feature-title">Location Discovery</h3>
+                <p class="feature-desc">Discover temples near you with GPS-based location services and radius search.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">⏰</div>
+                <h3 class="feature-title">Real-Time Timings</h3>
+                <p class="feature-desc">Get accurate pooja timings, festival schedules, and special ceremony information.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3 class="feature-title">Crowd Tracking</h3>
+                <p class="feature-desc">Check real-time crowd levels to plan your visit during optimal times.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">❤️</div>
+                <h3 class="feature-title">Save Favorites</h3>
+                <p class="feature-desc">Bookmark your favorite temples and create personalized visit plans.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3 class="feature-title">PWA Experience</h3>
+                <p class="feature-desc">Install as a mobile app with offline access and push notifications.</p>
+            </div>
+        </div>
+        
+        <!-- Featured Temples -->
+        <div class="temples-section">
+            <h2 class="section-title">Featured Temples</h2>
+            
+            <div class="temples-grid">
+                <div class="temple-card">
+                    <div class="temple-image">🕉️</div>
+                    <div class="temple-content">
+                        <h3 class="temple-name">Meenakshi Amman Temple</h3>
+                        <p class="temple-deity">Meenakshi (Parvati)</p>
+                        <p class="temple-desc">A historic Hindu temple located in Madurai, Tamil Nadu, known for its magnificent architecture and spiritual significance.</p>
+                        <div class="temple-stats">
+                            <div class="rating">
+                                <span class="stars">⭐⭐⭐⭐⭐</span>
+                                <span>4.8 (1,250 reviews)</span>
+                            </div>
+                            <div class="crowd-level crowd-low">Low Crowd</div>
+                        </div>
+                        <div class="temple-location">📍 Madurai, Tamil Nadu</div>
+                        <div style="margin-top: 20px;">
+                            <button class="btn">View Details</button>
+                            <button class="btn btn-outline" style="margin-left: 10px;">Add to Favorites</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="temple-card">
+                    <div class="temple-image">🕉️</div>
+                    <div class="temple-content">
+                        <h3 class="temple-name">Tirumala Venkateswara Temple</h3>
+                        <p class="temple-deity">Venkateswara (Vishnu)</p>
+                        <p class="temple-desc">One of the most visited pilgrimage sites in the world, located in Tirumala, Andhra Pradesh.</p>
+                        <div class="temple-stats">
+                            <div class="rating">
+                                <span class="stars">⭐⭐⭐⭐⭐</span>
+                                <span>4.9 (2,500 reviews)</span>
+                            </div>
+                            <div class="crowd-level crowd-high">High Crowd</div>
+                        </div>
+                        <div class="temple-location">📍 Tirupati, Andhra Pradesh</div>
+                        <div style="margin-top: 20px;">
+                            <button class="btn">View Details</button>
+                            <button class="btn btn-outline" style="margin-left: 10px;">Add to Favorites</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="temple-card">
+                    <div class="temple-image">🕉️</div>
+                    <div class="temple-content">
+                        <h3 class="temple-name">Golden Temple</h3>
+                        <p class="temple-deity">Harmandir Sahib</p>
+                        <p class="temple-desc">The holiest Gurdwara of Sikhism, located in Amritsar, Punjab, known for its golden dome.</p>
+                        <div class="temple-stats">
+                            <div class="rating">
+                                <span class="stars">⭐⭐⭐⭐⭐</span>
+                                <span>4.7 (1,800 reviews)</span>
+                            </div>
+                            <div class="crowd-level crowd-medium">Medium Crowd</div>
+                        </div>
+                        <div class="temple-location">📍 Amritsar, Punjab</div>
+                        <div style="margin-top: 20px;">
+                            <button class="btn">View Details</button>
+                            <button class="btn btn-outline" style="margin-left: 10px;">Add to Favorites</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>&copy; 2024 Temple Finder. Discover Sacred Places, Connect with Devotion. 🕉️</p>
+        </div>
+    </div>
+    
+    <script>
+        // Simple interactivity
+        document.querySelector('.search-btn').addEventListener('click', function() {
+            const query = document.querySelector('.search-input').value;
+            if (query.trim()) {
+                alert('Searching for: ' + query + '\n\nThis is a demo. In the full app, this would perform an AI-powered search.');
+            }
+        });
+        
+        document.querySelector('.search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.querySelector('.search-btn').click();
+            }
+        });
+        
+        // Add click handlers to temple cards
+        document.querySelectorAll('.temple-card .btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const templeName = this.closest('.temple-card').querySelector('.temple-name').textContent;
+                if (this.textContent.includes('Favorites')) {
+                    alert('Added ' + templeName + ' to favorites!');
+                } else {
+                    alert('Opening details for ' + templeName + '\n\nThis is a demo. In the full app, this would show detailed temple information.');
+                }
+            });
+        });
+        
+        // Add some animation on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.feature-card, .temple-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
