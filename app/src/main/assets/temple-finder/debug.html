@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temple Finder Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🕉️ Temple Finder - Debug Mode</h1>
+        
+        <div class="status info">
+            <strong>Debug Information:</strong><br>
+            User Agent: <span id="userAgent"></span><br>
+            Current URL: <span id="currentUrl"></span><br>
+            Timestamp: <span id="timestamp"></span>
+        </div>
+
+        <div id="status" class="status info">
+            <strong>Status:</strong> Initializing...
+        </div>
+
+        <div id="tests">
+            <h3>Tests:</h3>
+            <button onclick="testJavaScript()">Test JavaScript</button>
+            <button onclick="testLocalStorage()">Test Local Storage</button>
+            <button onclick="testFetch()">Test Fetch</button>
+            <button onclick="loadConfig()">Load Config</button>
+        </div>
+
+        <div id="results"></div>
+
+        <div style="margin-top: 20px;">
+            <button onclick="window.location.href='index.html'">Go to Main App</button>
+        </div>
+    </div>
+
+    <script>
+        console.log('🔧 Debug page loaded');
+        
+        // Update debug info
+        document.getElementById('userAgent').textContent = navigator.userAgent;
+        document.getElementById('currentUrl').textContent = window.location.href;
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
+        
+        function updateStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+            console.log(`Status: ${message}`);
+        }
+        
+        function addResult(message, type = 'info') {
+            const resultsEl = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}:</strong> ${message}`;
+            resultsEl.appendChild(div);
+        }
+        
+        function testJavaScript() {
+            try {
+                const result = 2 + 2;
+                addResult(`JavaScript working: 2 + 2 = ${result}`, 'success');
+            } catch (error) {
+                addResult(`JavaScript error: ${error.message}`, 'error');
+            }
+        }
+        
+        function testLocalStorage() {
+            try {
+                localStorage.setItem('test', 'value');
+                const retrieved = localStorage.getItem('test');
+                if (retrieved === 'value') {
+                    addResult('Local Storage working correctly', 'success');
+                } else {
+                    addResult('Local Storage retrieval failed', 'error');
+                }
+            } catch (error) {
+                addResult(`Local Storage error: ${error.message}`, 'error');
+            }
+        }
+        
+        function testFetch() {
+            try {
+                // Test if fetch is available
+                if (typeof fetch === 'function') {
+                    addResult('Fetch API is available', 'success');
+                } else {
+                    addResult('Fetch API not available', 'error');
+                }
+            } catch (error) {
+                addResult(`Fetch test error: ${error.message}`, 'error');
+            }
+        }
+        
+        function loadConfig() {
+            try {
+                const script = document.createElement('script');
+                script.src = './config.js';
+                script.onload = function() {
+                    addResult('Config script loaded successfully', 'success');
+                    if (window.TEMPLE_FINDER_CONFIG) {
+                        addResult('Config object found: ' + JSON.stringify(window.TEMPLE_FINDER_CONFIG, null, 2), 'info');
+                    } else {
+                        addResult('Config object not found', 'error');
+                    }
+                };
+                script.onerror = function() {
+                    addResult('Failed to load config script', 'error');
+                };
+                document.head.appendChild(script);
+            } catch (error) {
+                addResult(`Config loading error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Auto-run basic tests
+        window.addEventListener('load', function() {
+            updateStatus('Page loaded successfully', 'success');
+            
+            // Auto-run tests
+            setTimeout(() => testJavaScript(), 100);
+            setTimeout(() => testLocalStorage(), 200);
+            setTimeout(() => testFetch(), 300);
+            setTimeout(() => loadConfig(), 500);
+        });
+        
+        // Log all console messages
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addResult(args.join(' '), 'info');
+        };
+        
+        const originalError = console.error;
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addResult(args.join(' '), 'error');
+        };
+    </script>
+</body>
+</html>
