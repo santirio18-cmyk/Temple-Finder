@@ -2,13 +2,14 @@ import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Search, Bell, Menu } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import DarkModeToggle from './DarkModeToggle'
 
 const Header: React.FC = () => {
   const location = useLocation()
   const { user } = useAuth()
 
   return (
-    <header className="bg-white shadow-sm border-b border-neutral-200 sticky top-0 z-50">
+    <header className="bg-white dark:bg-neutral-900 shadow-sm border-b border-neutral-200 dark:border-neutral-700 sticky top-0 z-50 transition-colors duration-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -16,7 +17,7 @@ const Header: React.FC = () => {
             <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">🕉️</span>
             </div>
-            <span className="font-heading font-bold text-xl text-neutral-900">
+            <span className="font-heading font-bold text-xl text-neutral-900 dark:text-neutral-100">
               Temple Finder
             </span>
           </Link>
@@ -29,7 +30,7 @@ const Header: React.FC = () => {
                 <input
                   type="text"
                   placeholder="Search temples, deities, or locations..."
-                  className="w-full pl-10 pr-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="input-field w-full pl-10 pr-4 py-2"
                 />
               </div>
             </div>
@@ -37,10 +38,13 @@ const Header: React.FC = () => {
 
           {/* Right side actions */}
           <div className="flex items-center space-x-4">
+            {/* Dark Mode Toggle */}
+            <DarkModeToggle size="sm" />
+
             {/* Notifications */}
             <Link
               to="/notifications"
-              className="p-2 text-neutral-600 hover:text-primary-500 transition-colors relative"
+              className="p-2 text-neutral-600 dark:text-neutral-400 hover:text-primary-500 transition-colors relative"
             >
               <Bell className="w-6 h-6" />
               <span className="absolute -top-1 -right-1 bg-secondary-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
@@ -51,7 +55,7 @@ const Header: React.FC = () => {
             {/* Profile */}
             <Link
               to="/profile"
-              className="flex items-center space-x-2 p-2 text-neutral-600 hover:text-primary-500 transition-colors"
+              className="flex items-center space-x-2 p-2 text-neutral-600 dark:text-neutral-400 hover:text-primary-500 transition-colors"
             >
               <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
                 <span className="text-primary-600 font-medium text-sm">
@@ -64,7 +68,7 @@ const Header: React.FC = () => {
             </Link>
 
             {/* Mobile menu button */}
-            <button className="p-2 text-neutral-600 hover:text-primary-500 transition-colors lg:hidden">
+            <button className="p-2 text-neutral-600 dark:text-neutral-400 hover:text-primary-500 transition-colors lg:hidden">
               <Menu className="w-6 h-6" />
             </button>
           </div>

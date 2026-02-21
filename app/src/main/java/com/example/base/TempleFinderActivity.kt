@@ -28,7 +28,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 class TempleFinderActivity : ComponentActivity() {
     
     companion object {
-        private const val INITIAL_URL = "file:///android_asset/temple-finder/index.html" // Back to main app
+        private const val INITIAL_URL = "file:///android_asset/temple-finder/stable-app.html" // Stable Temple Finder app
+        private const val MAIN_URL = "file:///android_asset/temple-finder/index.html" // Main React app
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
         
         fun start(context: Context) {
@@ -144,6 +145,13 @@ class TempleFinderActivity : ComponentActivity() {
             cacheMode = WebSettings.LOAD_DEFAULT
             mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
             
+            // FIXED: Enhanced settings for React app
+            allowFileAccess = true
+            allowContentAccess = true
+            allowFileAccessFromFileURLs = true
+            allowUniversalAccessFromFileURLs = true
+            databaseEnabled = true
+            
             // Enable modern web features
             if (WebViewFeature.isFeatureSupported(WebViewFeature.SAFE_BROWSING_ENABLE)) {
                 WebSettingsCompat.setSafeBrowsingEnabled(this, true)
@@ -152,6 +160,13 @@ class TempleFinderActivity : ComponentActivity() {
             if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
                 WebSettingsCompat.setAlgorithmicDarkeningAllowed(this, true)
             }
+            
+            // FIXED: Additional settings for better React app support
+            setRenderPriority(WebSettings.RenderPriority.HIGH)
+            setPluginState(WebSettings.PluginState.ON)
+            setLoadsImagesAutomatically(true)
+            setBlockNetworkImage(false)
+            setBlockNetworkLoads(false)
         }
     }
     
@@ -191,38 +206,28 @@ class TempleFinderActivity : ComponentActivity() {
                 super.onPageFinished(view, url)
                 println("🔍 WebView: Page finished loading: $url")
                 
-                // Load scripts in correct order: config -> error handler -> mobile enhancements -> AI fallback
-                view?.loadUrl("javascript:(function() { " +
-                    "console.log('🔧 Starting script loading sequence...'); " +
-                    "var configScript = document.createElement('script'); " +
-                    "configScript.src = 'file:///android_asset/temple-finder/config.js'; " +
-                    "configScript.onload = function() { " +
-                        "console.log('✅ Config loaded successfully'); " +
-                        "var errorScript = document.createElement('script'); " +
-                        "errorScript.src = 'file:///android_asset/temple-finder/error-handler.js'; " +
-                        "errorScript.onload = function() { " +
-                            "console.log('✅ Error handler loaded successfully'); " +
-                            "var mobileScript = document.createElement('script'); " +
-                            "mobileScript.src = 'file:///android_asset/temple-finder/mobile-enhancements.js'; " +
-                            "mobileScript.onload = function() { " +
-                                "console.log('✅ Mobile enhancements loaded successfully'); " +
-                                "console.log('🎉 All scripts loaded - Temple Finder ready!'); " +
-                            "}; " +
-                            "mobileScript.onerror = function() { " +
-                                "console.error('❌ Failed to load mobile enhancements'); " +
-                            "}; " +
-                            "document.head.appendChild(mobileScript); " +
-                        "}; " +
-                        "errorScript.onerror = function() { " +
-                            "console.error('❌ Failed to load error handler'); " +
-                        "}; " +
-                        "document.head.appendChild(errorScript); " +
-                    "}; " +
-                    "configScript.onerror = function() { " +
-                        "console.error('❌ Failed to load config'); " +
-                    "}; " +
-                    "document.head.appendChild(configScript); " +
+                // Check if we're on debug page and auto-redirect to main app after 3 seconds
+                if (url?.contains("debug.html") == true) {
+                    println("🔧 Debug page loaded, will redirect to main app in 3 seconds")
+                    view?.loadUrl("javascript:(function() { " +
+                        "console.log('🔧 Debug page loaded successfully'); " +
+                        "setTimeout(function() { " +
+                            "console.log('🔄 Redirecting to main app...'); " +
+                            "window.location.href = 'index.html'; " +
+                        "}, 3000); " +
                     "})();")
+                } else if (url?.contains("index.html") == true) {
+                    // Main app loaded, check if it's working
+                    view?.loadUrl("javascript:(function() { " +
+                        "console.log('🎉 Main Temple Finder app loaded'); " +
+                        "if (document.getElementById('root')) { " +
+                            "console.log('✅ React app root element found'); " +
+                        "} else { " +
+                            "console.log('❌ React app root element not found'); " +
+                            "document.body.innerHTML = '<div style=\"padding:20px;text-align:center;\"><h1>🕉️ Temple Finder</h1><p>Loading React app...</p><p>If this persists, the React app may not be loading properly.</p></div>'; " +
+                        "} " +
+                    "})();")
+                }
             }
             
             override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {

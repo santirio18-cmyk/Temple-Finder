@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle with gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B4513;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#A0522D;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="templeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F5DEB3;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#DEB887;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="domeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F0E68C;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#bgGradient)" stroke="#654321" stroke-width="4"/>
+  
+  <!-- Temple base -->
+  <rect x="120" y="350" width="272" height="60" fill="url(#templeGradient)" stroke="#8B4513" stroke-width="2"/>
+  
+  <!-- Main entrance -->
+  <rect x="240" y="360" width="32" height="40" fill="#654321" stroke="#3D2914" stroke-width="1"/>
+  
+  <!-- Temple tiers -->
+  <!-- Tier 1 -->
+  <rect x="140" y="320" width="232" height="30" fill="url(#templeGradient)" stroke="#8B4513" stroke-width="1"/>
+  <rect x="200" y="325" width="20" height="20" fill="url(#domeGradient)" stroke="#D2B48C" stroke-width="1"/>
+  <rect x="240" y="325" width="20" height="20" fill="url(#domeGradient)" stroke="#D2B48C" stroke-width="1"/>
+  <rect x="280" y="325" width="20" height="20" fill="url(#domeGradient)" stroke="#D2B48C" stroke-width="1"/>
+  
+  <!-- Tier 2 -->
+  <rect x="160" y="290" width="192" height="30" fill="url(#templeGradient)" stroke="#8B4513" stroke-width="1"/>
+  <rect x="200" y="295" width="16" height="20" fill="url(#domeGradient)" stroke="#D2B48C" stroke-width="1"/>
+  <rect x="240" y="295" width="16" height="20" fill="url(#domeGradient)" stroke="#D2B48C" stroke-width="1"/>
+  <rect x="280" y="295" width="16" height="20" fill="url(#domeGradient)" stroke="#D2B48C" stroke-width="1"/>
+  
+  <!-- Tier 3 -->
+  <rect x="180" y="260" width="152" height="30" fill="url(#templeGradient)" stroke="#8B4513" stroke-width="1"/>
+  <rect x="210" y="265" width="12" height="20" fill="url(#domeGradient)" stroke="#D2B48C" stroke-width="1"/>
+  <rect x="240" y="265" width="12" height="20" fill="url(#domeGradient)" stroke="#D2B48C" stroke-width="1"/>
+  <rect x="270" y="265" width="12" height="20" fill="url(#domeGradient)" stroke="#D2B48C" stroke-width="1"/>
+  
+  <!-- Tier 4 -->
+  <rect x="200" y="230" width="112" height="30" fill="url(#templeGradient)" stroke="#8B4513" stroke-width="1"/>
+  <rect x="220" y="235" width="10" height="20" fill="url(#domeGradient)" stroke="#D2B48C" stroke-width="1"/>
+  <rect x="240" y="235" width="10" height="20" fill="url(#domeGradient)" stroke="#D2B48C" stroke-width="1"/>
+  <rect x="260" y="235" width="10" height="20" fill="url(#domeGradient)" stroke="#D2B48C" stroke-width="1"/>
+  
+  <!-- Tier 5 -->
+  <rect x="220" y="200" width="72" height="30" fill="url(#templeGradient)" stroke="#8B4513" stroke-width="1"/>
+  <rect x="235" y="205" width="8" height="20" fill="url(#domeGradient)" stroke="#D2B48C" stroke-width="1"/>
+  <rect x="250" y="205" width="8" height="20" fill="url(#domeGradient)" stroke="#D2B48C" stroke-width="1"/>
+  <rect x="265" y="205" width="8" height="20" fill="url(#domeGradient)" stroke="#D2B48C" stroke-width="1"/>
+  
+  <!-- Top dome -->
+  <ellipse cx="256" cy="180" rx="36" ry="20" fill="url(#domeGradient)" stroke="#D2B48C" stroke-width="2"/>
+  
+  <!-- Kalashas (finials) on top -->
+  <circle cx="240" cy="160" r="3" fill="#8B4513"/>
+  <circle cx="256" cy="155" r="4" fill="#8B4513"/>
+  <circle cx="272" cy="160" r="3" fill="#8B4513"/>
+  
+  <!-- People figures at the base -->
+  <!-- Person 1 -->
+  <ellipse cx="180" cy="380" rx="4" ry="6" fill="#FF6B35"/>
+  <rect x="178" y="386" width="4" height="8" fill="#FFFFFF"/>
+  
+  <!-- Person 2 -->
+  <ellipse cx="200" cy="380" rx="4" ry="6" fill="#4ECDC4"/>
+  <rect x="198" y="386" width="4" height="8" fill="#FFFFFF"/>
+  
+  <!-- Person 3 -->
+  <ellipse cx="220" cy="380" rx="4" ry="6" fill="#45B7D1"/>
+  <rect x="218" y="386" width="4" height="8" fill="#FFFFFF"/>
+  
+  <!-- Person 4 -->
+  <ellipse cx="280" cy="380" rx="4" ry="6" fill="#96CEB4"/>
+  <rect x="278" y="386" width="4" height="8" fill="#FFFFFF"/>
+  
+  <!-- Person 5 -->
+  <ellipse cx="300" cy="380" rx="4" ry="6" fill="#FECA57"/>
+  <rect x="298" y="386" width="4" height="8" fill="#FFFFFF"/>
+  
+  <!-- Person 6 -->
+  <ellipse cx="320" cy="380" rx="4" ry="6" fill="#FF9FF3"/>
+  <rect x="318" y="386" width="4" height="8" fill="#FFFFFF"/>
+  
+  <!-- Decorative elements -->
+  <!-- Lotus petals around the temple -->
+  <ellipse cx="150" cy="300" rx="8" ry="4" fill="#FFB6C1" opacity="0.6" transform="rotate(-30 150 300)"/>
+  <ellipse cx="362" cy="300" rx="8" ry="4" fill="#FFB6C1" opacity="0.6" transform="rotate(30 362 300)"/>
+  <ellipse cx="150" cy="250" rx="6" ry="3" fill="#FFB6C1" opacity="0.4" transform="rotate(-45 150 250)"/>
+  <ellipse cx="362" cy="250" rx="6" ry="3" fill="#FFB6C1" opacity="0.4" transform="rotate(45 362 250)"/>
+</svg>
