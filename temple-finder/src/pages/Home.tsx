@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Search, MapPin, Star, Users, Heart } from 'lucide-react'
 import { useSimpleTemple } from '../contexts/SimpleTempleContext'
 import VoiceSearchButton from '../components/VoiceSearchButton'
-// import { DeityCategory } from '../types'
+import { DeityCategory, Temple } from '../types'
 
 const Home: React.FC = () => {
   const navigate = useNavigate()
@@ -112,7 +112,7 @@ const Home: React.FC = () => {
             Explore by Deity
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {categories.map((category) => (
+            {categories.map((category: DeityCategory) => (
               <button
                 key={category.id}
                 onClick={() => navigate(`/search?deity=${category.name}`)}
@@ -164,7 +164,7 @@ const Home: React.FC = () => {
             Featured Temples
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featuredTemples.map((temple) => (
+            {featuredTemples.map((temple: Temple) => (
               <div
                 key={temple.id}
                 onClick={() => navigate(`/temple/${temple.id}`)}

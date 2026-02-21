@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { User } from '../types'
+import { mockDataService } from '../services/mockDataService'
 
 interface AuthContextType {
   user: User | null
@@ -28,20 +29,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Check for existing session
     const checkAuth = async () => {
       try {
-        const token = localStorage.getItem('auth_token')
-        if (token) {
-          // In a real app, you would validate the token with your backend
-          // For now, we'll simulate a user
-          setUser({
-            id: '1',
-            email: 'user@example.com',
-            name: 'Devotee User',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          })
-        }
+        const currentUser = await mockDataService.getCurrentUser()
+        setUser(currentUser)
       } catch (error) {
         console.error('Auth check failed:', error)
+        setUser(null)
       } finally {
         setLoading(false)
       }
@@ -50,47 +42,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkAuth()
   }, [])
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, _password: string) => {
     setLoading(true)
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      const userData: User = {
-        id: '1',
-        email,
-        name: email.split('@')[0],
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+      const result = await mockDataService.signIn(email, _password)
+      if (result.error) {
+        throw new Error(result.error)
       }
-      
-      setUser(userData)
-      localStorage.setItem('auth_token', 'mock_token')
+      setUser(result.user)
     } catch (error) {
-      throw new Error('Login failed')
+      throw error
     } finally {
       setLoading(false)
     }
   }
 
-  const register = async (email: string, password: string, name: string) => {
+  const register = async (email: string, _password: string, name: string) => {
     setLoading(true)
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      const userData: User = {
-        id: '1',
-        email,
-        name,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+      const result = await mockDataService.signUp(email, _password, name)
+      if (result.error) {
+        throw new Error(result.error)
       }
-      
-      setUser(userData)
-      localStorage.setItem('auth_token', 'mock_token')
+      setUser(result.user)
     } catch (error) {
-      throw new Error('Registration failed')
+      throw error
     } finally {
       setLoading(false)
     }
@@ -99,10 +75,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     setLoading(true)
     try {
-      localStorage.removeItem('auth_token')
+      const result = await mockDataService.signOut()
+      if (result.error) {
+        throw new Error(result.error)
+      }
       setUser(null)
     } catch (error) {
       console.error('Logout failed:', error)
+      throw error
     } finally {
       setLoading(false)
     }

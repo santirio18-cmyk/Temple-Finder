@@ -9,18 +9,16 @@ import {
   Globe, 
   Star, 
   Users, 
-  Clock, 
   Camera,
-  ChevronRight,
   Calendar
 } from 'lucide-react'
-import { useTemple } from '../contexts/TempleContext'
+import { useSimpleTemple } from '../contexts/SimpleTempleContext'
 import { Temple, PoojaTiming, Review } from '../types'
 
 const TempleDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const { getTempleById, getTempleTimings, getTempleReviews, addToFavorites, removeFromFavorites } = useTemple()
+  const { getTempleById, getTempleTimings, getTempleReviews, addToFavorites, removeFromFavorites } = useSimpleTemple()
   
   const [temple, setTemple] = useState<Temple | null>(null)
   const [timings, setTimings] = useState<PoojaTiming[]>([])
@@ -209,7 +207,7 @@ const TempleDetails: React.FC = () => {
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {temple.images.length > 0 ? (
-                  temple.images.map((image, index) => (
+                  temple.images.map((_image: string, index: number) => (
                     <div
                       key={index}
                       className="aspect-square bg-gradient-to-br from-primary-100 to-secondary-100 rounded-lg flex items-center justify-center"
@@ -291,13 +289,13 @@ const TempleDetails: React.FC = () => {
                       </p>
                     </div>
 
-                    {temple.legends.length > 0 && (
+                    {temple.legends && temple.legends.length > 0 && (
                       <div>
                         <h3 className="text-lg font-heading font-bold text-neutral-900 mb-3">
                           Legends
                         </h3>
                         <ul className="space-y-2">
-                          {temple.legends.map((legend, index) => (
+                          {temple.legends.map((legend: string, index: number) => (
                             <li key={index} className="flex items-start space-x-2">
                               <span className="text-primary-500 mt-1">•</span>
                               <span className="text-neutral-700">{legend}</span>

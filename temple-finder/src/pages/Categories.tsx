@@ -2,19 +2,20 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, Star, MapPin } from 'lucide-react'
 import { useSimpleTemple } from '../contexts/SimpleTempleContext'
+import { DeityCategory, Temple } from '../types'
 
 const Categories: React.FC = () => {
   const navigate = useNavigate()
   const { categories, temples } = useSimpleTemple()
   const [searchQuery, setSearchQuery] = useState('')
 
-  const filteredCategories = categories.filter(category =>
+  const filteredCategories = categories.filter((category: DeityCategory) =>
     category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     category.description.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   const getTemplesByDeity = (deityName: string) => {
-    return temples.filter(temple => 
+    return temples.filter((temple: Temple) => 
       temple.deity.toLowerCase().includes(deityName.toLowerCase())
     )
   }
@@ -48,7 +49,7 @@ const Categories: React.FC = () => {
 
         {/* Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCategories.map((category) => {
+          {filteredCategories.map((category: DeityCategory) => {
             const categoryTemples = getTemplesByDeity(category.name)
             return (
               <div
@@ -113,7 +114,7 @@ const Categories: React.FC = () => {
                       Featured Temples
                     </h4>
                     <div className="space-y-2">
-                      {categoryTemples.slice(0, 3).map((temple) => (
+                      {categoryTemples.slice(0, 3).map((temple: Temple) => (
                         <div
                           key={temple.id}
                           onClick={(e) => {
