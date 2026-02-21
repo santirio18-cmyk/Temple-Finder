@@ -3,6 +3,7 @@ export interface User {
   email: string
   name: string
   avatar?: string
+  avatar_url?: string
   created_at: string
   updated_at: string
 }
@@ -12,10 +13,11 @@ export interface Temple {
   name: string
   deity: string
   description: string
-  history: string
-  significance: string
-  architecture: string
-  legends: string[]
+  history?: string
+  significance?: string
+  architecture?: string
+  legends?: string[]
+  festivals?: string[]
   address: string
   city: string
   state: string
@@ -32,6 +34,7 @@ export interface Temple {
   rating: number
   review_count: number
   is_favorite?: boolean
+  is_active?: boolean
   created_at: string
   updated_at: string
 }
@@ -110,4 +113,8 @@ export interface DeityCategory {
   description: string
   temple_count: number
   color: string
+  mantra?: string
+  image?: string
+  created_at?: string
+  updated_at?: string
 }

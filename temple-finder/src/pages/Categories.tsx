@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, Star, MapPin } from 'lucide-react'
-import { useTemple } from '../contexts/TempleContext'
+import { useSimpleTemple } from '../contexts/SimpleTempleContext'
 
 const Categories: React.FC = () => {
   const navigate = useNavigate()
-  const { categories, temples } = useTemple()
+  const { categories, temples } = useSimpleTemple()
   const [searchQuery, setSearchQuery] = useState('')
 
   const filteredCategories = categories.filter(category =>
@@ -57,15 +57,50 @@ const Categories: React.FC = () => {
                 className="bg-white rounded-xl shadow-sm border border-neutral-200 p-6 hover:shadow-md transition-shadow cursor-pointer group"
               >
                 <div className="text-center mb-4">
-                  <div className="text-6xl mb-3 group-hover:scale-110 transition-transform">
-                    {category.icon}
+                  {/* Deity Image */}
+                  <div className="mb-4 flex justify-center relative">
+                    {category.image ? (
+                      <>
+                        <img 
+                          src={category.image} 
+                          alt={category.name}
+                          className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg group-hover:scale-110 transition-transform"
+                          onError={(e) => {
+                            // Fallback to icon if image fails to load
+                            e.currentTarget.style.display = 'none'
+                            const iconDiv = e.currentTarget.parentElement?.querySelector('.deity-icon-fallback')
+                            if (iconDiv) iconDiv.classList.remove('hidden')
+                          }}
+                        />
+                        <div className="deity-icon-fallback hidden text-6xl group-hover:scale-110 transition-transform">
+                          {category.icon}
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-6xl group-hover:scale-110 transition-transform">
+                        {category.icon}
+                      </div>
+                    )}
                   </div>
                   <h3 className="text-xl font-heading font-bold text-neutral-900 mb-2">
                     {category.name}
                   </h3>
-                  <p className="text-neutral-600 text-sm mb-4">
+                  <p className="text-neutral-600 text-sm mb-3">
                     {category.description}
                   </p>
+                  {/* Mantra */}
+                  {category.mantra && (
+                    <div className="mb-3 p-3 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg border border-orange-100">
+                      <p className="text-base font-semibold text-neutral-800 font-sans text-center">
+                        {category.mantra.split('(')[0].trim()}
+                      </p>
+                      {category.mantra.includes('(') && (
+                        <p className="text-sm text-neutral-600 text-center mt-1">
+                          {category.mantra.match(/\(([^)]+)\)/)?.[1]}
+                        </p>
+                      )}
+                    </div>
+                  )}
                   <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-600">
                     {category.temple_count} temples
                   </div>

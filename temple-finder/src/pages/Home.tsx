@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, MapPin, Star, Users, Clock } from 'lucide-react'
-import { useTemple } from '../contexts/TempleContext'
-import { DeityCategory } from '../types'
+import { Search, MapPin, Star, Users, Heart } from 'lucide-react'
+import { useSimpleTemple } from '../contexts/SimpleTempleContext'
+import VoiceSearchButton from '../components/VoiceSearchButton'
+// import { DeityCategory } from '../types'
 
 const Home: React.FC = () => {
   const navigate = useNavigate()
-  const { categories, temples } = useTemple()
+  const { categories, temples } = useSimpleTemple()
   const [searchQuery, setSearchQuery] = useState('')
 
   const handleSearch = (e: React.FormEvent) => {
@@ -14,6 +15,11 @@ const Home: React.FC = () => {
     if (searchQuery.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchQuery)}`)
     }
+  }
+
+  const handleVoiceResult = (transcript: string) => {
+    setSearchQuery(transcript)
+    navigate(`/search?q=${encodeURIComponent(transcript)}`)
   }
 
   const featuredTemples = temples.slice(0, 3)
@@ -41,14 +47,20 @@ const Home: React.FC = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search temples, deities, or locations..."
-                className="w-full pl-12 pr-4 py-4 text-lg rounded-xl border-0 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+                className="w-full pl-12 pr-20 py-4 text-lg rounded-xl border-0 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
               />
-              <button
-                type="submit"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white text-primary-500 px-6 py-2 rounded-lg font-medium hover:bg-orange-50 transition-colors"
-              >
-                Search
-              </button>
+              <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
+                <VoiceSearchButton 
+                  onVoiceResult={handleVoiceResult}
+                  className="bg-white/20 hover:bg-white/30 text-white"
+                />
+                <button
+                  type="submit"
+                  className="bg-white text-primary-500 px-6 py-2 rounded-lg font-medium hover:bg-orange-50 transition-colors"
+                >
+                  Search
+                </button>
+              </div>
             </div>
           </form>
         </div>
@@ -60,26 +72,26 @@ const Home: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <button
               onClick={() => navigate('/nearby')}
-              className="bg-white rounded-xl p-6 shadow-sm border border-neutral-200 hover:shadow-md transition-shadow text-center"
+              className="card hover:shadow-md transition-shadow text-center"
             >
               <MapPin className="w-8 h-8 text-primary-500 mx-auto mb-2" />
-              <span className="font-medium text-neutral-900">Nearby Temples</span>
+              <span className="font-medium text-neutral-900 dark:text-neutral-100">Nearby Temples</span>
             </button>
             
             <button
               onClick={() => navigate('/categories')}
-              className="bg-white rounded-xl p-6 shadow-sm border border-neutral-200 hover:shadow-md transition-shadow text-center"
+              className="card hover:shadow-md transition-shadow text-center"
             >
               <Star className="w-8 h-8 text-secondary-500 mx-auto mb-2" />
-              <span className="font-medium text-neutral-900">Deity Categories</span>
+              <span className="font-medium text-neutral-900 dark:text-neutral-100">Deity Categories</span>
             </button>
             
             <button
               onClick={() => navigate('/favorites')}
-              className="bg-white rounded-xl p-6 shadow-sm border border-neutral-200 hover:shadow-md transition-shadow text-center"
+              className="card hover:shadow-md transition-shadow text-center"
             >
               <Heart className="w-8 h-8 text-red-500 mx-auto mb-2" />
-              <span className="font-medium text-neutral-900">My Favorites</span>
+              <span className="font-medium text-neutral-900 dark:text-neutral-100">My Favorites</span>
             </button>
             
             <button
@@ -104,10 +116,40 @@ const Home: React.FC = () => {
               <button
                 key={category.id}
                 onClick={() => navigate(`/search?deity=${category.name}`)}
-                className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 text-center hover:shadow-md transition-shadow border border-orange-100"
+                className="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 text-center hover:shadow-md transition-all border border-orange-100 group relative"
               >
-                <div className="text-4xl mb-2">{category.icon}</div>
+                {/* Deity Image */}
+                <div className="mb-3 flex justify-center relative">
+                  {category.image ? (
+                    <>
+                      <img 
+                        src={category.image} 
+                        alt={category.name}
+                        className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md group-hover:scale-110 transition-transform"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none'
+                          const iconDiv = e.currentTarget.parentElement?.querySelector('.deity-icon-fallback')
+                          if (iconDiv) iconDiv.classList.remove('hidden')
+                        }}
+                      />
+                      <div className="deity-icon-fallback hidden text-4xl">
+                        {category.icon}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-4xl">
+                      {category.icon}
+                    </div>
+                  )}
+                </div>
                 <h3 className="font-medium text-neutral-900 mb-1">{category.name}</h3>
+                {/* Mantra - shown on hover */}
+                {category.mantra && (
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-neutral-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                    {category.mantra}
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-neutral-900"></div>
+                  </div>
+                )}
                 <p className="text-sm text-neutral-600">{category.temple_count} temples</p>
               </button>
             ))}
