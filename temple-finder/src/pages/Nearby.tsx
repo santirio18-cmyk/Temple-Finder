@@ -88,7 +88,7 @@ const Nearby: React.FC = () => {
       }
 
       const nearbyTempleData = locationService.findNearbyTemples(
-        temples.map(t => ({
+        temples.map((t: Temple) => ({
           id: t.id,
           name: t.name,
           deity: t.deity,
@@ -103,19 +103,19 @@ const Nearby: React.FC = () => {
       console.log('Found nearby temples:', nearbyTempleData.length)
 
       // Get crowd levels for nearby temples
-      const templeIds = nearbyTempleData.map(t => t.templeId)
+      const templeIds = nearbyTempleData.map((t: { templeId: string }) => t.templeId)
       const crowdLevelsData = await realtimeService.getCrowdLevels(templeIds)
       
       const crowdLevelsMap: Record<string, CrowdLevel> = {}
-      crowdLevelsData.forEach(level => {
+      crowdLevelsData.forEach((level: CrowdLevel & { templeId: string }) => {
         crowdLevelsMap[level.templeId] = level
       })
 
       setCrowdLevels(crowdLevelsMap)
 
       // Combine temple data with distance and crowd levels
-      const nearbyWithDetails: NearbyTemple[] = nearbyTempleData.map(templeData => {
-        const temple = temples.find(t => t.id === templeData.templeId)
+      const nearbyWithDetails: NearbyTemple[] = nearbyTempleData.map((templeData: { templeId: string; distance: number }) => {
+        const temple = temples.find((t: Temple) => t.id === templeData.templeId)
         if (!temple) return null
 
         return {
@@ -133,7 +133,7 @@ const Nearby: React.FC = () => {
       
       // Fallback: show first few temples with mock distances
       if (temples && temples.length > 0) {
-        const fallbackTemples: NearbyTemple[] = temples.slice(0, 5).map(temple => ({
+        const fallbackTemples: NearbyTemple[] = temples.slice(0, 5).map((temple: Temple) => ({
           ...temple,
           distance: Math.random() * 10 + 1 // Mock distance 1-11 km
         }))

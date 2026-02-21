@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import { Search, Filter, MapPin, Star, Users, Clock, Heart } from 'lucide-react'
-import { useTemple } from '../contexts/TempleContext'
+import { Search as SearchIcon, Filter, MapPin, Star, Users, Heart } from 'lucide-react'
+import { useSimpleTemple } from '../contexts/SimpleTempleContext'
 import { Temple, SearchFilters } from '../types'
 
-const Search: React.FC = () => {
+const SearchPage: React.FC = () => {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
-  const { searchTemples, loading } = useTemple()
+  const { searchTemples, loading } = useSimpleTemple()
   
   const [temples, setTemples] = useState<Temple[]>([])
   const [filters, setFilters] = useState<SearchFilters>({
@@ -46,7 +46,7 @@ const Search: React.FC = () => {
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-5 h-5" />
+                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 w-5 h-5" />
                 <input
                   type="text"
                   value={filters.query || ''}
@@ -263,4 +263,4 @@ const Search: React.FC = () => {
   )
 }
 
-export default Search
+export default SearchPage
