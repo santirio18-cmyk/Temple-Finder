@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import DiyaLamp from "@/components/DiyaLamp";
+import { getTodayMantra } from "@/services/panchangService";
 
 const steps = [
   {
@@ -25,7 +26,7 @@ const steps = [
     title: "Chant",
     tamil: "ஜபம்",
     emoji: "🔱",
-    instruction: "Chant 'Om Namo Narayanaya' or your chosen mantra 11 times with devotion.",
+    instruction: "", // filled from today’s panchang (Trinity)
     visual: "chant",
   },
   {
@@ -40,14 +41,34 @@ const steps = [
 
 const Ritual = () => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [chantInstruction, setChantInstruction] = useState(
+    "Chant your ishta mantra 11 times with devotion."
+  );
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setChantInstruction(`${getTodayMantra()} Repeat softly 11 times.`);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      () => {
+        setChantInstruction(`${getTodayMantra()} Repeat softly 11 times.`);
+      },
+      () => setChantInstruction(`${getTodayMantra()} Repeat softly 11 times.`),
+      { maximumAge: 300_000, timeout: 10_000 }
+    );
+  }, []);
+
   const step = steps[currentStep];
+  const instruction =
+    currentStep === 2 ? chantInstruction : step.instruction;
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      navigate("/home");
+      navigate("/");
     }
   };
 
@@ -55,7 +76,7 @@ const Ritual = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     } else {
-      navigate("/home");
+      navigate("/");
     }
   };
 
@@ -136,7 +157,7 @@ const Ritual = () => {
 
         {/* Instruction */}
         <p className="text-center font-body text-lg text-foreground/70 leading-relaxed max-w-[280px] mb-12">
-          {step.instruction}
+          {instruction}
         </p>
 
         {/* Visual Anchor - Diya */}

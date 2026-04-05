@@ -98,13 +98,17 @@ VITE_SUPABASE_ANON_KEY=your_supabase_key
 
 ### Google Maps API Setup
 
-1. Get API key from [Google Cloud Console](https://console.cloud.google.com)
-2. Enable these APIs:
-   - Maps JavaScript API
-   - Places API
-   - Directions API
-   - Geocoding API
-3. Add API key to environment variables
+1. Create an API key in [Google Cloud Console](https://console.cloud.google.com) (Credentials).
+2. Enable at least:
+   - **Maps JavaScript API** (maps on Home / Nearby / Temple)
+   - **Places API** (live “Nearby” Hindu temples from Google; without it, the app falls back to the built-in sample list)
+3. Optional: Directions API, Geocoding API (for future features).
+4. Restrict the key by **HTTP referrer** (your Vercel domain + `localhost` for dev).
+5. Add `VITE_GOOGLE_MAPS_API_KEY` to `.env.local` and Vercel.
+
+### Panchang accuracy
+
+Daily tithi, nakshatra, yoga, paksha, sunrise/sunset, and muhurtas are computed in the browser with the `mhah-panchang` library (astronomical algorithms). Regional almanacs (Tamil / Drik) may differ slightly; Tamil month labels are approximate mappings from the computed lunar month.
 
 ## 🛠️ Tech Stack
 

@@ -243,7 +243,7 @@ export function getTemplesByDeity(deity: string): Temple[] {
   )
 }
 
-export function getNearbyTemples(lat: number, lng: number, radiusKm: number = 50): Temple[] {
+export function getNearbyTemples(lat: number, lng: number, radiusKm: number = 50): (Temple & { distance: number })[] {
   return temples
     .map(temple => ({
       ...temple,

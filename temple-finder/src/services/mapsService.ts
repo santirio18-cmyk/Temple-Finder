@@ -35,7 +35,7 @@ export class MapsService {
       }
 
       const script = document.createElement('script')
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${key}`
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${key}&libraries=places`
       script.async = true
       script.defer = true
       script.onload = () => {
@@ -47,6 +47,11 @@ export class MapsService {
     })
 
     return this.loadPromise
+  }
+
+  /** Load Maps + Places script (used by TempleMap and Places search). */
+  ensureMapsLoaded(): Promise<void> {
+    return this.loadScript()
   }
 
   async initMap(

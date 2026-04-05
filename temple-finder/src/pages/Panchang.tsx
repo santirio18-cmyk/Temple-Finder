@@ -1,43 +1,33 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Sunrise, Sunset } from "lucide-react";
 import vishnuTilak from "@/assets/panchang/vishnu-tilak.png";
-// Sample panchang data per date (keyed by "YYYY-MM-DD")
-const panchangData: Record<string, {
-  tithi: string; tithiEnd: string; nakshatra: string; nakshatraEnd: string;
-  sunrise: string; sunset: string; tamilDate: string; tamilMonth: string;
-  mantra: string; tamilTithi: string;
-}> = {};
-
-const getKey = (d: Date) => d.toISOString().split("T")[0];
-
-const getDefaultData = (d: Date) => {
-  const day = d.getDate();
-  const tithis = ["Pratipada", "Dwitiya", "Tritiya", "Chaturthi", "Panchami", "Shashthi", "Saptami", "Ashtami", "Navami", "Dashami", "Ekadashi", "Dwadashi", "Trayodashi", "Chaturdashi", "Purnima"];
-  const nakshatras = ["Ashwini", "Bharani", "Krittika", "Rohini", "Mrigashira", "Ardra", "Punarvasu", "Pushya", "Ashlesha", "Magha", "Purva Phalguni", "Uttara Phalguni", "Hasta", "Chitra", "Swati", "Vishakha", "Anuradha", "Jyeshtha", "Mula", "Purva Ashadha", "Uttara Ashadha", "Shravana", "Dhanishta", "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"];
-  const mantras = [
-    "Chant 'Om Namo Narayanaya' to seek the blessings of Lord Vishnu",
-    "Chant 'Om Namah Shivaya' for inner peace and divine grace",
-    "Recite 'Om Gan Ganapataye Namah' for removing obstacles",
-    "Chant 'Om Sri Rama Jaya Rama' for strength and courage",
-    "Recite 'Om Aim Saraswatyai Namah' for wisdom and knowledge",
-  ];
-  return {
-    tithi: tithis[day % tithis.length],
-    tithiEnd: `${String((day * 3 + 5) % 24).padStart(2, "0")}:${String((day * 7) % 60).padStart(2, "0")}`,
-    nakshatra: nakshatras[day % nakshatras.length],
-    nakshatraEnd: `${String((day * 2 + 8) % 24).padStart(2, "0")}:${String((day * 11) % 60).padStart(2, "0")}`,
-    sunrise: `05:${String(40 + (day % 20)).padStart(2, "0")} AM`,
-    sunset: `06:${String(20 + (day % 15)).padStart(2, "0")} PM`,
-    tamilDate: String(day),
-    tamilMonth: "வைகாசி",
-    mantra: mantras[day % mantras.length],
-    tamilTithi: "ஏகாதசி",
-  };
-};
+import {
+  getPanchangForDate,
+  DEFAULT_LAT,
+  DEFAULT_LNG,
+} from "@/services/panchangService";
 
 const Panchang = () => {
   const today = new Date();
   const [selectedDate, setSelectedDate] = useState<Date>(today);
+  const [lat, setLat] = useState(DEFAULT_LAT);
+  const [lng, setLng] = useState(DEFAULT_LNG);
+  const [locLabel, setLocLabel] = useState<string>("Chennai area (default)");
+
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setLat(pos.coords.latitude);
+        setLng(pos.coords.longitude);
+        setLocLabel("Your location");
+      },
+      () => {
+        setLocLabel("Default location (enable GPS for accuracy)");
+      },
+      { enableHighAccuracy: false, timeout: 12_000, maximumAge: 300_000 }
+    );
+  }, []);
 
   const getWeekDates = () => {
     const current = new Date(today);
@@ -52,20 +42,16 @@ const Panchang = () => {
   };
 
   const weekDates = getWeekDates();
-  const eventDates = [25, 27, 29, 24];
 
-  const data = panchangData[getKey(selectedDate)] || getDefaultData(selectedDate);
+  const data = useMemo(
+    () => getPanchangForDate(selectedDate, lat, lng),
+    [selectedDate, lat, lng]
+  );
 
-  const auspiciousTimings = [
-    { name: "Brahma Muhurtham", time: "04:11 AM – 04:57 AM", emoji: "🪔" },
-    { name: "Rahu Kaal", time: "03:24 PM – 05:03 PM", emoji: "🐍" },
-    { name: "Abhijit Muhurtham", time: "11:43 AM – 12:34 PM", emoji: "🌻" },
-    { name: "Yamaganda", time: "09:06 AM – 10:46 AM", emoji: "🐃" },
-  ];
+  const auspiciousTimings = data.auspiciousTimings;
 
   return (
     <div className="min-h-screen bg-background max-w-lg mx-auto relative pb-24">
-      {/* Mandala watermark background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden max-w-lg mx-auto">
         <div
           className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[500px] h-[500px] opacity-[0.04]"
@@ -77,7 +63,6 @@ const Panchang = () => {
         />
       </div>
 
-      {/* Header with styled title */}
       <div className="text-center pt-6 pb-4 px-3">
         <div className="inline-flex items-center gap-2">
           <span className="text-lg">🪷</span>
@@ -87,12 +72,13 @@ const Panchang = () => {
           <span className="text-lg">🪷</span>
         </div>
         <div className="mx-auto mt-1.5 w-24 h-[2px] rounded-full bg-gradient-to-r from-transparent via-[hsl(var(--saffron))] to-transparent" />
+        <p className="text-[11px] text-muted-foreground mt-2 px-4">
+          {locLabel} · {lat.toFixed(2)}°, {lng.toFixed(2)}°
+        </p>
       </div>
 
-      {/* Top Card - Date & Details */}
       <div className="px-3 mb-4">
         <div className="bg-[hsl(30,40%,97%)] rounded-xl border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm p-5 relative overflow-hidden">
-          {/* Left gold accent line */}
           <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-[hsl(var(--saffron))] via-[hsl(var(--temple-gold))] to-[hsl(var(--saffron-light))]" />
 
           <div className="flex justify-between items-start pl-3">
@@ -104,19 +90,25 @@ const Panchang = () => {
                 </h2>
               </div>
               <p className="text-sm font-body text-muted-foreground ml-6 mb-4">
-                ({data.tamilMonth} {data.tamilDate}, விபவ)
+                ({data.tamilMonthLabel} · {data.masa} paksha)
               </p>
 
               <div className="space-y-1.5 mb-4">
                 <p className="text-sm font-body text-foreground">
-                  <span className="font-semibold text-saffron">Tithi:</span> {data.tithi} ({data.tithiEnd})
+                  <span className="font-semibold text-saffron">Tithi:</span> {data.tithi} (until {data.tithiEnd})
                 </p>
                 <p className="text-sm font-body text-foreground">
-                  <span className="font-semibold text-saffron">Nakshatra:</span> {data.nakshatra} ({data.nakshatraEnd})
+                  <span className="font-semibold text-saffron">Nakshatra:</span> {data.nakshatra} (until {data.nakshatraEnd})
+                </p>
+                <p className="text-sm font-body text-foreground">
+                  <span className="font-semibold text-saffron">Yoga:</span> {data.yoga}
+                </p>
+                <p className="text-sm font-body text-foreground">
+                  <span className="font-semibold text-saffron">Paksha:</span> {data.paksha}
                 </p>
               </div>
 
-              <div className="flex gap-5 mb-4">
+              <div className="flex flex-wrap gap-5 mb-4">
                 <div className="flex items-center gap-1.5">
                   <Sunrise className="w-4 h-4 text-saffron" />
                   <span className="text-sm font-body text-foreground">Sunrise {data.sunrise}</span>
@@ -132,34 +124,34 @@ const Panchang = () => {
               <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center">
                 <img src={vishnuTilak} alt="Vishnu Tilak" className="w-[75%] h-[75%] object-contain" />
               </div>
-              <span className="text-sm font-body font-medium text-foreground">{data.tamilTithi}</span>
+              <span className="text-xs font-body font-medium text-foreground text-center max-w-[5rem] leading-tight">
+                {data.tithi}
+              </span>
             </div>
           </div>
 
-          {/* Mantra */}
           <p className="text-sm font-body italic text-saffron border-t border-[hsl(var(--temple-gold)/0.2)] pt-3 pl-3">
             ❝ {data.mantra} ❞
           </p>
+          <p className="text-[10px] text-muted-foreground mt-2 pl-3 pr-1">{data.sourceNote}</p>
         </div>
       </div>
 
-      {/* Subtle divider */}
       <div className="px-8 mb-4">
         <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--temple-gold)/0.25)] to-transparent" />
       </div>
 
-      {/* Calendar Strip */}
       <div className="px-3 mb-4">
         <div className="bg-[hsl(30,40%,97%)] rounded-xl border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm p-4 relative overflow-hidden">
           <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-[hsl(var(--saffron))] via-[hsl(var(--temple-gold))] to-[hsl(var(--saffron-light))]" />
 
           <div className="pl-3">
             <div className="flex items-center justify-center gap-4 mb-4">
-              <button className="text-muted-foreground hover:text-foreground transition-colors">
+              <button type="button" aria-label="Previous week" className="text-muted-foreground hover:text-foreground transition-colors">
                 <ChevronLeft className="w-5 h-5" />
               </button>
-              <span className="text-base font-display font-semibold text-foreground">வைகாசி</span>
-              <button className="text-muted-foreground hover:text-foreground transition-colors">
+              <span className="text-base font-display font-semibold text-foreground">{data.tamilMonthLabel}</span>
+              <button type="button" aria-label="Next week" className="text-muted-foreground hover:text-foreground transition-colors">
                 <ChevronRight className="w-5 h-5" />
               </button>
             </div>
@@ -176,10 +168,10 @@ const Panchang = () => {
               {weekDates.map((date) => {
                 const isTodayDate = date.getDate() === today.getDate() && date.getMonth() === today.getMonth();
                 const isSelected = date.getDate() === selectedDate.getDate() && date.getMonth() === selectedDate.getMonth();
-                const hasEvent = eventDates.includes(date.getDate());
                 return (
                   <div key={date.toISOString()} className="flex flex-col items-center gap-0.5">
                     <button
+                      type="button"
                       onClick={() => setSelectedDate(new Date(date))}
                       className={`w-10 h-10 flex flex-col items-center justify-center rounded-lg transition-all ${
                         isSelected
@@ -192,13 +184,7 @@ const Panchang = () => {
                       <span className={`text-base font-body ${isSelected ? "font-bold" : "font-medium"}`}>
                         {date.getDate()}
                       </span>
-                      {isSelected && (
-                        <span className="text-[9px] font-body text-white/80 leading-none">{data.tamilDate}</span>
-                      )}
                     </button>
-                    {hasEvent && (
-                      <div className="w-1 h-1 rounded-full bg-saffron" />
-                    )}
                   </div>
                 );
               })}
@@ -207,12 +193,10 @@ const Panchang = () => {
         </div>
       </div>
 
-      {/* Subtle divider */}
       <div className="px-8 mb-4">
         <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--temple-gold)/0.25)] to-transparent" />
       </div>
 
-      {/* Auspicious Timings */}
       <div className="px-3 mb-4">
         <div className="bg-[hsl(30,40%,97%)] rounded-xl border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm p-5 relative overflow-hidden">
           <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-[hsl(var(--saffron))] via-[hsl(var(--temple-gold))] to-[hsl(var(--saffron-light))]" />
@@ -242,10 +226,9 @@ const Panchang = () => {
         </div>
       </div>
 
-      {/* Closing blessing */}
       <div className="text-center py-5 px-5">
         <p className="text-[10px] font-body text-muted-foreground italic">
-          "सर्वे भवन्तु सुखिनः" — May all beings be happy
+          &quot;सर्वे भवन्तु सुखिनः&quot; — May all beings be happy
         </p>
         <div className="section-ornament mt-2">
           <span className="text-temple-gold text-xs">🙏</span>
