@@ -1,38 +1,48 @@
-import { NavLink } from 'react-router-dom'
-import { Home, Search, MapPin, Grid3X3 } from 'lucide-react'
+import { Home, BookOpen, Search, MapPin } from 'lucide-react'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 const tabs = [
-  { to: '/', end: true, label: 'Home', icon: Home },
-  { to: '/search', end: false, label: 'Search', icon: Search },
-  { to: '/nearby', end: false, label: 'Nearby', icon: MapPin },
-  { to: '/categories', end: false, label: 'Deities', icon: Grid3X3 },
+  { icon: Home, label: 'Home', path: '/' },
+  { icon: BookOpen, label: 'Panchang', path: '/panchang' },
+  { icon: Search, label: 'Search', path: '/search' },
+  { icon: MapPin, label: 'Nearby', path: '/nearby' },
 ] as const
 
 export default function BottomTabs() {
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  const isActive = (path: string) => {
+    if (path === '/') return location.pathname === '/'
+    return location.pathname === path || location.pathname.startsWith(`${path}/`)
+  }
+
   return (
-    <nav
-      className="fixed bottom-0 left-0 right-0 z-40 max-w-lg mx-auto border-t border-muted bg-background/95 backdrop-blur-md safe-area-pb"
-      aria-label="Main navigation"
-    >
-      <div className="flex items-center justify-around h-16 px-2">
-        {tabs.map(({ to, end, label, icon: Icon }) => (
-          <NavLink
-            key={to + String(end)}
-            to={to}
-            end={end}
-            className={({ isActive }) =>
-              `flex flex-col items-center justify-center gap-0.5 flex-1 py-2 rounded-xl transition-colors ${
-                isActive
-                  ? 'text-darshanam-orange'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`
-            }
-          >
-            <Icon className="w-5 h-5" strokeWidth={2} />
-            <span className="text-[10px] font-medium">{label}</span>
-          </NavLink>
-        ))}
+    <div className="fixed bottom-0 left-0 right-0 z-50 max-w-lg mx-auto">
+      <div className="h-[1.5px] bg-gradient-to-r from-transparent via-temple-gold/40 to-transparent" />
+      <div className="bg-card/95 backdrop-blur-md border-t border-border/50">
+        <div className="flex items-center justify-around py-2 pb-[max(8px,env(safe-area-inset-bottom,8px))]">
+          {tabs.map((tab) => {
+            const active = isActive(tab.path)
+            return (
+              <button
+                key={tab.path}
+                type="button"
+                onClick={() => navigate(tab.path)}
+                className={`flex flex-col items-center gap-0.5 px-4 py-1.5 transition-all duration-200 relative ${
+                  active ? 'text-saffron' : 'text-muted-foreground hover:text-saffron/60'
+                }`}
+              >
+                {active && (
+                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full bg-saffron" />
+                )}
+                <tab.icon className="w-5 h-5" />
+                <span className="text-[10px] font-body font-medium">{tab.label}</span>
+              </button>
+            )
+          })}
+        </div>
       </div>
-    </nav>
+    </div>
   )
 }

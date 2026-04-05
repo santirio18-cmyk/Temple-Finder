@@ -13,3 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Local Lovable clone (merged into temple-finder)
+/darshanam-lovable-remix/

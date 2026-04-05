@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, MapPin, User } from 'lucide-react'
+import { MapPin, User, Search } from 'lucide-react'
+import '@fontsource/crimson-text/400.css'
+import templeHeaderBg from '@/assets/temple-header-bg.png'
 import { useUser } from '@/contexts/UserContext'
 
 function getTamilGreeting(): string {
@@ -18,7 +20,6 @@ export default function HeaderSection({ onProfileClick }: HeaderSectionProps) {
   const navigate = useNavigate()
   const { userName } = useUser()
   const [searchQuery, setSearchQuery] = useState('')
-  const location = 'Chennai, TN'
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault()
@@ -30,43 +31,55 @@ export default function HeaderSection({ onProfileClick }: HeaderSectionProps) {
   }
 
   return (
-    <div className="relative min-h-[300px] bg-temple-hero bg-cover bg-center">
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50" />
+    <div className="relative">
+      <div className="relative px-3 pt-12 pb-10 text-foreground overflow-hidden min-h-[440px] flex flex-col">
+        <div
+          className="absolute inset-0 bg-cover bg-top bg-no-repeat"
+          style={{ backgroundImage: `url(${templeHeaderBg})` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent via-40% to-background/90" />
 
-      <div className="relative flex items-center justify-between px-4 pt-4">
-        <span className="text-sm text-white/90 font-medium">Home</span>
-        <button
-          type="button"
-          onClick={onProfileClick}
-          className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center"
-          aria-label="Profile"
-        >
-          <User className="w-5 h-5 text-white" />
-        </button>
-      </div>
+        <div className="flex items-center justify-between mb-4 relative z-20">
+          <div className="flex items-center gap-1.5">
+            <MapPin className="w-4 h-4 text-foreground/80" />
+            <span className="text-sm font-body font-medium text-foreground/80">Chennai, TN</span>
+          </div>
+          <button
+            type="button"
+            onClick={onProfileClick}
+            className="w-9 h-9 rounded-full bg-foreground/10 flex items-center justify-center backdrop-blur-sm border border-foreground/10"
+            aria-label="Profile"
+          >
+            <User className="w-5 h-5 text-foreground/70" />
+          </button>
+        </div>
 
-      <div className="relative flex items-center gap-1.5 px-4 pt-2">
-        <MapPin className="w-4 h-4 text-white" />
-        <span className="text-sm text-white font-medium">{location}</span>
-      </div>
+        <div className="flex-1" />
 
-      <div className="relative flex flex-col items-center justify-center px-4 pt-6 pb-6 text-center">
-        <h1 className="text-2xl font-bold text-white mb-1 drop-shadow-md font-['Playfair_Display',_serif]">
-          {getTamilGreeting()}, {userName}
-        </h1>
-        <p className="text-sm text-white/95 mb-5 drop-shadow-sm">
-          May your day be filled with divine energy.
-        </p>
+        <div className="relative z-20 mt-auto">
+          <h1
+            className="font-normal text-2xl font-serif px-[12px]"
+            style={{ color: '#312116', fontFamily: "'Crimson Text', serif", fontSize: '28px' }}
+          >
+            {getTamilGreeting()}, {userName}
+          </h1>
+          <p className="text-sm font-body px-[12px]" style={{ color: '#664633', marginTop: '2px' }}>
+            May your day be filled with divine energy.
+          </p>
+        </div>
 
-        <form onSubmit={handleSearch} className="w-full max-w-md">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-400" />
+        <form onSubmit={handleSearch} className="relative z-20 mx-1" style={{ marginTop: '16px' }}>
+          <div
+            className="flex items-center gap-2.5 bg-card/80 backdrop-blur-md px-3.5 py-3 border border-border/50 shadow-card-warm"
+            style={{ borderRadius: '24px' }}
+          >
+            <Search className="w-4 h-4 text-muted-foreground flex-shrink-0" />
             <input
-              type="text"
+              type="search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Find Temples, Deities, or Festivals..."
-              className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-white/95 shadow-lg border border-white/50 text-darshanam-brown placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-darshanam-orange/50 focus:border-darshanam-orange"
+              className="flex-1 bg-transparent text-sm font-body text-foreground placeholder:text-muted-foreground outline-none"
             />
           </div>
         </form>

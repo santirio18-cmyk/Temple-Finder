@@ -1,28 +1,124 @@
-import { categories } from '@/data'
+import { ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import vishnuImg from "@/assets/deities/vishnu-sacred.png";
 
-const quotes = [
-  { sanskrit: 'सर्वे भवन्तु सुखिनः', translation: 'May all beings be happy' },
-  { sanskrit: 'तमसो मा ज्योतिर्गमय', translation: 'From darkness, lead me to light' },
-  { sanskrit: 'ॐ शान्तिः शान्तिः शान्तिः', translation: 'Peace, peace, peace' },
-]
-
-export default function SacredToday() {
-  const dayIndex = Math.floor(Date.now() / 86400000) % categories.length
-  const mantra = categories[dayIndex]?.mantra ?? 'Om Namah Shivaya'
-  const quote = quotes[Math.floor(Date.now() / 86400000) % quotes.length]
+const SacredToday = () => {
+  const navigate = useNavigate();
 
   return (
-    <section className="px-4 py-5">
-      <div className="rounded-2xl bg-white/90 border border-temple-gold/20 shadow-sm p-5">
-        <p className="text-[10px] uppercase tracking-widest text-darshanam-orange font-semibold mb-2">
-          Sacred today
-        </p>
-        <p className="text-sm font-medium text-foreground mb-1">{mantra}</p>
-        <div className="h-px bg-temple-gold/25 my-3" />
-        <p className="text-xs text-muted-foreground italic leading-relaxed">
-          “{quote.sanskrit}” — {quote.translation}
+    <section
+      className="bg-background relative z-10 -mt-5 animate-fade-in-up"
+      style={{ borderRadius: '28px 28px 0 0' }}
+    >
+      <div className="px-3 pt-6">
+        {/* Main Sacred Today Card */}
+        <div
+          className="relative overflow-hidden rounded-2xl border border-saffron-glow/20"
+          style={{
+            background: "linear-gradient(135deg, hsl(var(--warm-cream)) 0%, hsl(28 60% 92%) 40%, hsl(25 55% 90%) 100%)",
+          }}
+        >
+          {/* Deity illustration - taller */}
+          <div className="absolute right-0 top-0 bottom-0 w-[38%] pointer-events-none overflow-hidden">
+            <img
+              src={vishnuImg}
+              alt=""
+              className="absolute right-[-4px] bottom-[-6px] h-[130%] object-contain opacity-90 drop-shadow-sm"
+            />
+          </div>
+
+          <div className="relative z-10 px-4 py-4">
+            {/* Header row */}
+            <div className="flex items-center gap-1.5 mb-1">
+              <span className="text-sm">🪔</span>
+              <span className="text-[10px] font-body font-semibold text-saffron-deep tracking-wider uppercase">
+                Sacred Today
+              </span>
+            </div>
+
+            {/* Headline */}
+            <h3 className="font-display text-2xl font-bold text-foreground leading-snug">
+              Ekadashi
+            </h3>
+
+            {/* Description */}
+            <p className="text-sm font-body text-foreground/75 mt-1.5 max-w-[58%] leading-relaxed">
+              A sacred day to connect with Lord Vishnu
+            </p>
+            <p className="text-sm font-body text-foreground/75 mt-0.5 max-w-[58%]">
+              Follow today's <span className="font-semibold text-saffron-deep">வழிபாடு</span>
+            </p>
+
+            {/* Visit Nearby Temple CTA */}
+            <button
+              type="button"
+              onClick={() => navigate("/nearby")}
+              className="mt-3.5 flex items-center gap-1.5 px-5 py-2.5 rounded-full font-body text-sm font-semibold text-primary-foreground transition-all hover:brightness-110 active:scale-[0.98] w-fit"
+              style={{
+                background: "linear-gradient(135deg, hsl(var(--saffron)) 0%, hsl(var(--saffron-light)) 100%)",
+                boxShadow: "0 4px 14px -3px hsl(var(--saffron) / 0.4)",
+              }}
+            >
+              Visit Nearby Temple
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Can't visit temple? Section */}
+        <div
+          className="mt-2.5 rounded-2xl border border-saffron-glow/15 px-4 py-4"
+          style={{
+            background: "linear-gradient(135deg, hsl(var(--warm-cream)) 0%, hsl(30 40% 94%) 100%)",
+          }}
+        >
+          <p className="font-display text-base font-semibold text-foreground leading-snug">
+            Can't visit temple?
+          </p>
+          <p className="text-sm font-body text-foreground/70 mt-1">
+            <span className="font-semibold text-foreground/85">Begin</span> today's sacred practice from home.
+          </p>
+
+          {/* Steps row */}
+          <div className="flex items-center gap-2 mt-3 flex-wrap">
+            <span className="flex items-center gap-1 text-xs font-body text-foreground/70">
+              <span className="text-sm">🪔</span> Prepare
+            </span>
+            <span className="text-saffron/40 text-xs">✦</span>
+            <span className="flex items-center gap-1 text-xs font-body text-foreground/70">
+              <span className="text-sm">🌿</span> Offer
+            </span>
+            <span className="text-saffron/40 text-xs">✦</span>
+            <span className="flex items-center gap-1 text-xs font-body text-foreground/70">
+              <span className="text-sm">🔱</span> Chant
+            </span>
+            <span className="text-saffron/40 text-xs">✦</span>
+            <span className="flex items-center gap-1 text-xs font-body text-foreground/70">
+              <span className="text-sm">✨</span> Be Still
+            </span>
+          </div>
+
+          {/* Begin Today CTA */}
+          <button
+            onClick={() => navigate("/ritual")}
+            className="mt-4 flex items-center justify-center gap-2 w-full px-5 py-3 rounded-full font-body text-sm font-bold text-primary-foreground transition-all hover:brightness-110 active:scale-[0.98]"
+            style={{
+              background: "linear-gradient(135deg, hsl(var(--saffron)) 0%, hsl(var(--saffron-light)) 100%)",
+              boxShadow: "0 4px 14px -3px hsl(var(--saffron) / 0.35)",
+            }}
+          >
+            Begin Today's வழிபாடு
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Footer italic */}
+        <p className="text-[11px] font-body text-muted-foreground mt-3 mb-1 italic text-center">
+          Fasting observed today · Next Ekadashi in 15 days
         </p>
       </div>
     </section>
-  )
-}
+  );
+};
+
+export default SacredToday;
