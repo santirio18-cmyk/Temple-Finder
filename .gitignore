@@ -18,6 +18,8 @@ local.properties
 *.apk
 node-v*/
 node-*.tar.gz
+/app/
+.gradle/
 
 # Local Lovable clone (merged into temple-finder)
 /darshanam-lovable-remix/
