@@ -14,5 +14,10 @@
 .cxx
 local.properties
 
+# Phase 1: web app only — ignore large/binary cruft if reintroduced
+*.apk
+node-v*/
+node-*.tar.gz
+
 # Local Lovable clone (merged into temple-finder)
 /darshanam-lovable-remix/

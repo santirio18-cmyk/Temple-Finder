@@ -78,10 +78,10 @@ temple-finder/
 │   ├── contexts/       # React contexts
 │   ├── services/       # API and service layers
 │   ├── types/          # TypeScript types
-│   └── App.tsx         # Main app component
+│   └── SimpleApp.tsx   # Main app router
 ├── public/             # Static assets
 ├── dist/               # Build output (generated)
-└── package.json         # Dependencies
+└── package.json
 ```
 
 ## 🔧 Configuration
@@ -105,10 +105,6 @@ VITE_SUPABASE_ANON_KEY=your_supabase_key
    - Directions API
    - Geocoding API
 3. Add API key to environment variables
-
-## 📱 Android App
-
-The web app is also integrated into an Android app. See the parent directory for Android build instructions.
 
 ## 🛠️ Tech Stack
 
