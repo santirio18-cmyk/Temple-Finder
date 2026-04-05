@@ -110,6 +110,8 @@ VITE_SUPABASE_ANON_KEY=your_supabase_key
 
 Daily tithi, nakshatra, yoga, paksha, sunrise/sunset, and muhurtas are computed in the browser with the `mhah-panchang` library (astronomical algorithms). Regional almanacs (Tamil / Drik) may differ slightly; Tamil month labels are approximate mappings from the computed lunar month.
 
+**Daily mantra line:** The library groups the 27 nakshatras into three large “Trinity” buckets (9 days each per cycle), so using Trinity alone often repeats the same suggestion. The app instead picks a **per-nakshatra** mantra line so the guidance changes every day.
+
 ## 🛠️ Tech Stack
 
 - **Frontend**: React 18, TypeScript

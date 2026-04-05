@@ -73,18 +73,65 @@ export interface PanchangDay {
   sourceNote: string
 }
 
-function trinityMantra(trinityEn: string | undefined): string {
-  const t = (trinityEn || '').toLowerCase()
-  if (t.includes('vishnu')) {
-    return "Chant 'Om Namo Narayanaya' — Vishnu tattva is strong today."
-  }
-  if (t.includes('shiva')) {
-    return "Chant 'Om Namah Shivaya' — Shiva tattva is strong today."
-  }
-  if (t.includes('brahma')) {
-    return "Chant 'Om' with focus on Gayatri — creative energy is highlighted today."
-  }
+/**
+ * One-line suggestions keyed by mhah-panchang `Nakshatra.name_en_IN`.
+ * Trinity alone repeats for 9 days in a row (library buckets 27 nakshatras into 3×9),
+ * so we key on nakshatra for daily variety.
+ */
+const NAKSHATRA_MANTRA: Record<string, string> = {
+  Ashwini: "Chant 'Om Gham' or pray to Ashwini Kumaras — vitality and healing.",
+  Dwija: "Chant 'Om Kleem' or honor Agni — clarity and new beginnings.",
+  Krittika: "Chant 'Om Saravanabhavaya Namah' — Muruga / Agni kula.",
+  Rohini: "Chant 'Om Namo Bhagavate Vasudevaya' — Krishna’s nakshatra.",
+  Mrigashirsha: "Chant 'Om Chandraya Namah' — Soma / gentle growth.",
+  Ardra: "Chant 'Om Namah Shivaya' — Rudra’s transformative energy.",
+  Punarvasu: "Chant 'Om Namo Narayanaya' — Aditi’s children, renewal.",
+  Pushya: "Chant 'Om Gurave Namah' — Brihaspati, nourishment.",
+  Ashlesha: "Chant 'Om Nagadevaya Namah' — serpent wisdom, introspection.",
+  Magha: "Chant 'Om Pitru Devaya Namah' — ancestors and lineage.",
+  'Purva Phalguni': "Chant 'Om Namah Shivaya' or honor Bhaga — creativity.",
+  'Uttara Phalguni': "Chant 'Om Namo Narayanaya' — Aryaman, vows, union.",
+  Hasta: "Chant 'Om Savitre Namah' — Savitur / skillful action.",
+  Chitra: "Chant 'Om Vishwakarmane Namah' — divine architect, beauty.",
+  Swati: "Chant 'Om Vayave Namah' — Vayu, independence, movement.",
+  Vishakha: "Chant 'Om Indragnibhyam Namah' — Indra–Agni, purpose.",
+  Anuradha: "Chant 'Om Mitraya Namah' — friendship, devotion.",
+  Jyeshtha: "Chant 'Om Indraya Namah' — Indra, protection, courage.",
+  Mula: "Chant 'Om Ketave Namah' or 'Om Namah Shivaya' — root, Ketu.",
+  'Purva Ashadha': "Chant 'Om Apasve Namah' — invincibility, waters.",
+  'Uttara Ashadha': "Chant 'Om Vishve Devaya Namah' — victory, tenacity.",
+  Sravana: "Chant 'Om Vishnu Namah' — Vishnu’s hearing, wisdom.",
+  Dhanishta: "Chant 'Om Vasubhyo Namah' — the Vasus, rhythm.",
+  Shatabhisha: "Chant 'Om Varunaya Namah' — Varuna, healing.",
+  'Purva Bhadrapada': "Chant 'Om Namah Shivaya' — Aja Ekapada, fire.",
+  'Uttara Bhadrapada': "Chant 'Om Ahirbudhnyaya Namah' — deep waters, Saturn.",
+  Rebati: "Chant 'Om Pushne Namah' — Pushan, safe journey, completion.",
+}
+
+function mantraForNakshatra(nakName: string | undefined): string {
+  const key = (nakName || '').trim()
+  if (key && NAKSHATRA_MANTRA[key]) return NAKSHATRA_MANTRA[key]
+  const lower = key.toLowerCase()
+  const found = Object.keys(NAKSHATRA_MANTRA).find((k) => k.toLowerCase() === lower)
+  if (found) return NAKSHATRA_MANTRA[found]
+  return ''
+}
+
+/** Fallback when nakshatra name is unknown — use Trinity bucket (0–2). */
+function trinityMantraByIno(ino: number | undefined): string {
+  if (ino === 0) return "Chant 'Om' with Gayatri — Brahma tattva is highlighted today."
+  if (ino === 1) return "Chant 'Om Namo Narayanaya' — Vishnu tattva is highlighted today."
+  if (ino === 2) return "Chant 'Om Namah Shivaya' — Shiva tattva is highlighted today."
   return "Chant your ishta mantra with devotion — align with today's lunar energy."
+}
+
+export function getDailyMantraLine(calc: {
+  Nakshatra?: { name_en_IN?: string }
+  Trinity?: { ino?: number }
+}): string {
+  const nak = mantraForNakshatra(calc.Nakshatra?.name_en_IN as string | undefined)
+  if (nak) return nak
+  return trinityMantraByIno(calc.Trinity?.ino as number | undefined)
 }
 
 export function getPanchangForDate(
@@ -111,7 +158,7 @@ export function getPanchangForDate(
   const masaName = (cal.Masa?.name_en_UK as string) || (cal.Masa?.name_en_IN as string) || ''
   const tamilMonth = MASA_TO_TAMIL[masaName] ?? masaName
 
-  const mantra = trinityMantra(calc.Trinity?.name_en_IN as string | undefined)
+  const mantra = getDailyMantraLine(calc)
 
   const auspiciousTimings: AuspiciousTimingRow[] = []
 
@@ -170,10 +217,10 @@ export function getPanchangForDate(
   }
 }
 
-/** Today’s mantra line for Ritual / onboarding (same engine, local noon). */
+/** Today’s mantra line for Ritual (nakshatra-based for variety). */
 export function getTodayMantra(): string {
   const d = new Date()
   d.setHours(12, 0, 0, 0)
   const calc = engine.calculate(d)
-  return trinityMantra(calc.Trinity?.name_en_IN as string | undefined)
+  return getDailyMantraLine(calc)
 }
