@@ -18,6 +18,19 @@
   }
 }
 
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
 @layer components {
   .btn-primary {
     @apply bg-primary-500 hover:bg-primary-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
@@ -41,5 +54,15 @@
   
   .temple-pattern {
     @apply bg-temple-pattern;
+  }
+
+  .section-ornament {
+    @apply flex items-center justify-center gap-2 text-temple-gold/60;
+  }
+
+  .section-ornament::before,
+  .section-ornament::after {
+    content: '';
+    @apply h-px w-8 bg-temple-gold/40;
   }
 }

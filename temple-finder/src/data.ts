@@ -21,6 +21,34 @@ export interface DeityCategory {
   mantra?: string
 }
 
+export interface Festival {
+  id: string
+  name: string
+  dateLabel: string
+  description: string
+}
+
+export const upcomingFestivals: Festival[] = [
+  {
+    id: 'f1',
+    name: 'Panguni Uthiram',
+    dateLabel: 'Mar–Apr',
+    description: 'Celebration of divine marriages; Murugan temples across Tamil Nadu.',
+  },
+  {
+    id: 'f2',
+    name: 'Chithirai Brahmotsavam',
+    dateLabel: 'Apr–May',
+    description: 'Meenakshi–Sundareswarar festival in Madurai.',
+  },
+  {
+    id: 'f3',
+    name: 'Karthigai Deepam',
+    dateLabel: 'Nov–Dec',
+    description: 'Lamps and lamps on sacred hills; Thiruvannamalai and temples statewide.',
+  },
+]
+
 // All Temples Data
 export const temples: Temple[] = [
   {
@@ -33,7 +61,8 @@ export const temples: Temple[] = [
     state: 'Tamil Nadu',
     latitude: 13.0334,
     longitude: 80.2700,
-    rating: 4.8
+    rating: 4.8,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/9/9f/MylaporeKapaleeshwararTemple.jpg'
   },
   {
     id: '2',
@@ -45,7 +74,8 @@ export const temples: Temple[] = [
     state: 'Tamil Nadu',
     latitude: 13.0567,
     longitude: 80.2778,
-    rating: 4.7
+    rating: 4.7,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Parthasarathy-Temple-Triplicane-Chennai-1.JPG'
   },
   {
     id: '3',
@@ -57,7 +87,8 @@ export const temples: Temple[] = [
     state: 'Tamil Nadu',
     latitude: 12.9697,
     longitude: 80.2603,
-    rating: 4.6
+    rating: 4.6,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/c/c5/Arulmigu_Marundeeswarar_Temple_tower%2C_Tiruvanmiyur.jpg'
   },
   {
     id: '4',
@@ -69,7 +100,8 @@ export const temples: Temple[] = [
     state: 'Tamil Nadu',
     latitude: 13.0500,
     longitude: 80.2167,
-    rating: 4.9
+    rating: 4.9,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Vadapalani_Murugan_Temple.jpg'
   },
   {
     id: '5',
@@ -81,7 +113,8 @@ export const temples: Temple[] = [
     state: 'Tamil Nadu',
     latitude: 12.9994,
     longitude: 80.2750,
-    rating: 4.7
+    rating: 4.7,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/4/4e/Ashtalakshmi_Temple_Kothapet.jpg'
   },
   {
     id: '6',
@@ -93,7 +126,8 @@ export const temples: Temple[] = [
     state: 'Tamil Nadu',
     latitude: 13.0567,
     longitude: 80.2778,
-    rating: 4.8
+    rating: 4.8,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Parthasarathy-Temple-Triplicane-Chennai-1.JPG'
   },
   {
     id: '7',
@@ -105,7 +139,8 @@ export const temples: Temple[] = [
     state: 'Tamil Nadu',
     latitude: 9.9197,
     longitude: 78.1194,
-    rating: 4.9
+    rating: 4.9,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/d/d9/Meenakshi_Amman_Temple%2C_Madurai.JPG'
   },
   {
     id: '8',
@@ -117,7 +152,8 @@ export const temples: Temple[] = [
     state: 'Tamil Nadu',
     latitude: 10.7828,
     longitude: 79.1318,
-    rating: 5.0
+    rating: 5.0,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/a/a4/Brihadisvara_Temple%2C_Thanjavur%2C_Tamil_Nadu%2C_India.jpg'
   },
   {
     id: '9',
@@ -129,7 +165,8 @@ export const temples: Temple[] = [
     state: 'Tamil Nadu',
     latitude: 9.2881,
     longitude: 79.3175,
-    rating: 4.8
+    rating: 4.8,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/8/84/Ramanathaswamy_temple7.JPG'
   },
   {
     id: '10',
@@ -141,7 +178,8 @@ export const temples: Temple[] = [
     state: 'Tamil Nadu',
     latitude: 10.4500,
     longitude: 77.5167,
-    rating: 4.9
+    rating: 4.9,
+    image: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/India_Tamil_Nadu_Palani_Murugan_Hill_Temple_evening.JPG'
   }
 ]
 

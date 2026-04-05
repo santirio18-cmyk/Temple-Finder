@@ -8,6 +8,23 @@ export default {
   theme: {
     extend: {
       colors: {
+        background: '#F5F0E8',
+        foreground: '#4A3728',
+        muted: {
+          DEFAULT: '#E8E4DC',
+          foreground: '#6B5344',
+        },
+        temple: {
+          gold: '#C9A227',
+        },
+        darshanam: {
+          beige: '#F5F0E8',
+          cream: '#FAF7F2',
+          brown: '#4A3728',
+          'brown-light': '#6B5344',
+          orange: '#D4732C',
+          'orange-soft': '#E8A35D',
+        },
         primary: {
           50: '#fff7ed',
           100: '#ffedd5',
@@ -50,6 +67,7 @@ export default {
         'body': ['Inter', 'sans-serif'],
       },
       backgroundImage: {
+        'temple-hero': "url('https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=800&q=80')",
         'temple-pattern': "url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23FF9933\" fill-opacity=\"0.05\"%3E%3Cpath d=\"M30 30c0-11.046-8.954-20-20-20s-20 8.954-20 20 8.954 20 20 20 20-8.954 20-20zm0 0c0-11.046 8.954-20 20-20s20 8.954 20 20-8.954 20-20 20-20-8.954-20-20z\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')",
       }
     },
