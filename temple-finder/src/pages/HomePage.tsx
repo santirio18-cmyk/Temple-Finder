@@ -13,8 +13,8 @@ const HomePage = () => {
   return (
     <div className="min-h-screen relative">
       <HeaderSection onProfileClick={() => setShowProfile(true)} />
-      <SacredToday />
       <DeityOfTheDay />
+      <SacredToday />
       <NearbyTemples />
       <DeitySection />
       <FestivalsSection />

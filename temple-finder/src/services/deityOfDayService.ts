@@ -53,10 +53,10 @@ const deityMapping: Record<number, DeityOfDay> = {
   4: { // Thursday
     name: 'Sai Baba',
     dayName: 'Thursday',
-    description: 'Sai Baba, the revered saint who embodies love, compassion, and wisdom',
+    description: 'Sai Baba of Shirdi, the revered saint who embodies love, compassion, and unity',
     imageKey: 'saibaba',
-    mantra: 'Om Sai Nathaya Namaha',
-    benefits: 'Worship Sai Baba for peace, prosperity, and divine blessings',
+    mantra: 'Om Sai Ram',
+    benefits: 'Worship Sai Baba for peace, prosperity, health, and spiritual growth',
     color: 'hsl(35, 70%, 50%)'
   },
   5: { // Friday
