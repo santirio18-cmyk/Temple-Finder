@@ -9,6 +9,7 @@ import shivaImg from '@/assets/deities/shiva.jpg';
 import hanumanImg from '@/assets/deities/hanuman.jpg';
 import ganeshaImg from '@/assets/deities/ganpati.jpg';
 import lakshmiImg from '@/assets/lakshmi-lotus.png';
+import muruganImg from '@/assets/deities/murugan.jpg';
 
 const deityImages: Record<string, string> = {
   vishnu: vishnuImg,
@@ -16,6 +17,8 @@ const deityImages: Record<string, string> = {
   hanuman: hanumanImg,
   ganesha: ganeshaImg,
   lakshmi: lakshmiImg,
+  murugan: muruganImg,
+  saibaba: vishnuImg, // Using Vishnu as placeholder for Sai Baba until we add specific image
 };
 
 const DeityOfTheDay = () => {

@@ -33,12 +33,12 @@ const deityMapping: Record<number, DeityOfDay> = {
     color: 'hsl(220, 60%, 55%)'
   },
   2: { // Tuesday
-    name: 'Hanuman',
+    name: 'Murugan',
     dayName: 'Tuesday',
-    description: 'Lord Hanuman, the symbol of strength, courage, and devotion',
-    imageKey: 'hanuman',
-    mantra: 'Om Hanumate Namaha',
-    benefits: 'Worship Hanuman for courage, strength, and protection from negative forces',
+    description: 'Lord Murugan, the god of war, victory, and divine grace',
+    imageKey: 'murugan',
+    mantra: 'Om Saravanabhavaya Namaha',
+    benefits: 'Worship Murugan for courage, victory, and removal of obstacles',
     color: 'hsl(15, 85%, 50%)'
   },
   3: { // Wednesday
@@ -51,13 +51,13 @@ const deityMapping: Record<number, DeityOfDay> = {
     color: 'hsl(45, 75%, 50%)'
   },
   4: { // Thursday
-    name: 'Vishnu',
+    name: 'Sai Baba',
     dayName: 'Thursday',
-    description: 'Lord Vishnu, the preserver and protector of the universe',
-    imageKey: 'vishnu',
-    mantra: 'Om Namo Narayanaya',
-    benefits: 'Worship Vishnu for wealth, prosperity, and overall well-being',
-    color: 'hsl(200, 70%, 50%)'
+    description: 'Sai Baba, the revered saint who embodies love, compassion, and wisdom',
+    imageKey: 'saibaba',
+    mantra: 'Om Sai Nathaya Namaha',
+    benefits: 'Worship Sai Baba for peace, prosperity, and divine blessings',
+    color: 'hsl(35, 70%, 50%)'
   },
   5: { // Friday
     name: 'Lakshmi',
@@ -69,13 +69,13 @@ const deityMapping: Record<number, DeityOfDay> = {
     color: 'hsl(340, 70%, 55%)'
   },
   6: { // Saturday
-    name: 'Hanuman',
+    name: 'Vishnu',
     dayName: 'Saturday',
-    description: 'Lord Hanuman and Shani Dev - protection from planetary afflictions',
-    imageKey: 'hanuman',
-    mantra: 'Om Hanumate Namaha',
-    benefits: 'Worship Hanuman to overcome obstacles and hardships',
-    color: 'hsl(270, 50%, 45%)'
+    description: 'Lord Vishnu, the preserver and protector of the universe',
+    imageKey: 'vishnu',
+    mantra: 'Om Namo Narayanaya',
+    benefits: 'Worship Vishnu for wealth, prosperity, and overall well-being',
+    color: 'hsl(200, 70%, 50%)'
   }
 }
 
