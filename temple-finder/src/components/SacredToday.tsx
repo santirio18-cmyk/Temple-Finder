@@ -1,9 +1,42 @@
 import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import vishnuImg from "@/assets/deities/vishnu-sacred.png";
+import { getCurrentTithi } from "@/services/festivalService";
 
 const SacredToday = () => {
   const navigate = useNavigate();
+  const [tithiData, setTithiData] = useState({
+    tithi: 'Ekadashi',
+    description: 'A sacred day to connect with Lord Vishnu',
+    nextEkadashi: 15
+  });
+
+  useEffect(() => {
+    // Get current tithi on mount and update daily
+    const updateTithi = () => {
+      const data = getCurrentTithi();
+      setTithiData(data);
+    };
+
+    updateTithi();
+
+    // Update at midnight each day
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    const msUntilMidnight = tomorrow.getTime() - now.getTime();
+
+    const midnightTimer = setTimeout(() => {
+      updateTithi();
+      // Set up daily interval after first midnight update
+      const dailyInterval = setInterval(updateTithi, 24 * 60 * 60 * 1000);
+      return () => clearInterval(dailyInterval);
+    }, msUntilMidnight);
+
+    return () => clearTimeout(midnightTimer);
+  }, []);
 
   return (
     <section
@@ -38,12 +71,12 @@ const SacredToday = () => {
 
             {/* Headline */}
             <h3 className="font-display text-2xl font-bold text-foreground leading-snug">
-              Ekadashi
+              {tithiData.tithi}
             </h3>
 
             {/* Description */}
             <p className="text-sm font-body text-foreground/75 mt-1.5 max-w-[58%] leading-relaxed">
-              A sacred day to connect with Lord Vishnu
+              {tithiData.description}
             </p>
             <p className="text-sm font-body text-foreground/75 mt-0.5 max-w-[58%]">
               Follow today's <span className="font-semibold text-saffron-deep">வழிபாடு</span>
@@ -114,7 +147,7 @@ const SacredToday = () => {
 
         {/* Footer italic */}
         <p className="text-[11px] font-body text-muted-foreground mt-3 mb-1 italic text-center">
-          Fasting observed today · Next Ekadashi in 15 days
+          {tithiData.tithi.toLowerCase().includes('ekadashi') ? 'Fasting observed today' : 'Sacred observances recommended'} · Next Ekadashi in {tithiData.nextEkadashi} {tithiData.nextEkadashi === 1 ? 'day' : 'days'}
         </p>
       </div>
     </section>
