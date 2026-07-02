@@ -7,9 +7,10 @@ import { useUser } from '@/contexts/UserContext'
 
 function getTamilGreeting(): string {
   const hour = new Date().getHours()
-  if (hour < 12) return 'Iniya Kaalai Vanakkam'
-  if (hour < 17) return 'Iniya Madhyanam Vanakkam'
-  return 'Iniya Sayanthiram Vanakkam'
+  if (hour < 12) return 'Iniya Kaalai Vanakkam'        // Morning (before noon)
+  if (hour < 17) return 'Iniya Madhyanam Vanakkam'     // Afternoon (12 PM - 5 PM)
+  if (hour < 21) return 'Iniya Sayanthiram Vanakkam'   // Evening (5 PM - 9 PM)
+  return 'Iniya Iravu Vanakkam'                         // Night (9 PM onwards)
 }
 
 interface HeaderSectionProps {
