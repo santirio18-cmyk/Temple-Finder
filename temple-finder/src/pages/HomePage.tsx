@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import HeaderSection from '@/components/HeaderSection'
 import SacredToday from '@/components/SacredToday'
+import DeityOfTheDay from '@/components/DeityOfTheDay'
 import NearbyTemples from '@/components/NearbyTemples'
 import DeitySection from '@/components/DeitySection'
 import FestivalsSection from '@/components/FestivalsSection'
@@ -13,6 +14,7 @@ const HomePage = () => {
     <div className="min-h-screen relative">
       <HeaderSection onProfileClick={() => setShowProfile(true)} />
       <SacredToday />
+      <DeityOfTheDay />
       <NearbyTemples />
       <DeitySection />
       <FestivalsSection />
