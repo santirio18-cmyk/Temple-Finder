@@ -1,28 +1,34 @@
-const festivals = [
-  {
-    name: "Ekadashi",
-    description: "Seek the blessings of Lord Vishnu",
-    date: "Mar 2",
-    icon: "🪔",
-    daysLeft: 5,
-  },
-  {
-    name: "Pradosham",
-    description: "Sacred evening for Lord Shiva",
-    date: "Mar 8",
-    icon: "🔱",
-    daysLeft: 11,
-  },
-  {
-    name: "Amavasya",
-    description: "Day for ancestral prayers",
-    date: "Mar 10",
-    icon: "🌙",
-    daysLeft: 13,
-  },
-];
+import { useEffect, useState } from 'react';
+import { getUpcomingFestivals, type Festival } from '@/services/festivalService';
 
 const FestivalsSection = () => {
+  const [festivals, setFestivals] = useState<Festival[]>([]);
+
+  useEffect(() => {
+    // Calculate festivals on mount and update daily
+    const updateFestivals = () => {
+      const upcoming = getUpcomingFestivals();
+      setFestivals(upcoming);
+    };
+
+    updateFestivals();
+
+    // Update at midnight each day
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    const msUntilMidnight = tomorrow.getTime() - now.getTime();
+
+    const midnightTimer = setTimeout(() => {
+      updateFestivals();
+      // Set up daily interval after first midnight update
+      const dailyInterval = setInterval(updateFestivals, 24 * 60 * 60 * 1000);
+      return () => clearInterval(dailyInterval);
+    }, msUntilMidnight);
+
+    return () => clearTimeout(midnightTimer);
+  }, []);
   return (
     <section className="px-3 py-5">
       {/* Header */}
