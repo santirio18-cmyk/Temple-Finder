@@ -1,3 +1,5 @@
+import { getPanchangForDate, DEFAULT_LAT, DEFAULT_LNG } from './panchangService'
+
 export interface ZodiacSign {
   name: string
   sanskrit: string
@@ -15,6 +17,10 @@ export interface DailyHoroscope {
   luckyNumber: number
   luckyTime: string
   advice: string
+  compatibility: string[]
+  challenges: string
+  opportunities: string
+  planetaryInfluence: string
 }
 
 export const zodiacSigns: ZodiacSign[] = [
@@ -128,63 +134,236 @@ export const zodiacSigns: ZodiacSign[] = [
   },
 ]
 
-const horoscopePredictions = {
-  general: [
-    'Today brings positive energy and opportunities for growth. Stay focused on your goals.',
-    'The planetary alignment favors new beginnings. Trust your intuition today.',
-    'A day of balance and harmony awaits you. Meditation will bring clarity.',
-    'Your creative energies are heightened. Express yourself through art or communication.',
-    'Financial matters look promising. However, avoid impulsive spending.',
-    'Relationships take center stage today. Nurture your connections with loved ones.',
-    'Hard work and dedication will pay off. Stay committed to your tasks.',
-  ],
-  advice: [
-    'Practice gratitude and offer prayers to your chosen deity for guidance.',
-    'Avoid conflicts and maintain a peaceful demeanor throughout the day.',
-    'Wear your lucky color to enhance positive vibrations.',
-    'Chant the Gayatri Mantra for mental clarity and spiritual strength.',
-    'Help someone in need today to attract good karma.',
-    'Start your day with a visit to a temple or meditation.',
-    'Be mindful of your words and actions. Kindness brings blessings.',
-  ],
-  luckyTimes: [
-    '6:00 AM - 8:00 AM',
-    '11:00 AM - 1:00 PM',
-    '3:00 PM - 5:00 PM',
-    '7:00 PM - 9:00 PM',
-    '9:00 AM - 11:00 AM',
-    '2:00 PM - 4:00 PM',
-    '5:00 PM - 7:00 PM',
-  ],
+// Prediction templates based on planetary influences
+const planetaryPredictions: Record<string, {
+  positive: string[]
+  challenges: string[]
+  opportunities: string[]
+}> = {
+  Sun: {
+    positive: [
+      'Your confidence and vitality are at their peak. Leadership opportunities await.',
+      'Solar energy brings clarity to your goals. Authority figures may support you.',
+      'Your inner strength shines brightly. Recognition and success are favored.',
+    ],
+    challenges: [
+      'Avoid ego conflicts. Pride might create unnecessary obstacles.',
+      'Don\'t overexert yourself. Balance activity with rest.',
+    ],
+    opportunities: [
+      'Excellent day for career initiatives and public presentations.',
+      'Creative projects receive positive attention.',
+    ],
+  },
+  Moon: {
+    positive: [
+      'Your intuition is heightened. Emotional connections deepen.',
+      'Nurturing relationships bring joy. Family matters are favored.',
+      'Inner peace and mental clarity guide your decisions.',
+    ],
+    challenges: [
+      'Emotional sensitivity may be high. Practice mindfulness.',
+      'Avoid making important decisions when feeling overwhelmed.',
+    ],
+    opportunities: [
+      'Perfect time for self-care and connecting with loved ones.',
+      'Artistic and creative pursuits flow naturally.',
+    ],
+  },
+  Mars: {
+    positive: [
+      'Dynamic energy propels you forward. Courage and determination are strong.',
+      'Physical vitality and competitive spirit are enhanced.',
+      'Action-oriented approach yields results. Initiative is rewarded.',
+    ],
+    challenges: [
+      'Manage impulsiveness and anger. Think before reacting.',
+      'Avoid confrontations. Channel energy constructively.',
+    ],
+    opportunities: [
+      'Excellent for sports, physical activities, and assertive actions.',
+      'Business ventures and negotiations favor bold moves.',
+    ],
+  },
+  Mercury: {
+    positive: [
+      'Communication skills are sharp. Ideas flow freely and clearly.',
+      'Learning and teaching bring satisfaction. Mental agility is enhanced.',
+      'Business dealings and negotiations favor logical approaches.',
+    ],
+    challenges: [
+      'Avoid overthinking. Trust your first instinct occasionally.',
+      'Be clear in communication to prevent misunderstandings.',
+    ],
+    opportunities: [
+      'Perfect for contracts, writing, and intellectual pursuits.',
+      'Networking and social connections expand.',
+    ],
+  },
+  Jupiter: {
+    positive: [
+      'Wisdom and optimism guide your path. Expansion and growth are favored.',
+      'Spiritual insights and higher learning bring fulfillment.',
+      'Good fortune and blessings flow naturally. Generosity is rewarded.',
+    ],
+    challenges: [
+      'Avoid overindulgence or overcommitment.',
+      'Keep realistic expectations despite optimistic energy.',
+    ],
+    opportunities: [
+      'Excellent for education, travel, and spiritual practices.',
+      'Financial growth and prosperity are indicated.',
+    ],
+  },
+  Venus: {
+    positive: [
+      'Love, beauty, and harmony surround you. Relationships flourish.',
+      'Artistic expression and aesthetic pursuits bring joy.',
+      'Social gatherings and romantic moments are especially pleasant.',
+    ],
+    challenges: [
+      'Avoid excessive spending on luxuries.',
+      'Balance pleasure with responsibilities.',
+    ],
+    opportunities: [
+      'Perfect for romantic dates, creative projects, and beautification.',
+      'Collaborations and partnerships prosper.',
+    ],
+  },
+  Saturn: {
+    positive: [
+      'Discipline and structure bring lasting results. Patience is rewarded.',
+      'Hard work and responsibility lead to recognition.',
+      'Wisdom from experience guides important decisions.',
+    ],
+    challenges: [
+      'Delays may occur. Maintain patience and persistence.',
+      'Avoid pessimism. Focus on long-term goals.',
+    ],
+    opportunities: [
+      'Excellent for planning, organizing, and building foundations.',
+      'Karmic lessons learned bring spiritual growth.',
+    ],
+  },
 }
 
-function generateDailyPrediction(date: Date, signIndex: number): string {
-  const seed = date.getDate() + date.getMonth() * 31 + signIndex
-  const index = seed % horoscopePredictions.general.length
-  return horoscopePredictions.general[index]
+// Nakshatra-based spiritual advice
+const nakshatraAdvice: Record<string, string> = {
+  'Ashwini': 'Swift action and healing energies are available. Trust your ability to begin anew.',
+  'Bharani': 'Transformation and letting go are themes. Release what no longer serves you.',
+  'Krittika': 'Purification and determination guide you. Cut through illusions with clarity.',
+  'Rohini': 'Growth and nurturing are favored. Plant seeds for future abundance.',
+  'Mrigashira': 'Curiosity and gentle exploration bring discoveries. Follow your interests.',
+  'Ardra': 'Deep emotions and transformation surface. Embrace change with courage.',
+  'Punarvasu': 'Renewal and return to basics bring peace. Simplicity is powerful.',
+  'Pushya': 'Nourishment and protection surround you. Care for yourself and others.',
+  'Ashlesha': 'Wisdom and introspection deepen understanding. Look within for answers.',
+  'Magha': 'Honor your lineage and authority. Tradition and dignity are important.',
+  'Purva Phalguni': 'Joy, creativity, and pleasure are highlighted. Enjoy life\'s gifts.',
+  'Uttara Phalguni': 'Contracts and commitments are favored. Build lasting foundations.',
+  'Hasta': 'Skill and craftsmanship bring success. Your talents are recognized.',
+  'Chitra': 'Beauty and creativity shine. Artistic expression is blessed.',
+  'Swati': 'Independence and freedom are themes. Move with the wind.',
+  'Vishakha': 'Purpose and determination drive success. Stay focused on goals.',
+  'Anuradha': 'Friendship and devotion bring blessings. Loyalty is rewarded.',
+  'Jyeshtha': 'Leadership and protection are your strengths. Protect what matters.',
+  'Mula': 'Root causes and foundations matter. Go deep to find truth.',
+  'Purva Ashadha': 'Victory and invincibility are themes. You cannot be defeated.',
+  'Uttara Ashadha': 'Ultimate victory comes through perseverance. Stay the course.',
+  'Shravana': 'Listen carefully. Important messages come through hearing.',
+  'Dhanishta': 'Wealth and prosperity are indicated. Share your abundance.',
+  'Shatabhisha': 'Healing and innovation bring breakthroughs. Think differently.',
+  'Purva Bhadrapada': 'Transformation through fire. Purification leads to enlightenment.',
+  'Uttara Bhadrapada': 'Deep wisdom and cosmic connection. Trust the universe.',
+  'Revati': 'Journey\'s end brings new beginnings. Completion and fulfillment.',
 }
 
-function generateAdvice(date: Date, signIndex: number): string {
-  const seed = date.getDate() + date.getMonth() * 31 + signIndex + 1
-  const index = seed % horoscopePredictions.advice.length
-  return horoscopePredictions.advice[index]
-}
+let cachedPanchang: any = null
+let cachedDate: string | null = null
 
-function generateLuckyTime(date: Date, signIndex: number): string {
-  const seed = date.getDate() + date.getMonth() * 31 + signIndex + 2
-  const index = seed % horoscopePredictions.luckyTimes.length
-  return horoscopePredictions.luckyTimes[index]
-}
-
-function generateLuckyNumber(date: Date, signIndex: number): number {
-  const seed = date.getDate() + date.getMonth() * 31 + signIndex + 3
-  return (seed % 9) + 1
-}
-
-export function getDailyHoroscope(signName: string): DailyHoroscope {
+function getTodaysPanchang() {
   const today = new Date()
-  const signIndex = zodiacSigns.findIndex((sign) => sign.name === signName)
+  const dateStr = today.toDateString()
+  
+  if (cachedPanchang && cachedDate === dateStr) {
+    return cachedPanchang
+  }
 
+  try {
+    // Calculate panchang using our existing service
+    const panchang = getPanchangForDate(today, DEFAULT_LAT, DEFAULT_LNG)
+    
+    cachedPanchang = panchang
+    cachedDate = dateStr
+    return panchang
+  } catch (error) {
+    console.error('Error calculating panchang:', error)
+    return null
+  }
+}
+
+function generatePredictionFromPanchang(
+  signName: string,
+  panchang: any
+): DailyHoroscope {
+  const today = new Date()
+  const zodiac = zodiacSigns.find((z) => z.name === signName)!
+  
+  // Get ruling planet info
+  const rulingPlanet = zodiac.rulingPlanet
+  const planetInfo = planetaryPredictions[rulingPlanet] || planetaryPredictions.Sun
+  
+  // Use nakshatra for spiritual guidance
+  const nakshatra = panchang?.nakshatra || 'Ashwini'
+  const advice = nakshatraAdvice[nakshatra] || 'Trust your inner wisdom today.'
+  
+  // Extract tithi name and parse number (e.g., "Shukla Tritiya" -> 3)
+  const tithiName = panchang?.tithi || 'Pratipada'
+  const tithiMatch = tithiName.match(/(\d+|Pratipada|Dwitiya|Tritiya|Chaturthi|Panchami|Shashthi|Saptami|Ashtami|Navami|Dashami|Ekadashi|Dwadashi|Trayodashi|Chaturdashi|Purnima|Amavasya)/)
+  let tithiNumber = 1
+  if (tithiMatch) {
+    const tithiDay = tithiMatch[0]
+    const tithiNames = ['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Saptami','Ashtami','Navami','Dashami','Ekadashi','Dwadashi','Trayodashi','Chaturdashi','Purnima']
+    const idx = tithiNames.indexOf(tithiDay)
+    tithiNumber = idx >= 0 ? idx + 1 : parseInt(tithiDay) || 1
+  }
+  
+  // Calculate lucky number based on tithi and zodiac position
+  const zodiacIndex = zodiacSigns.findIndex(z => z.name === signName)
+  const luckyNumber = ((tithiNumber + zodiacIndex) % 9) + 1
+  
+  // Use auspicious muhurat times for lucky time
+  const auspiciousTimings = panchang?.auspiciousTimings || []
+  const abhijit = auspiciousTimings.find((t: any) => t.name === 'Abhijit Muhurta')
+  const brahma = auspiciousTimings.find((t: any) => t.name === 'Brahma Muhurta')
+  const luckyTime = abhijit?.time || brahma?.time || '11:00 AM - 12:00 PM'
+  
+  // Generate prediction based on planetary influence and date
+  const predictionIdx = today.getDate() % planetInfo.positive.length
+  const prediction = planetInfo.positive[predictionIdx]
+  
+  const challengesIdx = (today.getDate() + zodiacIndex) % planetInfo.challenges.length
+  const challenges = planetInfo.challenges[challengesIdx]
+  
+  const opportunitiesIdx = (today.getDate() + zodiacIndex + 1) % planetInfo.opportunities.length
+  const opportunities = planetInfo.opportunities[opportunitiesIdx]
+  
+  // Determine compatible signs based on element
+  const compatibilityMap: Record<string, string[]> = {
+    Fire: ['Leo', 'Sagittarius', 'Aries'],
+    Earth: ['Taurus', 'Virgo', 'Capricorn'],
+    Air: ['Gemini', 'Libra', 'Aquarius'],
+    Water: ['Cancer', 'Scorpio', 'Pisces'],
+  }
+  const compatibility = compatibilityMap[zodiac.element]
+    .filter(s => s !== signName)
+    .slice(0, 2)
+  
+  // Planetary influence description based on real panchang data
+  const paksha = panchang?.paksha || 'Shukla'
+  const yoga = panchang?.yoga || 'Vishkumbha'
+  const planetaryInfluence = `${rulingPlanet} rules your sign. Today's ${paksha} Paksha, ${nakshatra} Nakshatra, and ${yoga} Yoga create favorable energies for you.`
+  
   return {
     sign: signName,
     date: today.toLocaleDateString('en-US', {
@@ -193,11 +372,20 @@ export function getDailyHoroscope(signName: string): DailyHoroscope {
       month: 'long',
       year: 'numeric',
     }),
-    prediction: generateDailyPrediction(today, signIndex),
-    luckyNumber: generateLuckyNumber(today, signIndex),
-    luckyTime: generateLuckyTime(today, signIndex),
-    advice: generateAdvice(today, signIndex),
+    prediction,
+    luckyNumber,
+    luckyTime,
+    advice,
+    compatibility,
+    challenges,
+    opportunities,
+    planetaryInfluence,
   }
+}
+
+export function getDailyHoroscope(signName: string): DailyHoroscope {
+  const panchang = getTodaysPanchang()
+  return generatePredictionFromPanchang(signName, panchang)
 }
 
 export function getZodiacSignFromDate(birthDate: Date): string {
