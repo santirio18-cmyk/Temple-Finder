@@ -76,23 +76,26 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm"
       onClick={onClose}
     >
       <div 
-        className="relative w-full max-w-md bg-background rounded-3xl shadow-2xl overflow-hidden animate-fade-in-up"
+        className="relative w-full max-w-md bg-background rounded-3xl shadow-2xl overflow-y-auto animate-fade-in-up"
         onClick={(e) => e.stopPropagation()}
         style={{
           background: `linear-gradient(135deg, ${deity.color}08 0%, hsl(var(--background)) 50%)`,
+          maxHeight: '85vh',
         }}
       >
-        {/* Close Button */}
+        {/* Close Button - More Visible */}
         <button
+          type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center border border-border/50 hover:bg-background transition-colors"
+          className="absolute top-3 right-3 z-20 w-10 h-10 rounded-full bg-white shadow-xl flex items-center justify-center hover:scale-110 transition-all active:scale-95"
           aria-label="Close"
+          style={{ border: `2px solid ${deity.color}` }}
         >
-          <X className="w-5 h-5 text-foreground/70" />
+          <X className="w-6 h-6" style={{ color: deity.color }} strokeWidth={2.5} />
         </button>
 
         {/* Header with Deity Image */}
@@ -204,17 +207,25 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
 
             {/* Navigation Arrows - Outside Card */}
             <button
-              onClick={prevCard}
-              className="absolute -left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-background border-2 shadow-xl flex items-center justify-center hover:scale-110 transition-all active:scale-95"
-              style={{ borderColor: deity.color }}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                prevCard();
+              }}
+              className="absolute -left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white shadow-2xl flex items-center justify-center hover:scale-110 transition-all active:scale-95 z-10"
+              style={{ border: `3px solid ${deity.color}` }}
               aria-label="Previous card"
             >
               <ChevronLeft className="w-6 h-6" style={{ color: deity.color }} strokeWidth={3} />
             </button>
             <button
-              onClick={nextCard}
-              className="absolute -right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-background border-2 shadow-xl flex items-center justify-center hover:scale-110 transition-all active:scale-95"
-              style={{ borderColor: deity.color }}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                nextCard();
+              }}
+              className="absolute -right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white shadow-2xl flex items-center justify-center hover:scale-110 transition-all active:scale-95 z-10"
+              style={{ border: `3px solid ${deity.color}` }}
               aria-label="Next card"
             >
               <ChevronRight className="w-6 h-6" style={{ color: deity.color }} strokeWidth={3} />
