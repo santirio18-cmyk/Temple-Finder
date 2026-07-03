@@ -125,56 +125,76 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
           </div>
         </div>
 
-        {/* Swipeable Affirmation Card */}
-        <div className="px-6 pb-6">
-          {/* Card Container */}
-          <div className="relative">
-            {/* Main Card */}
+        {/* Physical Blessing Card */}
+        <div className="px-4 pb-6">
+          {/* Card Container - Like Physical Card */}
+          <div className="relative max-w-xs mx-auto">
+            {/* Main Physical Card */}
             <div
-              className="relative overflow-hidden rounded-3xl shadow-2xl"
+              className="relative overflow-hidden rounded-2xl"
               style={{
-                background: `linear-gradient(135deg, ${deity.color}90 0%, ${deity.color}70 50%, ${deity.color}90 100%)`,
-                minHeight: '320px',
+                aspectRatio: '2/3',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.2)',
               }}
             >
-              {/* Deity image watermark */}
+              {/* Deity Image - Full Background */}
               <div 
-                className="absolute inset-0 opacity-15 bg-center"
+                className="absolute inset-0"
                 style={{ 
                   backgroundImage: `url(${deityImage})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
-                  filter: 'brightness(1.2) contrast(0.9)',
                 }}
               />
               
-              {/* Content */}
-              <div className="relative z-10 flex flex-col items-center justify-center p-8 h-full min-h-[320px]">
-                <div className="mb-4">
-                  <div className="text-xs font-body font-semibold text-white/70 uppercase tracking-widest mb-2">
-                    Lord {deity.name}
-                  </div>
-                  <Sparkles 
-                    className="w-8 h-8 mx-auto" 
-                    style={{ color: 'white' }}
-                    strokeWidth={2}
-                  />
+              {/* Dark Overlay for Text Readability */}
+              <div 
+                className="absolute inset-0"
+                style={{ 
+                  background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.4) 100%)',
+                }}
+              />
+              
+              {/* Content Overlay */}
+              <div className="relative z-10 flex flex-col justify-between h-full p-6">
+                {/* Top - Deity Name */}
+                <div className="text-center">
+                  <p 
+                    className="font-display text-lg font-bold text-white tracking-wide" 
+                    style={{ 
+                      textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                      fontStyle: 'italic',
+                    }}
+                  >
+                    {deity.name}
+                  </p>
                 </div>
                 
-                <p className="text-xl font-display font-bold text-white leading-relaxed text-center px-4" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.4)' }}>
-                  {affirmations[currentCard]}
-                </p>
+                {/* Center - Affirmation Quote */}
+                <div className="flex-1 flex items-center justify-center px-2">
+                  <p 
+                    className="font-display text-base font-semibold text-white leading-relaxed text-center" 
+                    style={{ 
+                      textShadow: '0 3px 10px rgba(0,0,0,0.6)',
+                      letterSpacing: '0.02em',
+                    }}
+                  >
+                    {affirmations[currentCard]}
+                  </p>
+                </div>
                 
-                <div className="mt-6 flex items-center gap-2">
+                {/* Bottom - Attribution/Dots */}
+                <div className="flex justify-center items-center gap-2">
                   {affirmations.map((_, index) => (
                     <div 
                       key={index}
                       className="rounded-full transition-all"
                       style={{
-                        width: index === currentCard ? '24px' : '8px',
-                        height: '8px',
+                        width: index === currentCard ? '20px' : '6px',
+                        height: '6px',
                         backgroundColor: 'white',
-                        opacity: index === currentCard ? 1 : 0.4,
+                        opacity: index === currentCard ? 1 : 0.5,
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
                       }}
                     />
                   ))}
@@ -182,26 +202,28 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
               </div>
             </div>
 
-            {/* Navigation Arrows */}
+            {/* Navigation Arrows - Outside Card */}
             <button
               onClick={prevCard}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm shadow-lg flex items-center justify-center hover:bg-white transition-all active:scale-95"
+              className="absolute -left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-background border-2 shadow-xl flex items-center justify-center hover:scale-110 transition-all active:scale-95"
+              style={{ borderColor: deity.color }}
               aria-label="Previous card"
             >
-              <ChevronLeft className="w-6 h-6" style={{ color: deity.color }} strokeWidth={2.5} />
+              <ChevronLeft className="w-6 h-6" style={{ color: deity.color }} strokeWidth={3} />
             </button>
             <button
               onClick={nextCard}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm shadow-lg flex items-center justify-center hover:bg-white transition-all active:scale-95"
+              className="absolute -right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-background border-2 shadow-xl flex items-center justify-center hover:scale-110 transition-all active:scale-95"
+              style={{ borderColor: deity.color }}
               aria-label="Next card"
             >
-              <ChevronRight className="w-6 h-6" style={{ color: deity.color }} strokeWidth={2.5} />
+              <ChevronRight className="w-6 h-6" style={{ color: deity.color }} strokeWidth={3} />
             </button>
           </div>
 
           {/* Card Counter */}
-          <div className="text-center mt-4">
-            <p className="text-sm font-body text-muted-foreground">
+          <div className="text-center mt-6">
+            <p className="text-sm font-body font-semibold" style={{ color: deity.color }}>
               Card {currentCard + 1} of {affirmations.length}
             </p>
           </div>
