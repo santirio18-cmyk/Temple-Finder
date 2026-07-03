@@ -137,35 +137,37 @@ const DeityOfTheDay = () => {
           </div>
 
           {/* CTA Buttons - Stacked for Better Visibility */}
-          <div className="mt-4 space-y-2">
+          <div className="mt-4 space-y-3">
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 setShowAffirmation(true);
               }}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-full font-body text-sm font-bold text-white transition-all hover:brightness-110 active:scale-[0.98] shadow-lg"
+              className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-body text-sm font-bold transition-all hover:brightness-110 active:scale-[0.98]"
               style={{
-                background: `linear-gradient(135deg, ${deity.color} 0%, ${deity.color}dd 100%)`,
-                boxShadow: `0 4px 14px -2px ${deity.color}50`,
+                backgroundColor: deity.color,
+                color: '#ffffff',
+                boxShadow: `0 6px 20px -4px ${deity.color}60`,
               }}
             >
-              <Sparkles className="w-4 h-4" />
+              <Sparkles className="w-5 h-5" strokeWidth={2.5} />
               Daily Affirmations
             </button>
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/search?deity=${encodeURIComponent(deity.name)}`);
               }}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-full font-body text-sm font-semibold border-2 transition-all hover:bg-background/50 active:scale-[0.98]"
+              className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-full font-body text-sm font-semibold border-2 transition-all hover:bg-background/50 active:scale-[0.98] bg-background"
               style={{
                 borderColor: deity.color,
                 color: deity.color,
-                background: `${deity.color}08`,
               }}
             >
               Find Temples
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
             </button>
           </div>
         </div>
