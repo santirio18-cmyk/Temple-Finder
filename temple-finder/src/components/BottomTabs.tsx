@@ -1,9 +1,10 @@
-import { Home, BookOpen, Search, MapPin } from 'lucide-react'
+import { Home, BookOpen, Search, MapPin, Sparkles } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 const tabs = [
   { icon: Home, label: 'Home', path: '/' },
   { icon: BookOpen, label: 'Panchang', path: '/panchang' },
+  { icon: Sparkles, label: 'Horoscope', path: '/horoscope' },
   { icon: Search, label: 'Search', path: '/search' },
   { icon: MapPin, label: 'Nearby', path: '/nearby' },
 ] as const

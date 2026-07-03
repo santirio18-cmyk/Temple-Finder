@@ -11,6 +11,7 @@ import SimpleTemple from './pages/SimpleTemple'
 import SimpleNearby from './pages/SimpleNearby'
 import SimpleCategories from './pages/SimpleCategories'
 import Panchang from './pages/Panchang'
+import Horoscope from './pages/Horoscope'
 import Ritual from './pages/Ritual'
 import OnboardingLogin from './pages/OnboardingLogin'
 import OnboardingDeity from './pages/OnboardingDeity'
@@ -32,6 +33,7 @@ function AppShell() {
         <Route path="/nearby" element={<SimpleNearby />} />
         <Route path="/categories" element={<SimpleCategories />} />
         <Route path="/panchang" element={<Panchang />} />
+        <Route path="/horoscope" element={<Horoscope />} />
         <Route path="/ritual" element={<Ritual />} />
         <Route path="/onboarding/login" element={<OnboardingLogin />} />
         <Route path="/onboarding/difficulty" element={<OnboardingDifficulty />} />
