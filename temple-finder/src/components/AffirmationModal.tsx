@@ -1,4 +1,4 @@
-import { X, Sparkles, Heart } from 'lucide-react';
+import { X, Sparkles } from 'lucide-react';
 import { type DeityOfDay } from '@/services/deityOfDayService';
 
 interface AffirmationModalProps {
@@ -114,27 +114,46 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
           </div>
         </div>
 
-        {/* Affirmations List */}
+        {/* Affirmations List - Beautiful Cards */}
         <div className="px-6 pb-6">
-          <div className="space-y-3">
+          <div className="space-y-4">
             {affirmations.map((affirmation, index) => (
               <div
                 key={index}
-                className="flex items-start gap-3 p-4 rounded-xl border border-border/50 bg-background/60 backdrop-blur-sm"
+                className="relative overflow-hidden rounded-2xl p-6 shadow-lg"
+                style={{
+                  background: `linear-gradient(135deg, ${deity.color}90 0%, ${deity.color}60 50%, ${deity.color}90 100%)`,
+                  minHeight: '120px',
+                }}
               >
+                {/* Deity image watermark */}
                 <div 
-                  className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                  style={{ backgroundColor: `${deity.color}20` }}
-                >
-                  <Heart 
-                    className="w-3.5 h-3.5" 
-                    style={{ color: deity.color }}
-                    fill={deity.color}
-                  />
+                  className="absolute inset-0 opacity-10 bg-center bg-cover"
+                  style={{ 
+                    backgroundImage: `url(${deityImage})`,
+                    backgroundSize: '150%',
+                    filter: 'brightness(1.2) contrast(0.8)',
+                  }}
+                />
+                
+                {/* Content */}
+                <div className="relative z-10 flex flex-col items-center justify-center text-center h-full">
+                  <div className="mb-3">
+                    <Sparkles 
+                      className="w-6 h-6 mx-auto" 
+                      style={{ color: 'white' }}
+                      strokeWidth={2.5}
+                    />
+                  </div>
+                  <p className="text-base font-display font-semibold text-white leading-relaxed px-2" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>
+                    {affirmation}
+                  </p>
+                  <div className="mt-3 flex items-center gap-1">
+                    <div className="w-1 h-1 rounded-full bg-white/60" />
+                    <div className="w-1 h-1 rounded-full bg-white/60" />
+                    <div className="w-1 h-1 rounded-full bg-white/60" />
+                  </div>
                 </div>
-                <p className="flex-1 text-sm font-body text-foreground/85 leading-relaxed">
-                  {affirmation}
-                </p>
               </div>
             ))}
           </div>
