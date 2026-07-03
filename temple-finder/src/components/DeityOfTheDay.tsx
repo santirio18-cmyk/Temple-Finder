@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getTodayDeity, type DeityOfDay } from '@/services/deityOfDayService';
 import { ChevronRight, Sparkles } from 'lucide-react';
+import AffirmationModal from './AffirmationModal';
 
 // Import deity images
 import vishnuImg from '@/assets/deities/vishnu.jpg';
@@ -25,6 +26,7 @@ const deityImages: Record<string, string> = {
 const DeityOfTheDay = () => {
   const navigate = useNavigate();
   const [deity, setDeity] = useState<DeityOfDay | null>(null);
+  const [showAffirmation, setShowAffirmation] = useState(false);
 
   useEffect(() => {
     const updateDeity = () => {
@@ -73,7 +75,8 @@ const DeityOfTheDay = () => {
 
       {/* Main Card */}
       <div
-        className="relative overflow-hidden rounded-2xl border shadow-lg"
+        onClick={() => setShowAffirmation(true)}
+        className="relative overflow-hidden rounded-2xl border shadow-lg cursor-pointer transition-all hover:shadow-xl active:scale-[0.99]"
         style={{
           background: `linear-gradient(135deg, ${deity.color}15 0%, ${deity.color}08 100%)`,
           borderColor: `${deity.color}30`,
@@ -136,7 +139,25 @@ const DeityOfTheDay = () => {
           {/* CTA Buttons */}
           <div className="mt-4 flex gap-2">
             <button
-              onClick={() => navigate(`/search?deity=${encodeURIComponent(deity.name)}`)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowAffirmation(true);
+              }}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-body text-sm font-semibold border-2 transition-all hover:brightness-110 active:scale-[0.98]"
+              style={{
+                borderColor: deity.color,
+                color: deity.color,
+                background: `${deity.color}10`,
+              }}
+            >
+              Daily Affirmations
+              <Sparkles className="w-4 h-4" />
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/search?deity=${encodeURIComponent(deity.name)}`);
+              }}
               className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-body text-sm font-semibold text-primary-foreground transition-all hover:brightness-110 active:scale-[0.98]"
               style={{
                 background: `linear-gradient(135deg, ${deity.color} 0%, ${deity.color}dd 100%)`,
@@ -149,6 +170,14 @@ const DeityOfTheDay = () => {
           </div>
         </div>
       </div>
+
+      {/* Affirmation Modal */}
+      <AffirmationModal
+        isOpen={showAffirmation}
+        onClose={() => setShowAffirmation(false)}
+        deity={deity}
+        deityImage={deityImage}
+      />
     </section>
   );
 };
