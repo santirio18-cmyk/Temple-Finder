@@ -310,6 +310,14 @@ export function saveBirthChart(chart: BirthChart) {
   localStorage.setItem('birthCharts', JSON.stringify(charts))
 }
 
+export function updateBirthChart(index: number, chart: BirthChart) {
+  const charts = getBirthCharts()
+  if (index >= 0 && index < charts.length) {
+    charts[index] = chart
+    localStorage.setItem('birthCharts', JSON.stringify(charts))
+  }
+}
+
 export function getBirthCharts(): BirthChart[] {
   const stored = localStorage.getItem('birthCharts')
   if (!stored) return []
