@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Sparkles, Star, Clock, Lightbulb } from 'lucide-react'
+import { Sparkles, Star, Clock, Lightbulb, TrendingUp, AlertCircle, Users } from 'lucide-react'
 import {
   zodiacSigns,
   getDailyHoroscope,
@@ -200,6 +200,85 @@ const Horoscope = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="px-3 mb-4">
+            <div className="bg-[hsl(30,40%,97%)] rounded-xl border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm p-5 relative overflow-hidden">
+              <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-[hsl(var(--saffron))] via-[hsl(var(--temple-gold))] to-[hsl(var(--saffron-light))]" />
+
+              <div className="pl-3">
+                <div className="flex items-center gap-2 mb-3">
+                  <TrendingUp className="w-5 h-5 text-saffron" />
+                  <h3 className="text-base font-display font-semibold text-foreground">
+                    Opportunities
+                  </h3>
+                </div>
+                <p className="text-sm font-body text-foreground leading-relaxed">
+                  {horoscope.opportunities}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="px-3 mb-4">
+            <div className="bg-[hsl(30,40%,97%)] rounded-xl border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm p-5 relative overflow-hidden">
+              <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-[hsl(var(--saffron))] via-[hsl(var(--temple-gold))] to-[hsl(var(--saffron-light))]" />
+
+              <div className="pl-3">
+                <div className="flex items-center gap-2 mb-3">
+                  <AlertCircle className="w-5 h-5 text-saffron" />
+                  <h3 className="text-base font-display font-semibold text-foreground">
+                    Challenges to Watch
+                  </h3>
+                </div>
+                <p className="text-sm font-body text-foreground leading-relaxed">
+                  {horoscope.challenges}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="px-3 mb-4">
+            <div className="bg-[hsl(30,40%,97%)] rounded-xl border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm p-5 relative overflow-hidden">
+              <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-[hsl(var(--saffron))] via-[hsl(var(--temple-gold))] to-[hsl(var(--saffron-light))]" />
+
+              <div className="pl-3">
+                <div className="flex items-center gap-2 mb-3">
+                  <Users className="w-5 h-5 text-saffron" />
+                  <h3 className="text-base font-display font-semibold text-foreground">
+                    Compatible Signs Today
+                  </h3>
+                </div>
+                <div className="flex gap-2">
+                  {horoscope.compatibility.map((sign) => {
+                    const compatSign = zodiacSigns.find((z) => z.name === sign)
+                    return (
+                      <div
+                        key={sign}
+                        className="flex items-center gap-1.5 bg-secondary px-3 py-1.5 rounded-lg"
+                      >
+                        <span className="text-lg">{compatSign?.symbol}</span>
+                        <span className="text-xs font-body font-medium text-foreground">
+                          {sign}
+                        </span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="px-3 mb-4">
+            <div className="bg-[hsl(30,40%,97%)] rounded-xl border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm p-4 relative overflow-hidden">
+              <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-[hsl(var(--saffron))] via-[hsl(var(--temple-gold))] to-[hsl(var(--saffron-light))]" />
+
+              <div className="pl-3">
+                <p className="text-xs font-body text-muted-foreground leading-relaxed">
+                  {horoscope.planetaryInfluence}
+                </p>
               </div>
             </div>
           </div>
