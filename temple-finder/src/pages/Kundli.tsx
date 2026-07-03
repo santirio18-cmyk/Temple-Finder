@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
-import { User, Calendar, Clock, MapPin, Plus, Trash2, Star, Moon, Sun } from 'lucide-react'
+import { User, Calendar, Clock, MapPin, Plus, Trash2, Star, Moon, Sun, Edit2 } from 'lucide-react'
 import {
   calculateBirthChart,
   saveBirthChart,
   getBirthCharts,
   deleteBirthChart,
+  updateBirthChart,
   type BirthDetails,
   type BirthChart,
 } from '@/services/kundliService'
@@ -13,6 +14,7 @@ const Kundli = () => {
   const [showForm, setShowForm] = useState(false)
   const [savedCharts, setSavedCharts] = useState<BirthChart[]>([])
   const [selectedChart, setSelectedChart] = useState<BirthChart | null>(null)
+  const [editingIndex, setEditingIndex] = useState<number | null>(null)
   
   const [formData, setFormData] = useState<BirthDetails>({
     name: '',
@@ -35,10 +37,62 @@ const Kundli = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const chart = calculateBirthChart(formData)
-    saveBirthChart(chart)
-    setSavedCharts([...savedCharts, chart])
-    setSelectedChart(chart)
+    
+    if (editingIndex !== null) {
+      // Update existing chart
+      updateBirthChart(editingIndex, chart)
+      const updated = getBirthCharts()
+      setSavedCharts(updated)
+      setSelectedChart(updated[editingIndex])
+      setEditingIndex(null)
+    } else {
+      // Create new chart
+      saveBirthChart(chart)
+      setSavedCharts([...savedCharts, chart])
+      setSelectedChart(chart)
+    }
+    
     setShowForm(false)
+    // Reset form
+    setFormData({
+      name: '',
+      dateOfBirth: new Date(),
+      timeOfBirth: '12:00',
+      latitude: 13.0827,
+      longitude: 80.2707,
+      timezone: 'Asia/Kolkata',
+      locationName: 'Chennai, India'
+    })
+  }
+
+  const handleEdit = (index: number, chart: BirthChart) => {
+    // Pre-fill form with chart data
+    setFormData({
+      name: chart.name,
+      dateOfBirth: new Date(chart.birthDateTime),
+      timeOfBirth: new Date(chart.birthDateTime).toTimeString().slice(0, 5),
+      latitude: 13.0827, // Default for now
+      longitude: 80.2707, // Default for now
+      timezone: 'Asia/Kolkata',
+      locationName: chart.location
+    })
+    setEditingIndex(index)
+    setShowForm(true)
+  }
+
+  const handleCancelEdit = () => {
+    setShowForm(false)
+    setEditingIndex(null)
+    // Reset form
+    setFormData({
+      name: '',
+      dateOfBirth: new Date(),
+      timeOfBirth: '12:00',
+      latitude: 13.0827,
+      longitude: 80.2707,
+      timezone: 'Asia/Kolkata',
+      locationName: 'Chennai, India'
+    })
   }
 
   const handleDelete = (index: number) => {
@@ -85,7 +139,10 @@ const Kundli = () => {
           </h3>
           <button
             type="button"
-            onClick={() => setShowForm(!showForm)}
+            onClick={() => {
+              setEditingIndex(null)
+              setShowForm(!showForm)
+            }}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-br from-[hsl(var(--saffron))] to-[hsl(var(--saffron-light))] text-white text-xs font-body font-medium shadow-temple"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -95,6 +152,11 @@ const Kundli = () => {
 
         {showForm && (
           <div className="bg-[hsl(30,40%,97%)] rounded-xl border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm p-4 mb-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-body font-semibold text-foreground">
+                {editingIndex !== null ? 'Edit Birth Chart' : 'New Birth Chart'}
+              </h4>
+            </div>
             <form onSubmit={handleSubmit} className="space-y-3">
               <div>
                 <label className="text-xs font-body font-medium text-foreground block mb-1">
@@ -164,11 +226,11 @@ const Kundli = () => {
                   type="submit"
                   className="flex-1 py-2 rounded-lg bg-gradient-to-br from-[hsl(var(--saffron))] to-[hsl(var(--saffron-light))] text-white text-sm font-body font-medium shadow-temple"
                 >
-                  Calculate Chart
+                  {editingIndex !== null ? 'Update Chart' : 'Calculate Chart'}
                 </button>
                 <button
                   type="button"
-                  onClick={() => setShowForm(false)}
+                  onClick={handleCancelEdit}
                   className="px-4 py-2 rounded-lg border border-[hsl(var(--temple-gold)/0.3)] text-sm font-body font-medium"
                 >
                   Cancel
@@ -204,16 +266,28 @@ const Kundli = () => {
                     {chart.birthDateTime.toLocaleDateString()} • {chart.location}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleDelete(index)
-                  }}
-                  className="p-2 rounded-lg hover:bg-red-50 text-red-500"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                <div className="flex gap-1">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleEdit(index, chart)
+                    }}
+                    className="p-2 rounded-lg hover:bg-saffron/10 text-saffron"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleDelete(index)
+                    }}
+                    className="p-2 rounded-lg hover:bg-red-50 text-red-500"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </button>
             ))}
           </div>
