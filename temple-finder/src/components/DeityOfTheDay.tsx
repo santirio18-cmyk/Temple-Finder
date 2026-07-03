@@ -136,32 +136,32 @@ const DeityOfTheDay = () => {
             </p>
           </div>
 
-          {/* CTA Buttons */}
-          <div className="mt-4 flex gap-2">
+          {/* CTA Buttons - Stacked for Better Visibility */}
+          <div className="mt-4 space-y-2">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 setShowAffirmation(true);
               }}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-body text-sm font-semibold border-2 transition-all hover:brightness-110 active:scale-[0.98]"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-full font-body text-sm font-bold text-white transition-all hover:brightness-110 active:scale-[0.98] shadow-lg"
               style={{
-                borderColor: deity.color,
-                color: deity.color,
-                background: `${deity.color}10`,
+                background: `linear-gradient(135deg, ${deity.color} 0%, ${deity.color}dd 100%)`,
+                boxShadow: `0 4px 14px -2px ${deity.color}50`,
               }}
             >
-              Daily Affirmations
               <Sparkles className="w-4 h-4" />
+              Daily Affirmations
             </button>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 navigate(`/search?deity=${encodeURIComponent(deity.name)}`);
               }}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full font-body text-sm font-semibold text-primary-foreground transition-all hover:brightness-110 active:scale-[0.98]"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-full font-body text-sm font-semibold border-2 transition-all hover:bg-background/50 active:scale-[0.98]"
               style={{
-                background: `linear-gradient(135deg, ${deity.color} 0%, ${deity.color}dd 100%)`,
-                boxShadow: `0 4px 12px -2px ${deity.color}40`,
+                borderColor: deity.color,
+                color: deity.color,
+                background: `${deity.color}08`,
               }}
             >
               Find Temples
