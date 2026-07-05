@@ -81,34 +81,42 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/70"
       onClick={onClose}
     >
       <div 
-        className="relative w-full max-w-md bg-background rounded-3xl shadow-2xl overflow-y-auto animate-fade-in-up"
+        className="relative w-full max-w-md rounded-3xl shadow-2xl overflow-y-auto animate-fade-in-up"
         onClick={(e) => e.stopPropagation()}
         style={{
-          background: `linear-gradient(135deg, ${deity.color}08 0%, hsl(var(--background)) 50%)`,
+          background: `linear-gradient(160deg, #FFFFFF 0%, ${deity.color}12 100%)`,
           maxHeight: '85vh',
+          border: `3px solid ${deity.color}`,
+          boxShadow: `0 30px 80px -15px ${deity.color}60, 0 15px 40px -10px rgba(0,0,0,0.3)`,
         }}
       >
         {/* Close Button - More Visible */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-3 right-3 z-20 w-10 h-10 rounded-full bg-white shadow-xl flex items-center justify-center hover:scale-110 transition-all active:scale-95"
+          className="absolute top-4 right-4 z-20 w-11 h-11 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-all active:scale-95"
           aria-label="Close"
-          style={{ border: `2px solid ${deity.color}` }}
+          style={{ 
+            background: `linear-gradient(135deg, ${deity.color} 0%, ${deity.color}dd 100%)`,
+            boxShadow: `0 4px 16px ${deity.color}60`,
+          }}
         >
-          <X className="w-6 h-6" style={{ color: deity.color }} strokeWidth={2.5} />
+          <X className="w-6 h-6 text-white" strokeWidth={3} />
         </button>
 
         {/* Header with Deity Image */}
         <div className="relative p-6 pb-4">
           <div className="flex items-center gap-4 mb-4">
             <div
-              className="w-20 h-20 rounded-full overflow-hidden border-3 shadow-lg"
-              style={{ borderColor: deity.color }}
+              className="w-24 h-24 rounded-full overflow-hidden shadow-2xl"
+              style={{ 
+                border: `4px solid ${deity.color}`,
+                boxShadow: `0 8px 24px ${deity.color}40, 0 0 0 1px ${deity.color}20`,
+              }}
             >
               <img
                 src={deityImage}
@@ -117,17 +125,17 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
               />
             </div>
             <div>
-              <div className="flex items-center gap-2 mb-1">
-                <Sparkles className="w-4 h-4" style={{ color: deity.color }} />
-                <h2 className="text-xs font-body font-semibold uppercase tracking-wider text-muted-foreground">
+              <div className="flex items-center gap-2 mb-1.5">
+                <Sparkles className="w-5 h-5" style={{ color: deity.color }} />
+                <h2 className="text-xs font-body font-bold uppercase tracking-wider" style={{ color: deity.color }}>
                   Daily Affirmations
                 </h2>
               </div>
-              <h3 className="font-display text-2xl font-bold text-foreground">
+              <h3 className="font-display text-3xl font-bold" style={{ color: deity.color }}>
                 Lord {deity.name}
               </h3>
-              <p className="text-xs font-body text-muted-foreground mt-1">
-                {deity.dayName}'s Blessings
+              <p className="text-sm font-body font-medium text-foreground/70 mt-1">
+                {deity.dayName}'s Blessings ✨
               </p>
             </div>
           </div>
@@ -139,10 +147,10 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
             /* Step 1: Show multiple face-down cards to pick */
             <div className="space-y-6">
               <div className="text-center px-4">
-                <p className="text-lg font-display font-semibold text-foreground mb-2">
+                <p className="text-xl font-display font-bold mb-2" style={{ color: deity.color }}>
                   🙏 Pick Your Blessing Card
                 </p>
-                <p className="text-sm font-body text-muted-foreground">
+                <p className="text-sm font-body font-medium text-foreground/60">
                   Trust your intuition and choose a card
                 </p>
               </div>
@@ -172,30 +180,37 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
                     >
                       {/* Card Back - Face Down */}
                       <div
-                        className="relative overflow-hidden rounded-xl shadow-2xl"
+                        className="relative overflow-hidden rounded-2xl"
                         style={{
                           aspectRatio: '2/3',
-                          background: `linear-gradient(135deg, ${deity.color} 0%, ${deity.color}dd 100%)`,
-                          boxShadow: '0 20px 40px rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.2)',
+                          background: `linear-gradient(135deg, ${deity.color} 0%, ${deity.color}cc 100%)`,
+                          boxShadow: `0 25px 50px -12px ${deity.color}60, 0 12px 24px -8px rgba(0,0,0,0.4)`,
+                          border: `2px solid ${deity.color}`,
                         }}
                       >
                         {/* Decorative Pattern */}
-                        <div className="absolute inset-0 opacity-20">
+                        <div className="absolute inset-0 opacity-25">
                           <div className="absolute inset-0 flex items-center justify-center">
-                            <Sparkles className="w-16 h-16 text-white" />
+                            <Sparkles className="w-20 h-20 text-white drop-shadow-lg" />
                           </div>
                           <div className="absolute top-4 left-4">
-                            <Sparkles className="w-6 h-6 text-white" />
+                            <Sparkles className="w-7 h-7 text-white" />
                           </div>
                           <div className="absolute bottom-4 right-4">
-                            <Sparkles className="w-6 h-6 text-white" />
+                            <Sparkles className="w-7 h-7 text-white" />
+                          </div>
+                          <div className="absolute top-1/3 right-6">
+                            <Sparkles className="w-5 h-5 text-white" />
+                          </div>
+                          <div className="absolute bottom-1/3 left-6">
+                            <Sparkles className="w-5 h-5 text-white" />
                           </div>
                         </div>
                         
                         {/* Card Number (hidden initially) */}
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="w-12 h-12 rounded-full border-2 border-white/50 flex items-center justify-center">
-                            <span className="text-2xl font-display font-bold text-white opacity-50">
+                          <div className="w-14 h-14 rounded-full border-3 border-white/60 flex items-center justify-center bg-white/10 backdrop-blur-sm">
+                            <span className="text-3xl font-display font-bold text-white">
                               ?
                             </span>
                           </div>
@@ -203,9 +218,17 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
 
                         {/* Glow effect on hover */}
                         <div 
-                          className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-300"
+                          className="absolute inset-0 opacity-0 group-hover:opacity-40 transition-opacity duration-300"
                           style={{
-                            background: 'radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%)',
+                            background: 'radial-gradient(circle at center, rgba(255,255,255,0.9) 0%, transparent 60%)',
+                          }}
+                        />
+                        
+                        {/* Shine effect */}
+                        <div 
+                          className="absolute inset-0 opacity-40"
+                          style={{
+                            background: 'linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 45%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 55%, transparent 100%)',
                           }}
                         />
                       </div>
@@ -215,7 +238,7 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
               </div>
 
               <div className="text-center">
-                <p className="text-xs font-body text-muted-foreground italic">
+                <p className="text-sm font-body font-medium text-foreground/60 italic">
                   ✨ Each card holds a divine message for you
                 </p>
               </div>
