@@ -50,7 +50,7 @@ const RAHU_SEGMENT: number[] = [8, 2, 7, 5, 6, 4, 3] // Sun–Sat
 /** Yamaganda segment (1–8). */
 const YAMA_SEGMENT: number[] = [5, 1, 6, 4, 3, 2, 7]
 
-export interface AuspiciousTimingRow {
+export interface TimingRow {
   name: string
   time: string
   emoji: string
@@ -68,7 +68,8 @@ export interface PanchangDay {
   yoga: string
   paksha: string
   masa: string
-  auspiciousTimings: AuspiciousTimingRow[]
+  auspiciousTimings: TimingRow[]
+  inauspiciousTimings: TimingRow[]
   /** Short disclaimer for UI */
   sourceNote: string
 }
@@ -160,23 +161,27 @@ export function getPanchangForDate(
 
   const mantra = getDailyMantraLine(calc)
 
-  const auspiciousTimings: AuspiciousTimingRow[] = []
+  const auspiciousTimings: TimingRow[] = []
+  const inauspiciousTimings: TimingRow[] = []
 
   if (sunrise && sunset) {
     const wd = sunrise.getDay()
     const rahu = daySegmentRange(sunrise, sunset, RAHU_SEGMENT[wd])
     const yama = daySegmentRange(sunrise, sunset, YAMA_SEGMENT[wd])
-    auspiciousTimings.push({
+    
+    // Inauspicious timings
+    inauspiciousTimings.push({
       name: 'Rahu Kaal',
       time: formatRange(rahu.start, rahu.end),
-      emoji: '🐍',
+      emoji: '⚠️',
     })
-    auspiciousTimings.push({
+    inauspiciousTimings.push({
       name: 'Yamaganda',
       time: formatRange(yama.start, yama.end),
-      emoji: '🐃',
+      emoji: '🚫',
     })
 
+    // Auspicious timings
     const brahmaStart = new Date(sunrise.getTime() - 96 * 60 * 1000)
     const brahmaEnd = new Date(sunrise.getTime() - 48 * 60 * 1000)
     auspiciousTimings.push({
@@ -192,7 +197,7 @@ export function getPanchangForDate(
     auspiciousTimings.push({
       name: 'Abhijit Muhurta',
       time: formatRange(abStart, abEnd),
-      emoji: '🌻',
+      emoji: '✨',
     })
   }
 
@@ -212,6 +217,7 @@ export function getPanchangForDate(
     paksha: pakshaName,
     masa: masaName,
     auspiciousTimings,
+    inauspiciousTimings,
     sourceNote:
       'Panchang is computed for your location using astronomical algorithms. Regional almanacs may differ slightly.',
   }
