@@ -11,6 +11,13 @@ export interface Temple {
   longitude: number
   rating: number
   image?: string
+  // Phase 1 - Essential Information
+  openingHours?: string
+  phoneNumber?: string
+  festivals?: string[]
+  specialSignificance?: string
+  parking?: boolean
+  photographyAllowed?: boolean
 }
 
 export interface DeityCategory {
