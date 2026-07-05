@@ -62,7 +62,7 @@ export const temples: Temple[] = [
     latitude: 13.0334,
     longitude: 80.2700,
     rating: 4.8,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/9/9f/MylaporeKapaleeshwararTemple.jpg'
+    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=800&h=600&fit=crop'
   },
   {
     id: '2',
@@ -75,7 +75,7 @@ export const temples: Temple[] = [
     latitude: 13.0567,
     longitude: 80.2778,
     rating: 4.7,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Parthasarathy-Temple-Triplicane-Chennai-1.JPG'
+    image: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=800&h=600&fit=crop'
   },
   {
     id: '3',
@@ -88,7 +88,7 @@ export const temples: Temple[] = [
     latitude: 12.9697,
     longitude: 80.2603,
     rating: 4.6,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/c/c5/Arulmigu_Marundeeswarar_Temple_tower%2C_Tiruvanmiyur.jpg'
+    image: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&h=600&fit=crop'
   },
   {
     id: '4',
@@ -101,7 +101,7 @@ export const temples: Temple[] = [
     latitude: 13.0500,
     longitude: 80.2167,
     rating: 4.9,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Vadapalani_Murugan_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=800&h=600&fit=crop'
   },
   {
     id: '5',
@@ -114,7 +114,7 @@ export const temples: Temple[] = [
     latitude: 12.9994,
     longitude: 80.2750,
     rating: 4.7,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/4/4e/Ashtalakshmi_Temple_Kothapet.jpg'
+    image: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800&h=600&fit=crop'
   },
   {
     id: '6',
@@ -127,7 +127,7 @@ export const temples: Temple[] = [
     latitude: 13.0567,
     longitude: 80.2778,
     rating: 4.8,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/Parthasarathy-Temple-Triplicane-Chennai-1.JPG'
+    image: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=800&h=600&fit=crop'
   },
   {
     id: '11',
@@ -140,7 +140,7 @@ export const temples: Temple[] = [
     latitude: 13.0946,
     longitude: 80.2891,
     rating: 4.7,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Kalikambal_Temple_Chennai.jpg/800px-Kalikambal_Temple_Chennai.jpg'
+    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=400&h=300&fit=crop'
   },
   {
     id: '12',
@@ -153,7 +153,7 @@ export const temples: Temple[] = [
     latitude: 12.9061,
     longitude: 80.2417,
     rating: 4.8,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/ISKCON_Temple_Chennai.jpg/800px-ISKCON_Temple_Chennai.jpg'
+    image: 'https://images.unsplash.com/photo-1609920658906-8223bd289001?w=800&h=600&fit=crop'
   },
   {
     id: '13',
@@ -166,7 +166,7 @@ export const temples: Temple[] = [
     latitude: 13.0358,
     longitude: 80.2686,
     rating: 4.6,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Mundakakanni_Amman_Temple.jpg/800px-Mundakakanni_Amman_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop'
   },
   {
     id: '14',
@@ -179,7 +179,7 @@ export const temples: Temple[] = [
     latitude: 13.1573,
     longitude: 80.3014,
     rating: 4.7,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Thiruvottiyur_Temple_Tower.jpg/800px-Thiruvottiyur_Temple_Tower.jpg'
+    image: 'https://images.unsplash.com/photo-1560759846-fdd77ebe9d28?w=800&h=600&fit=crop'
   },
   {
     id: '15',
@@ -192,7 +192,7 @@ export const temples: Temple[] = [
     latitude: 13.0356,
     longitude: 80.2678,
     rating: 4.5,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Velleeswarar_Temple_Mylapore.jpg/800px-Velleeswarar_Temple_Mylapore.jpg'
+    image: 'https://images.unsplash.com/photo-1582632931445-d0160b17d7e7?w=800&h=600&fit=crop'
   },
   {
     id: '16',
@@ -205,7 +205,7 @@ export const temples: Temple[] = [
     latitude: 12.9789,
     longitude: 80.1933,
     rating: 4.8,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Nanganallur_Hanuman_Temple.jpg/800px-Nanganallur_Hanuman_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=800&h=600&fit=crop'
   },
   {
     id: '17',
@@ -218,7 +218,7 @@ export const temples: Temple[] = [
     latitude: 13.0333,
     longitude: 80.2778,
     rating: 4.7,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Santhome_Cathedral_Basilica.jpg/800px-Santhome_Cathedral_Basilica.jpg'
+    image: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=800&h=600&fit=crop'
   },
   {
     id: '18',
@@ -231,7 +231,7 @@ export const temples: Temple[] = [
     latitude: 13.0344,
     longitude: 80.2686,
     rating: 4.8,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Ramakrishna_Math_Chennai.jpg/800px-Ramakrishna_Math_Chennai.jpg'
+    image: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&h=600&fit=crop'
   },
   {
     id: '19',
@@ -244,7 +244,7 @@ export const temples: Temple[] = [
     latitude: 13.0528,
     longitude: 80.1739,
     rating: 4.5,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Palavanthangal_Temple.jpg/800px-Palavanthangal_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=800&h=600&fit=crop'
   },
   {
     id: '20',
@@ -257,7 +257,7 @@ export const temples: Temple[] = [
     latitude: 13.0217,
     longitude: 80.2242,
     rating: 4.6,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Chennai_karaneswarar_temple.jpg/800px-Chennai_karaneswarar_temple.jpg'
+    image: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800&h=600&fit=crop'
   },
   {
     id: '21',
@@ -270,7 +270,7 @@ export const temples: Temple[] = [
     latitude: 13.0336,
     longitude: 80.2697,
     rating: 4.5,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Mallikeswarar_Temple.jpg/800px-Mallikeswarar_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=800&h=600&fit=crop'
   },
   {
     id: '22',
@@ -283,7 +283,7 @@ export const temples: Temple[] = [
     latitude: 13.0467,
     longitude: 80.0928,
     rating: 4.6,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Kachchaleswarar_Temple.jpg/800px-Kachchaleswarar_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1609920658906-8223bd289001?w=800&h=600&fit=crop'
   },
   {
     id: '23',
@@ -296,7 +296,7 @@ export const temples: Temple[] = [
     latitude: 13.0881,
     longitude: 80.2636,
     rating: 4.7,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Kandaswamy_Temple_Kandhan_Kottam.jpg/800px-Kandaswamy_Temple_Kandhan_Kottam.jpg'
+    image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop'
   },
   {
     id: '24',
@@ -309,7 +309,7 @@ export const temples: Temple[] = [
     latitude: 13.2033,
     longitude: 80.1600,
     rating: 4.5,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Agatheeswarar_Temple.jpg/800px-Agatheeswarar_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1560759846-fdd77ebe9d28?w=800&h=600&fit=crop'
   },
   {
     id: '25',
@@ -322,7 +322,7 @@ export const temples: Temple[] = [
     latitude: 13.0314,
     longitude: 80.1081,
     rating: 4.8,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Mangadu_Kamakshi_Temple.jpg/800px-Mangadu_Kamakshi_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1582632931445-d0160b17d7e7?w=800&h=600&fit=crop'
   },
   {
     id: '26',
@@ -335,7 +335,7 @@ export const temples: Temple[] = [
     latitude: 12.9142,
     longitude: 80.1586,
     rating: 4.6,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Mariamman_Temple_Chennai.jpg/800px-Mariamman_Temple_Chennai.jpg'
+    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=800&h=600&fit=crop'
   },
   {
     id: '27',
@@ -348,7 +348,7 @@ export const temples: Temple[] = [
     latitude: 13.1264,
     longitude: 80.1456,
     rating: 4.6,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Thirumullavoyal_Temple.jpg/800px-Thirumullavoyal_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=800&h=600&fit=crop'
   },
   {
     id: '28',
@@ -361,7 +361,7 @@ export const temples: Temple[] = [
     latitude: 13.1569,
     longitude: 80.3011,
     rating: 4.7,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Thiruvottiyur_Ekambaranathar.jpg/800px-Thiruvottiyur_Ekambaranathar.jpg'
+    image: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&h=600&fit=crop'
   },
   {
     id: '29',
@@ -374,7 +374,7 @@ export const temples: Temple[] = [
     latitude: 13.1575,
     longitude: 80.3017,
     rating: 4.7,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Vadivudaiamman_Temple.jpg/800px-Vadivudaiamman_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=800&h=600&fit=crop'
   },
   {
     id: '30',
@@ -387,7 +387,7 @@ export const temples: Temple[] = [
     latitude: 13.0567,
     longitude: 80.2778,
     rating: 4.8,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Parthasarathy_Temple_Gopuram.jpg/800px-Parthasarathy_Temple_Gopuram.jpg'
+    image: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800&h=600&fit=crop'
   },
   {
     id: '31',
@@ -400,7 +400,7 @@ export const temples: Temple[] = [
     latitude: 13.0350,
     longitude: 80.2683,
     rating: 4.5,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Thiruvalluvar_Temple.jpg/800px-Thiruvalluvar_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=800&h=600&fit=crop'
   },
   {
     id: '32',
@@ -413,7 +413,7 @@ export const temples: Temple[] = [
     latitude: 13.0089,
     longitude: 80.2475,
     rating: 4.6,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Kotturpuram_Temple.jpg/800px-Kotturpuram_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1609920658906-8223bd289001?w=800&h=600&fit=crop'
   },
   {
     id: '33',
@@ -426,7 +426,7 @@ export const temples: Temple[] = [
     latitude: 13.0122,
     longitude: 80.2567,
     rating: 4.6,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Adyar_Anantha_Padmanabhaswamy.jpg/800px-Adyar_Anantha_Padmanabhaswamy.jpg'
+    image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop'
   },
   {
     id: '34',
@@ -439,7 +439,7 @@ export const temples: Temple[] = [
     latitude: 13.0892,
     longitude: 80.2819,
     rating: 4.6,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Kalikambal_Kameswara_Temple.jpg/800px-Kalikambal_Kameswara_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1560759846-fdd77ebe9d28?w=800&h=600&fit=crop'
   },
   {
     id: '35',
@@ -452,7 +452,7 @@ export const temples: Temple[] = [
     latitude: 12.7492,
     longitude: 80.0072,
     rating: 4.7,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Singaperumalkoil_Temple.jpg/800px-Singaperumalkoil_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1582632931445-d0160b17d7e7?w=800&h=600&fit=crop'
   },
   {
     id: '36',
@@ -465,7 +465,7 @@ export const temples: Temple[] = [
     latitude: 13.0361,
     longitude: 80.1558,
     rating: 4.6,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Porur_Murugan_Temple.jpg/800px-Porur_Murugan_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=800&h=600&fit=crop'
   },
   {
     id: '37',
@@ -478,7 +478,7 @@ export const temples: Temple[] = [
     latitude: 13.1572,
     longitude: 80.3012,
     rating: 4.7,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Aadhipureeswarar_Temple.jpg/800px-Aadhipureeswarar_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=800&h=600&fit=crop'
   },
   {
     id: '38',
@@ -491,7 +491,7 @@ export const temples: Temple[] = [
     latitude: 13.0672,
     longitude: 80.2881,
     rating: 4.5,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Nochikuppam_Temple.jpg/800px-Nochikuppam_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&h=600&fit=crop'
   },
   {
     id: '39',
@@ -504,7 +504,7 @@ export const temples: Temple[] = [
     latitude: 13.1133,
     longitude: 80.1550,
     rating: 4.6,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Ambattur_Ekambareswarar.jpg/800px-Ambattur_Ekambareswarar.jpg'
+    image: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=800&h=600&fit=crop'
   },
   {
     id: '40',
@@ -517,7 +517,7 @@ export const temples: Temple[] = [
     latitude: 13.0022,
     longitude: 80.2689,
     rating: 4.7,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Velankanni_Church_Chennai.jpg/800px-Velankanni_Church_Chennai.jpg'
+    image: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800&h=600&fit=crop'
   },
   {
     id: '41',
@@ -530,7 +530,7 @@ export const temples: Temple[] = [
     latitude: 12.7581,
     longitude: 80.2214,
     rating: 4.6,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Palabakkam_Murugan_Temple.jpg/800px-Palabakkam_Murugan_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=800&h=600&fit=crop'
   },
   {
     id: '42',
@@ -543,7 +543,7 @@ export const temples: Temple[] = [
     latitude: 13.0569,
     longitude: 80.2453,
     rating: 4.5,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Nageswara_Rao_Park_Hanuman.jpg/800px-Nageswara_Rao_Park_Hanuman.jpg'
+    image: 'https://images.unsplash.com/photo-1609920658906-8223bd289001?w=800&h=600&fit=crop'
   },
   {
     id: '43',
@@ -556,7 +556,7 @@ export const temples: Temple[] = [
     latitude: 13.1444,
     longitude: 79.9122,
     rating: 4.7,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Veeraraghava_Swamy_Temple.jpg/800px-Veeraraghava_Swamy_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop'
   },
   {
     id: '44',
@@ -569,7 +569,7 @@ export const temples: Temple[] = [
     latitude: 13.1333,
     longitude: 80.3058,
     rating: 4.5,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Arasaleeswarar_Temple.jpg/800px-Arasaleeswarar_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1560759846-fdd77ebe9d28?w=800&h=600&fit=crop'
   },
   {
     id: '45',
@@ -582,7 +582,7 @@ export const temples: Temple[] = [
     latitude: 13.0356,
     longitude: 80.2683,
     rating: 4.6,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Mundakanni_Amman_Mylapore.jpg/800px-Mundakanni_Amman_Mylapore.jpg'
+    image: 'https://images.unsplash.com/photo-1582632931445-d0160b17d7e7?w=800&h=600&fit=crop'
   },
   {
     id: '46',
@@ -595,7 +595,7 @@ export const temples: Temple[] = [
     latitude: 13.1433,
     longitude: 80.0169,
     rating: 4.7,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Thirumazhisai_Temple.jpg/800px-Thirumazhisai_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=800&h=600&fit=crop'
   },
   {
     id: '47',
@@ -608,7 +608,7 @@ export const temples: Temple[] = [
     latitude: 13.0567,
     longitude: 80.2778,
     rating: 4.8,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Parthasarathy_Swamy_Temple.jpg/800px-Parthasarathy_Swamy_Temple.jpg'
+    image: 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=800&h=600&fit=crop'
   },
   {
     id: '48',
@@ -621,7 +621,7 @@ export const temples: Temple[] = [
     latitude: 13.1239,
     longitude: 80.1847,
     rating: 4.8,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Karumariamman_Thiruverkadu.jpg/800px-Karumariamman_Thiruverkadu.jpg'
+    image: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=800&h=600&fit=crop'
   },
   {
     id: '49',
@@ -634,7 +634,7 @@ export const temples: Temple[] = [
     latitude: 13.1119,
     longitude: 80.2383,
     rating: 4.6,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Perambur_Kandaswamy.jpg/800px-Perambur_Kandaswamy.jpg'
+    image: 'https://images.unsplash.com/photo-1548013146-72479768bada?w=800&h=600&fit=crop'
   },
   {
     id: '50',
@@ -647,7 +647,7 @@ export const temples: Temple[] = [
     latitude: 13.1444,
     longitude: 79.9122,
     rating: 4.7,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Thiruvallur_Veeraraghava.jpg/800px-Thiruvallur_Veeraraghava.jpg'
+    image: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800&h=600&fit=crop'
   },
   {
     id: '7',
@@ -660,7 +660,7 @@ export const temples: Temple[] = [
     latitude: 9.9197,
     longitude: 78.1194,
     rating: 4.9,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/d/d9/Meenakshi_Amman_Temple%2C_Madurai.JPG'
+    image: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=800&h=600&fit=crop'
   },
   {
     id: '8',
@@ -673,7 +673,7 @@ export const temples: Temple[] = [
     latitude: 10.7828,
     longitude: 79.1318,
     rating: 5.0,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/a/a4/Brihadisvara_Temple%2C_Thanjavur%2C_Tamil_Nadu%2C_India.jpg'
+    image: 'https://images.unsplash.com/photo-1609920658906-8223bd289001?w=800&h=600&fit=crop'
   },
   {
     id: '9',
@@ -686,7 +686,7 @@ export const temples: Temple[] = [
     latitude: 9.2881,
     longitude: 79.3175,
     rating: 4.8,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/8/84/Ramanathaswamy_temple7.JPG'
+    image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=800&h=600&fit=crop'
   },
   {
     id: '10',
@@ -699,7 +699,7 @@ export const temples: Temple[] = [
     latitude: 10.4500,
     longitude: 77.5167,
     rating: 4.9,
-    image: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/India_Tamil_Nadu_Palani_Murugan_Hill_Temple_evening.JPG'
+    image: 'https://images.unsplash.com/photo-1560759846-fdd77ebe9d28?w=800&h=600&fit=crop'
   }
 ]
 
