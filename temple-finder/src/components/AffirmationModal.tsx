@@ -57,7 +57,6 @@ const deityAffirmations: Record<string, string[]> = {
 
 const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationModalProps) => {
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
-  const [isRevealing, setIsRevealing] = useState(false);
 
   if (!isOpen) return null;
 
@@ -73,16 +72,11 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
 
   const handleCardClick = (cardIndex: number) => {
     if (selectedCard !== null) return; // Already selected
-    
-    setIsRevealing(true);
-    setTimeout(() => {
-      setSelectedCard(cardIndex);
-    }, 300);
+    setSelectedCard(cardIndex);
   };
 
   const handleReset = () => {
     setSelectedCard(null);
-    setIsRevealing(false);
   };
 
   return (
