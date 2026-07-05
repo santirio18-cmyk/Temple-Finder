@@ -199,39 +199,63 @@ const Panchang = () => {
         <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--temple-gold)/0.25)] to-transparent" />
       </div>
 
-      {/* AUSPICIOUS TIMINGS - Good Times */}
+      {/* AUSPICIOUS TIMINGS - Premium Gold Theme */}
       <div className="px-3 mb-4">
         <div
-          className="rounded-xl border-2 shadow-card-warm p-5 relative overflow-hidden"
+          className="rounded-2xl shadow-2xl p-6 relative overflow-hidden"
           style={{
-            backgroundColor: 'hsl(142, 70%, 97%)',
-            borderColor: 'hsl(142, 50%, 70%)',
+            background: 'linear-gradient(135deg, #FFF9F0 0%, #FFFBF5 50%, #FFF9F0 100%)',
+            border: '2px solid #D4AF37',
+            boxShadow: '0 8px 32px rgba(212, 175, 55, 0.25), 0 4px 16px rgba(0, 0, 0, 0.1)',
           }}
         >
           <div
-            className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full"
+            className="absolute left-0 top-0 bottom-0 w-1 rounded-full"
             style={{
-              background: 'linear-gradient(to bottom, hsl(142, 70%, 50%), hsl(142, 70%, 60%))',
+              background: 'linear-gradient(to bottom, #FFD700, #DAA520, #B8860B)',
             }}
           />
 
-          <div className="pl-3">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-xl">✅</span>
-              <h3 className="text-lg font-display font-bold" style={{ color: 'hsl(142, 70%, 35%)' }}>
+          <div className="pl-2">
+            <div className="flex items-center gap-3 mb-3">
+              <div 
+                className="w-9 h-9 rounded-full flex items-center justify-center"
+                style={{
+                  background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
+                  boxShadow: '0 4px 12px rgba(255, 215, 0, 0.4)',
+                }}
+              >
+                <span className="text-xl">✨</span>
+              </div>
+              <h3 
+                className="text-xl font-display font-bold"
+                style={{ 
+                  background: 'linear-gradient(135deg, #B8860B 0%, #DAA520 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
                 Auspicious Timings
               </h3>
             </div>
-            <p className="text-xs font-body mb-4" style={{ color: 'hsl(142, 50%, 40%)' }}>
+            <p className="text-xs font-body font-semibold mb-4 text-amber-700/80">
               🙏 Best times for new beginnings, worship, and important activities
             </p>
             <div className="space-y-3">
               {auspiciousTimings.map((item) => (
-                <div key={item.name} className="flex items-center justify-between">
-                  <p className="text-sm font-body font-semibold" style={{ color: 'hsl(142, 70%, 30%)' }}>
+                <div 
+                  key={item.name} 
+                  className="flex items-center justify-between p-3 rounded-xl"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(255, 215, 0, 0.04) 100%)',
+                    border: '1px solid rgba(212, 175, 55, 0.2)',
+                  }}
+                >
+                  <p className="text-sm font-body font-bold text-amber-900">
                     {item.emoji} {item.name}
                   </p>
-                  <p className="text-xs font-body" style={{ color: 'hsl(142, 50%, 45%)' }}>
+                  <p className="text-xs font-body font-semibold text-amber-700">
                     {item.time}
                   </p>
                 </div>
@@ -241,39 +265,63 @@ const Panchang = () => {
         </div>
       </div>
 
-      {/* INAUSPICIOUS TIMINGS - Times to Avoid */}
+      {/* INAUSPICIOUS TIMINGS - Premium Red Theme */}
       <div className="px-3 mb-4">
         <div
-          className="rounded-xl border-2 shadow-card-warm p-5 relative overflow-hidden"
+          className="rounded-2xl shadow-2xl p-6 relative overflow-hidden"
           style={{
-            backgroundColor: 'hsl(0, 70%, 97%)',
-            borderColor: 'hsl(0, 50%, 70%)',
+            background: 'linear-gradient(135deg, #FFF5F5 0%, #FFFAFA 50%, #FFF5F5 100%)',
+            border: '2px solid #DC143C',
+            boxShadow: '0 8px 32px rgba(220, 20, 60, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1)',
           }}
         >
           <div
-            className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full"
+            className="absolute left-0 top-0 bottom-0 w-1 rounded-full"
             style={{
-              background: 'linear-gradient(to bottom, hsl(0, 70%, 50%), hsl(0, 70%, 60%))',
+              background: 'linear-gradient(to bottom, #DC143C, #C41E3A, #8B0000)',
             }}
           />
 
-          <div className="pl-3">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-xl">⚠️</span>
-              <h3 className="text-lg font-display font-bold" style={{ color: 'hsl(0, 70%, 35%)' }}>
+          <div className="pl-2">
+            <div className="flex items-center gap-3 mb-3">
+              <div 
+                className="w-9 h-9 rounded-full flex items-center justify-center"
+                style={{
+                  background: 'linear-gradient(135deg, #FF6B6B 0%, #DC143C 100%)',
+                  boxShadow: '0 4px 12px rgba(220, 20, 60, 0.4)',
+                }}
+              >
+                <span className="text-xl">⚠️</span>
+              </div>
+              <h3 
+                className="text-xl font-display font-bold"
+                style={{ 
+                  background: 'linear-gradient(135deg, #8B0000 0%, #DC143C 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
                 Inauspicious Timings
               </h3>
             </div>
-            <p className="text-xs font-body mb-4" style={{ color: 'hsl(0, 50%, 40%)' }}>
-              ⏰ Avoid starting new ventures or important tasks during these periods
+            <p className="text-xs font-body font-semibold mb-4 text-red-700/80">
+              🚫 Avoid starting new ventures or important tasks during these periods
             </p>
             <div className="space-y-3">
               {inauspiciousTimings.map((item) => (
-                <div key={item.name} className="flex items-center justify-between">
-                  <p className="text-sm font-body font-semibold" style={{ color: 'hsl(0, 70%, 30%)' }}>
+                <div 
+                  key={item.name} 
+                  className="flex items-center justify-between p-3 rounded-xl"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(220, 20, 60, 0.08) 0%, rgba(220, 20, 60, 0.04) 100%)',
+                    border: '1px solid rgba(220, 20, 60, 0.2)',
+                  }}
+                >
+                  <p className="text-sm font-body font-bold text-red-900">
                     {item.emoji} {item.name}
                   </p>
-                  <p className="text-xs font-body" style={{ color: 'hsl(0, 50%, 45%)' }}>
+                  <p className="text-xs font-body font-semibold text-red-700">
                     {item.time}
                   </p>
                 </div>
