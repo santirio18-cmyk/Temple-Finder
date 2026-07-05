@@ -10,6 +10,14 @@ import {
 const Panchang = () => {
   const today = new Date();
   const [selectedDate, setSelectedDate] = useState<Date>(today);
+  const [weekStartDate, setWeekStartDate] = useState<Date>(() => {
+    // Initialize with Monday of current week
+    const current = new Date(today);
+    const dayOfWeek = current.getDay();
+    const monday = new Date(current);
+    monday.setDate(current.getDate() - ((dayOfWeek + 6) % 7));
+    return monday;
+  });
   const [lat, setLat] = useState(DEFAULT_LAT);
   const [lng, setLng] = useState(DEFAULT_LNG);
   const [locLabel, setLocLabel] = useState<string>("Chennai area (default)");
@@ -29,19 +37,27 @@ const Panchang = () => {
     );
   }, []);
 
-  const getWeekDates = () => {
-    const current = new Date(today);
-    const dayOfWeek = current.getDay();
-    const monday = new Date(current);
-    monday.setDate(current.getDate() - ((dayOfWeek + 6) % 7));
+  const getWeekDates = (startDate: Date) => {
     return Array.from({ length: 7 }, (_, i) => {
-      const d = new Date(monday);
-      d.setDate(monday.getDate() + i);
+      const d = new Date(startDate);
+      d.setDate(startDate.getDate() + i);
       return d;
     });
   };
 
-  const weekDates = getWeekDates();
+  const weekDates = getWeekDates(weekStartDate);
+
+  const goToPreviousWeek = () => {
+    const newStart = new Date(weekStartDate);
+    newStart.setDate(weekStartDate.getDate() - 7);
+    setWeekStartDate(newStart);
+  };
+
+  const goToNextWeek = () => {
+    const newStart = new Date(weekStartDate);
+    newStart.setDate(weekStartDate.getDate() + 7);
+    setWeekStartDate(newStart);
+  };
 
   const data = useMemo(
     () => getPanchangForDate(selectedDate, lat, lng),
@@ -149,12 +165,22 @@ const Panchang = () => {
 
           <div className="pl-3">
             <div className="flex items-center justify-center gap-4 mb-4">
-              <button type="button" aria-label="Previous week" className="text-muted-foreground hover:text-foreground transition-colors">
-                <ChevronLeft className="w-5 h-5" />
+              <button 
+                type="button" 
+                onClick={goToPreviousWeek}
+                aria-label="Previous week" 
+                className="text-muted-foreground hover:text-saffron transition-colors active:scale-95 p-2 rounded-full hover:bg-[hsl(var(--temple-gold)/0.1)]"
+              >
+                <ChevronLeft className="w-6 h-6" strokeWidth={2.5} />
               </button>
-              <span className="text-base font-display font-semibold text-foreground">{data.tamilMonthLabel}</span>
-              <button type="button" aria-label="Next week" className="text-muted-foreground hover:text-foreground transition-colors">
-                <ChevronRight className="w-5 h-5" />
+              <span className="text-base font-display font-semibold text-foreground min-w-[140px] text-center">{data.tamilMonthLabel}</span>
+              <button 
+                type="button"
+                onClick={goToNextWeek}
+                aria-label="Next week" 
+                className="text-muted-foreground hover:text-saffron transition-colors active:scale-95 p-2 rounded-full hover:bg-[hsl(var(--temple-gold)/0.1)]"
+              >
+                <ChevronRight className="w-6 h-6" strokeWidth={2.5} />
               </button>
             </div>
 
