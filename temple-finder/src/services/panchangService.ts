@@ -50,6 +50,20 @@ const RAHU_SEGMENT: number[] = [8, 2, 7, 5, 6, 4, 3] // Sun–Sat
 /** Yamaganda segment (1–8). */
 const YAMA_SEGMENT: number[] = [5, 1, 6, 4, 3, 2, 7]
 
+/** Gulikai segment (1–8). */
+const GULIKAI_SEGMENT: number[] = [7, 6, 5, 4, 3, 2, 1]
+
+/** Nalla Neram segments (1–8) - multiple auspicious periods per day */
+const NALLA_NERAM_SEGMENTS: Record<number, number[]> = {
+  0: [3, 6], // Sunday
+  1: [1, 4, 7], // Monday
+  2: [2, 5, 8], // Tuesday
+  3: [3, 6], // Wednesday
+  4: [1, 4, 7], // Thursday
+  5: [2, 5], // Friday
+  6: [3, 6], // Saturday
+}
+
 export interface TimingRow {
   name: string
   time: string
@@ -70,6 +84,7 @@ export interface PanchangDay {
   masa: string
   auspiciousTimings: TimingRow[]
   inauspiciousTimings: TimingRow[]
+  auspiciousDays: string[]  // Special days like Shashti, Ekadashi
   /** Short disclaimer for UI */
   sourceNote: string
 }
@@ -168,6 +183,7 @@ export function getPanchangForDate(
     const wd = sunrise.getDay()
     const rahu = daySegmentRange(sunrise, sunset, RAHU_SEGMENT[wd])
     const yama = daySegmentRange(sunrise, sunset, YAMA_SEGMENT[wd])
+    const gulikai = daySegmentRange(sunrise, sunset, GULIKAI_SEGMENT[wd])
     
     // Inauspicious timings
     inauspiciousTimings.push({
@@ -180,6 +196,11 @@ export function getPanchangForDate(
       time: formatRange(yama.start, yama.end),
       emoji: '🚫',
     })
+    inauspiciousTimings.push({
+      name: 'Gulikai',
+      time: formatRange(gulikai.start, gulikai.end),
+      emoji: '⛔',
+    })
 
     // Auspicious timings
     const brahmaStart = new Date(sunrise.getTime() - 96 * 60 * 1000)
@@ -188,6 +209,17 @@ export function getPanchangForDate(
       name: 'Brahma Muhurta',
       time: formatRange(brahmaStart, brahmaEnd),
       emoji: '🪔',
+    })
+    
+    // Nalla Neram (multiple good times)
+    const nallaSegments = NALLA_NERAM_SEGMENTS[wd] || []
+    nallaSegments.forEach((seg, idx) => {
+      const period = daySegmentRange(sunrise, sunset, seg)
+      auspiciousTimings.push({
+        name: `Nalla Neram ${idx + 1}`,
+        time: formatRange(period.start, period.end),
+        emoji: '🌟',
+      })
     })
   }
 
@@ -199,10 +231,32 @@ export function getPanchangForDate(
       time: formatRange(abStart, abEnd),
       emoji: '✨',
     })
+    
+    // Gowri Nalla Neram (Goddess Gowri's auspicious time - after noon on specific days)
+    const gowriStart = new Date(solarNoon.getTime() + 60 * 60 * 1000) // 1 hour after noon
+    const gowriEnd = new Date(solarNoon.getTime() + 90 * 60 * 1000) // 1.5 hours after noon
+    auspiciousTimings.push({
+      name: 'Gowri Nalla Neram',
+      time: formatRange(gowriStart, gowriEnd),
+      emoji: '💐',
+    })
   }
 
   const yogaName = (cal.Yoga?.name_en_IN as string) || '—'
   const pakshaName = (cal.Paksha?.name_en_IN as string) || '—'
+  
+  // Auspicious Days
+  const auspiciousDays: string[] = []
+  const tithiNum = parseInt(tithi.match(/\d+/)?.[0] || '0')
+  
+  if (tithiNum === 6) auspiciousDays.push('🔱 Shashti - Sacred to Lord Murugan')
+  if (tithiNum === 11) auspiciousDays.push('🙏 Ekadashi - Sacred to Lord Vishnu (Fasting day)')
+  if (tithiNum === 13 && pakshaName.includes('Shukla')) auspiciousDays.push('🌙 Pradosham - Auspicious for Lord Shiva')
+  if (tithiNum === 13 && pakshaName.includes('Krishna')) auspiciousDays.push('🌙 Pradosham - Auspicious for Lord Shiva')
+  if (tithi.includes('Purnima') || tithiNum === 15) auspiciousDays.push('🌕 Pournami (Full Moon) - Very auspicious')
+  if (tithi.includes('Amavasya') || tithiNum === 30) auspiciousDays.push('🌑 Amavasya (New Moon) - Ancestral day')
+  if (tithiNum === 4) auspiciousDays.push('🐘 Chaturthi - Sacred to Lord Ganesha')
+  if (tithiNum === 8) auspiciousDays.push('✨ Ashtami - Sacred to Goddess Durga')
 
   return {
     tithi,
@@ -218,6 +272,7 @@ export function getPanchangForDate(
     masa: masaName,
     auspiciousTimings,
     inauspiciousTimings,
+    auspiciousDays,
     sourceNote:
       'Panchang is computed for your location using astronomical algorithms. Regional almanacs may differ slightly.',
   }

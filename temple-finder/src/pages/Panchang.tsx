@@ -50,6 +50,7 @@ const Panchang = () => {
 
   const auspiciousTimings = data.auspiciousTimings;
   const inauspiciousTimings = data.inauspiciousTimings;
+  const auspiciousDays = data.auspiciousDays;
 
   return (
     <div className="min-h-screen bg-background max-w-lg mx-auto relative pb-24">
@@ -224,26 +225,15 @@ const Panchang = () => {
             <p className="text-xs font-body mb-4" style={{ color: 'hsl(142, 50%, 40%)' }}>
               🙏 Best times for new beginnings, worship, and important activities
             </p>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-3">
               {auspiciousTimings.map((item) => (
-                <div key={item.name} className="flex items-start gap-3">
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{
-                      backgroundColor: 'hsl(142, 60%, 90%)',
-                      border: '2px solid hsl(142, 60%, 70%)',
-                    }}
-                  >
-                    <span className="text-lg">{item.emoji}</span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-body font-semibold leading-tight" style={{ color: 'hsl(142, 70%, 30%)' }}>
-                      {item.name}
-                    </p>
-                    <p className="text-xs font-body mt-0.5" style={{ color: 'hsl(142, 50%, 45%)' }}>
-                      {item.time}
-                    </p>
-                  </div>
+                <div key={item.name} className="flex items-center justify-between">
+                  <p className="text-sm font-body font-semibold" style={{ color: 'hsl(142, 70%, 30%)' }}>
+                    {item.emoji} {item.name}
+                  </p>
+                  <p className="text-xs font-body" style={{ color: 'hsl(142, 50%, 45%)' }}>
+                    {item.time}
+                  </p>
                 </div>
               ))}
             </div>
@@ -277,32 +267,69 @@ const Panchang = () => {
             <p className="text-xs font-body mb-4" style={{ color: 'hsl(0, 50%, 40%)' }}>
               ⏰ Avoid starting new ventures or important tasks during these periods
             </p>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-3">
               {inauspiciousTimings.map((item) => (
-                <div key={item.name} className="flex items-start gap-3">
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{
-                      backgroundColor: 'hsl(0, 60%, 90%)',
-                      border: '2px solid hsl(0, 60%, 70%)',
-                    }}
-                  >
-                    <span className="text-lg">{item.emoji}</span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-body font-semibold leading-tight" style={{ color: 'hsl(0, 70%, 30%)' }}>
-                      {item.name}
-                    </p>
-                    <p className="text-xs font-body mt-0.5" style={{ color: 'hsl(0, 50%, 45%)' }}>
-                      {item.time}
-                    </p>
-                  </div>
+                <div key={item.name} className="flex items-center justify-between">
+                  <p className="text-sm font-body font-semibold" style={{ color: 'hsl(0, 70%, 30%)' }}>
+                    {item.emoji} {item.name}
+                  </p>
+                  <p className="text-xs font-body" style={{ color: 'hsl(0, 50%, 45%)' }}>
+                    {item.time}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
         </div>
       </div>
+
+      {/* AUSPICIOUS DAYS - Special Sacred Days */}
+      {auspiciousDays.length > 0 && (
+        <div className="px-3 mb-4">
+          <div
+            className="rounded-xl border-2 shadow-card-warm p-5 relative overflow-hidden"
+            style={{
+              backgroundColor: 'hsl(280, 70%, 97%)',
+              borderColor: 'hsl(280, 50%, 70%)',
+            }}
+          >
+            <div
+              className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full"
+              style={{
+                background: 'linear-gradient(to bottom, hsl(280, 70%, 50%), hsl(280, 70%, 60%))',
+              }}
+            />
+
+            <div className="pl-3">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-xl">🌺</span>
+                <h3 className="text-lg font-display font-bold" style={{ color: 'hsl(280, 70%, 35%)' }}>
+                  Today's Special Day
+                </h3>
+              </div>
+              <p className="text-xs font-body mb-4" style={{ color: 'hsl(280, 50%, 40%)' }}>
+                🙏 Observe special prayers and rituals
+              </p>
+              <div className="space-y-2">
+                {auspiciousDays.map((day, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3 rounded-lg"
+                    style={{
+                      backgroundColor: 'hsl(280, 60%, 95%)',
+                      border: '1px solid hsl(280, 50%, 85%)',
+                    }}
+                  >
+                    <p className="text-sm font-body font-semibold" style={{ color: 'hsl(280, 70%, 30%)' }}>
+                      {day}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="text-center py-5 px-5">
         <p className="text-[10px] font-body text-muted-foreground italic">
