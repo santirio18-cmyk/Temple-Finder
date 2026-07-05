@@ -15,6 +15,7 @@ import Horoscope from './pages/Horoscope'
 import Kundli from './pages/Kundli'
 import Ritual from './pages/Ritual'
 import AdminPanel from './pages/AdminPanel'
+import TempleValidator from './pages/TempleValidator'
 import OnboardingLogin from './pages/OnboardingLogin'
 import OnboardingDeity from './pages/OnboardingDeity'
 import OnboardingDifficulty from './pages/OnboardingDifficulty'
@@ -39,6 +40,7 @@ function AppShell() {
         <Route path="/kundli" element={<Kundli />} />
         <Route path="/ritual" element={<Ritual />} />
         <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/validator" element={<TempleValidator />} />
         <Route path="/onboarding/login" element={<OnboardingLogin />} />
         <Route path="/onboarding/difficulty" element={<OnboardingDifficulty />} />
         <Route path="/onboarding/deity" element={<OnboardingDeity />} />
