@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { temples } from '../data'
 import type { Temple } from '../data'
+import AdminAuth from '../components/AdminAuth'
 
 interface TempleWithValidation extends Temple {
   verified?: boolean
@@ -218,23 +219,26 @@ export default function TempleValidator() {
 
   if (!currentTemple) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white p-6">
-        <div className="max-w-4xl mx-auto text-center py-12">
-          <h1 className="text-3xl font-bold text-orange-600 mb-4">🏛️ Temple Data Validator</h1>
-          <p className="text-gray-600">No temples to validate</p>
-          <button
-            onClick={initializeTempleList}
-            className="mt-4 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
-          >
-            Initialize Validation Data
-          </button>
+      <AdminAuth>
+        <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white p-6">
+          <div className="max-w-4xl mx-auto text-center py-12">
+            <h1 className="text-3xl font-bold text-orange-600 mb-4">🏛️ Temple Data Validator</h1>
+            <p className="text-gray-600">No temples to validate</p>
+            <button
+              onClick={initializeTempleList}
+              className="mt-4 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
+            >
+              Initialize Validation Data
+            </button>
+          </div>
         </div>
-      </div>
+      </AdminAuth>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white p-4 pb-20">
+    <AdminAuth>
+      <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white p-4 pb-20">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
@@ -534,6 +538,7 @@ export default function TempleValidator() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </AdminAuth>
   )
 }
