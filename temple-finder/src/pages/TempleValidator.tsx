@@ -150,38 +150,35 @@ export default function TempleValidator() {
 
     setLoadingPhotos(true)
     try {
-      // Extract place_id from current Google Maps photo URL or use temple name for search
-      const apiKey = import.meta.env.VITE_GOOGLE_PLACES_API_KEY
-      if (!apiKey) {
-        alert('Google Places API key not configured')
-        setLoadingPhotos(false)
-        return
-      }
+      // Call our serverless function instead of Google API directly
+      const response = await fetch('/api/fetch-temple-photos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          templeName: temple.name,
+          city: temple.city,
+        }),
+      })
 
-      // Search for the temple by name and location
-      const searchQuery = encodeURIComponent(`${temple.name} ${temple.city}`)
-      const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchQuery}&key=${apiKey}`
-      
-      // Note: This will fail in browser due to CORS. We'll show a message.
-      const response = await fetch(searchUrl)
-      
       if (!response.ok) {
-        throw new Error('Failed to fetch photos')
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to fetch photos')
       }
 
       const data = await response.json()
-      
-      if (data.results && data.results[0] && data.results[0].photos) {
-        const photos = data.results[0].photos.slice(0, 6).map((photo: any) => 
-          `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=${photo.photo_reference}&key=${apiKey}`
-        )
-        setAlternatePhotos(photos)
+
+      if (data.success && data.photos && data.photos.length > 0) {
+        const photoUrls = data.photos.map((p: any) => p.url)
+        setAlternatePhotos(photoUrls)
+        alert(`Found ${photoUrls.length} photos! Click on any image to use it.`)
       } else {
-        alert('No additional photos found')
+        alert('No photos found for this temple. Try manual image URL instead.')
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching photos:', error)
-      alert('Cannot fetch photos directly from browser due to CORS restrictions. Use the manual image URL input instead.')
+      alert(error.message || 'Failed to fetch photos. Use manual image URL instead.')
     } finally {
       setLoadingPhotos(false)
     }
