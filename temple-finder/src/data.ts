@@ -1134,15 +1134,27 @@ export const temples: Temple[] = [
   {
     id: '84',
     name: 'Kapaleeshwarar Temple',
-    deity: 'Hindu',
-    description: 'Hindu temple in Chennai. Rated by 12574 visitors.',
+    deity: 'Lord Shiva',
+    description: 'One of the most magnificent Shiva temples in Chennai, dating back to the 7th century. Built in Dravidian architecture with a stunning 40-meter gopuram, this temple is dedicated to Lord Shiva as Kapaleeshwarar and Goddess Parvati as Karpagambal. The temple complex features intricate stone carvings and hosts vibrant religious ceremonies throughout the day.',
     address: '234, Ramakrishna Mutt Rd, Vinayaka Nagar Colony, Mylapore, Chennai, Tamil Nadu 600004, India',
     city: 'Chennai',
     state: 'Tamil Nadu',
     latitude: 13.0337268,
     longitude: 80.269785,
     rating: 4.8,
-    image: 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=AaVGc3kJZUjwHkAq93I8VYXJ9q8A_siDNHtfMDlcm1A8bIkoTq2nOsZYpY9lkErT9eKRCmZZSYuPjcH58uwzD4k6y4H2KvMnfz9Ynpe_7O5Vpzg2ICvxaKZPLmqGAtJtvodRJXRpNQtekl4-DpwfPtKQlO2uXRMHzCNFklwRwTMT3s_UwZchSctT9tlkOMyj1M4kh3VkwEOd-m8JQurv1IsyZPAnWj69L9fFqQCiZFu94pGXWiFzW-pdRMVg__x6XWuaJFGEDYW0R2t_-6fsZ17NvzkglYeVgZ1zXnnPOx9beUYjDTFkzGLejqAOCg0L4PJ7UQtdH0-ki0lLS8iKiJYKWt0Js-Q1KWhgCXkUcnFaObFRsAs9-v9Tvmo1uPbENJINP15lzdWWDFUkjiGkT5lX4tDYzgT5nmiQ2VUjr3o454jngg&key=AIzaSyAUBTAF_woPUdB8TpfhHtrDcuEUZNFS_sU'
+    image: 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photo_reference=AaVGc3kJZUjwHkAq93I8VYXJ9q8A_siDNHtfMDlcm1A8bIkoTq2nOsZYpY9lkErT9eKRCmZZSYuPjcH58uwzD4k6y4H2KvMnfz9Ynpe_7O5Vpzg2ICvxaKZPLmqGAtJtvodRJXRpNQtekl4-DpwfPtKQlO2uXRMHzCNFklwRwTMT3s_UwZchSctT9tlkOMyj1M4kh3VkwEOd-m8JQurv1IsyZPAnWj69L9fFqQCiZFu94pGXWiFzW-pdRMVg__x6XWuaJFGEDYW0R2t_-6fsZ17NvzkglYeVgZ1zXnnPOx9beUYjDTFkzGLejqAOCg0L4PJ7UQtdH0-ki0lLS8iKiJYKWt0Js-Q1KWhgCXkUcnFaObFRsAs9-v9Tvmo1uPbENJINP15lzdWWDFUkjiGkT5lX4tDYzgT5nmiQ2VUjr3o454jngg&key=AIzaSyAUBTAF_woPUdB8TpfhHtrDcuEUZNFS_sU',
+    openingHours: '5:30 AM - 12:00 PM, 4:00 PM - 9:00 PM',
+    phoneNumber: '+91 044 2464 1670',
+    festivals: [
+      'Panguni Peruvizha (March-April) - Grand 10-day celebration',
+      'Arudra Darshanam (December-January) - Special prayers to Lord Shiva',
+      'Maha Shivaratri (February-March) - All-night vigil',
+      'Aadi Pooram (July-August) - Goddess Karpagambal festival',
+      'Navaratri (September-October) - Nine nights of divine celebration'
+    ],
+    specialSignificance: 'Legend says Goddess Parvati worshipped Lord Shiva here in the form of a peacock (mayil), giving Mylapore its name. This is one of the most important Shiva temples in South India and a must-visit spiritual destination.',
+    parking: true,
+    photographyAllowed: true
   },
   {
     id: '85',
