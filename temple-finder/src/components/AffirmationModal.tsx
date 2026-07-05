@@ -1,4 +1,4 @@
-import { X, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { type DeityOfDay } from '@/services/deityOfDayService';
 
@@ -56,7 +56,8 @@ const deityAffirmations: Record<string, string[]> = {
 };
 
 const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationModalProps) => {
-  const [currentCard, setCurrentCard] = useState(0);
+  const [selectedCard, setSelectedCard] = useState<number | null>(null);
+  const [isRevealing, setIsRevealing] = useState(false);
 
   if (!isOpen) return null;
 
@@ -66,12 +67,22 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
     "I am surrounded by divine grace"
   ];
 
-  const nextCard = () => {
-    setCurrentCard((prev) => (prev + 1) % affirmations.length);
+  // Show 5 cards max, or all if less than 5
+  const numberOfCards = Math.min(affirmations.length, 5);
+  const cardsToShow = Array.from({ length: numberOfCards }, (_, i) => i);
+
+  const handleCardClick = (cardIndex: number) => {
+    if (selectedCard !== null) return; // Already selected
+    
+    setIsRevealing(true);
+    setTimeout(() => {
+      setSelectedCard(cardIndex);
+    }, 300);
   };
 
-  const prevCard = () => {
-    setCurrentCard((prev) => (prev - 1 + affirmations.length) % affirmations.length);
+  const handleReset = () => {
+    setSelectedCard(null);
+    setIsRevealing(false);
   };
 
   return (
@@ -128,116 +139,200 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
           </div>
         </div>
 
-        {/* Physical Blessing Card */}
+        {/* Interactive Card Selection */}
         <div className="px-4 pb-6">
-          {/* Card Container - Like Physical Card */}
-          <div className="relative max-w-xs mx-auto">
-            {/* Main Physical Card */}
-            <div
-              className="relative overflow-hidden rounded-2xl"
-              style={{
-                aspectRatio: '2/3',
-                boxShadow: '0 20px 40px rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.2)',
-              }}
-            >
-              {/* Deity Image - Full Background */}
-              <div 
-                className="absolute inset-0"
-                style={{ 
-                  backgroundImage: `url(${deityImage})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
-              />
-              
-              {/* Dark Overlay for Text Readability */}
-              <div 
-                className="absolute inset-0"
-                style={{ 
-                  background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.4) 100%)',
-                }}
-              />
-              
-              {/* Content Overlay */}
-              <div className="relative z-10 flex flex-col justify-between h-full p-6">
-                {/* Top - Deity Name */}
-                <div className="text-center">
-                  <p 
-                    className="font-display text-lg font-bold text-white tracking-wide" 
-                    style={{ 
-                      textShadow: '0 2px 8px rgba(0,0,0,0.5)',
-                      fontStyle: 'italic',
-                    }}
-                  >
-                    {deity.name}
-                  </p>
-                </div>
-                
-                {/* Center - Affirmation Quote */}
-                <div className="flex-1 flex items-center justify-center px-2">
-                  <p 
-                    className="font-display text-base font-semibold text-white leading-relaxed text-center" 
-                    style={{ 
-                      textShadow: '0 3px 10px rgba(0,0,0,0.6)',
-                      letterSpacing: '0.02em',
-                    }}
-                  >
-                    {affirmations[currentCard]}
-                  </p>
-                </div>
-                
-                {/* Bottom - Attribution/Dots */}
-                <div className="flex justify-center items-center gap-2">
-                  {affirmations.map((_, index) => (
-                    <div 
-                      key={index}
-                      className="rounded-full transition-all"
+          {selectedCard === null ? (
+            /* Step 1: Show multiple face-down cards to pick */
+            <div className="space-y-6">
+              <div className="text-center px-4">
+                <p className="text-lg font-display font-semibold text-foreground mb-2">
+                  🙏 Pick Your Blessing Card
+                </p>
+                <p className="text-sm font-body text-muted-foreground">
+                  Trust your intuition and choose a card
+                </p>
+              </div>
+
+              {/* Card Spread - Fan Layout */}
+              <div className="relative h-72 flex items-center justify-center">
+                {cardsToShow.map((cardIndex, arrayIndex) => {
+                  const totalCards = cardsToShow.length;
+                  const middleIndex = (totalCards - 1) / 2;
+                  const offset = arrayIndex - middleIndex;
+                  
+                  // Calculate rotation and position
+                  const rotation = offset * 8; // degrees
+                  const translateX = offset * 35; // px
+                  const translateY = Math.abs(offset) * 15; // px (higher for cards on sides)
+                  
+                  return (
+                    <button
+                      key={cardIndex}
+                      type="button"
+                      onClick={() => handleCardClick(cardIndex)}
+                      className="absolute w-32 transition-all duration-300 hover:scale-110 hover:-translate-y-4 cursor-pointer group"
                       style={{
-                        width: index === currentCard ? '20px' : '6px',
-                        height: '6px',
-                        backgroundColor: 'white',
-                        opacity: index === currentCard ? 1 : 0.5,
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                        transform: `translateX(${translateX}px) translateY(${translateY}px) rotate(${rotation}deg)`,
+                        zIndex: arrayIndex === Math.floor(middleIndex) ? 10 : 5,
                       }}
-                    />
-                  ))}
-                </div>
+                    >
+                      {/* Card Back - Face Down */}
+                      <div
+                        className="relative overflow-hidden rounded-xl shadow-2xl"
+                        style={{
+                          aspectRatio: '2/3',
+                          background: `linear-gradient(135deg, ${deity.color} 0%, ${deity.color}dd 100%)`,
+                          boxShadow: '0 20px 40px rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.2)',
+                        }}
+                      >
+                        {/* Decorative Pattern */}
+                        <div className="absolute inset-0 opacity-20">
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <Sparkles className="w-16 h-16 text-white" />
+                          </div>
+                          <div className="absolute top-4 left-4">
+                            <Sparkles className="w-6 h-6 text-white" />
+                          </div>
+                          <div className="absolute bottom-4 right-4">
+                            <Sparkles className="w-6 h-6 text-white" />
+                          </div>
+                        </div>
+                        
+                        {/* Card Number (hidden initially) */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-12 h-12 rounded-full border-2 border-white/50 flex items-center justify-center">
+                            <span className="text-2xl font-display font-bold text-white opacity-50">
+                              ?
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Glow effect on hover */}
+                        <div 
+                          className="absolute inset-0 opacity-0 group-hover:opacity-30 transition-opacity duration-300"
+                          style={{
+                            background: 'radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%)',
+                          }}
+                        />
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="text-center">
+                <p className="text-xs font-body text-muted-foreground italic">
+                  ✨ Each card holds a divine message for you
+                </p>
               </div>
             </div>
-
-            {/* Navigation Arrows - Outside Card */}
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                prevCard();
+          ) : (
+            /* Step 2: Show revealed card with affirmation */
+            <div 
+              className="space-y-6 animate-fade-in-up"
+              style={{
+                animation: 'fadeInUp 0.6s ease-out',
               }}
-              className="absolute -left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white shadow-2xl flex items-center justify-center hover:scale-110 transition-all active:scale-95 z-10"
-              style={{ border: `3px solid ${deity.color}` }}
-              aria-label="Previous card"
             >
-              <ChevronLeft className="w-6 h-6" style={{ color: deity.color }} strokeWidth={3} />
-            </button>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                nextCard();
-              }}
-              className="absolute -right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white shadow-2xl flex items-center justify-center hover:scale-110 transition-all active:scale-95 z-10"
-              style={{ border: `3px solid ${deity.color}` }}
-              aria-label="Next card"
-            >
-              <ChevronRight className="w-6 h-6" style={{ color: deity.color }} strokeWidth={3} />
-            </button>
-          </div>
+              {/* Revealed Card */}
+              <div className="relative max-w-xs mx-auto">
+                <div
+                  className="relative overflow-hidden rounded-2xl transform"
+                  style={{
+                    aspectRatio: '2/3',
+                    boxShadow: '0 30px 60px rgba(0,0,0,0.4), 0 12px 24px rgba(0,0,0,0.3)',
+                    animation: 'cardFlip 0.8s ease-out',
+                  }}
+                >
+                  {/* Deity Image - Full Background */}
+                  <div 
+                    className="absolute inset-0"
+                    style={{ 
+                      backgroundImage: `url(${deityImage})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                    }}
+                  />
+                  
+                  {/* Dark Overlay for Text Readability */}
+                  <div 
+                    className="absolute inset-0"
+                    style={{ 
+                      background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.4) 100%)',
+                    }}
+                  />
+                  
+                  {/* Content Overlay */}
+                  <div className="relative z-10 flex flex-col justify-between h-full p-6">
+                    {/* Top - Deity Name */}
+                    <div className="text-center">
+                      <p 
+                        className="font-display text-lg font-bold text-white tracking-wide animate-fade-in" 
+                        style={{ 
+                          textShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                          fontStyle: 'italic',
+                          animationDelay: '0.3s',
+                          animationFillMode: 'both',
+                        }}
+                      >
+                        {deity.name}
+                      </p>
+                    </div>
+                    
+                    {/* Center - Affirmation Quote */}
+                    <div className="flex-1 flex items-center justify-center px-2">
+                      <p 
+                        className="font-display text-base font-semibold text-white leading-relaxed text-center animate-fade-in" 
+                        style={{ 
+                          textShadow: '0 3px 10px rgba(0,0,0,0.6)',
+                          letterSpacing: '0.02em',
+                          animationDelay: '0.5s',
+                          animationFillMode: 'both',
+                        }}
+                      >
+                        {affirmations[selectedCard]}
+                      </p>
+                    </div>
+                    
+                    {/* Bottom - Sparkle decoration */}
+                    <div className="flex justify-center">
+                      <Sparkles className="w-8 h-8 text-white opacity-80 animate-pulse" />
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-          {/* Card Counter */}
-          <div className="text-center mt-6">
-            <p className="text-sm font-body font-semibold" style={{ color: deity.color }}>
-              Card {currentCard + 1} of {affirmations.length}
-            </p>
-          </div>
+              {/* Success Message */}
+              <div 
+                className="text-center px-4 animate-fade-in"
+                style={{
+                  animationDelay: '0.7s',
+                  animationFillMode: 'both',
+                }}
+              >
+                <p className="text-sm font-body font-semibold mb-1" style={{ color: deity.color }}>
+                  🎊 Your Blessing Has Been Revealed!
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Carry this message in your heart today
+                </p>
+              </div>
+
+              {/* Pick Another Button */}
+              <button
+                type="button"
+                onClick={handleReset}
+                className="w-full py-2.5 rounded-full font-body text-sm font-medium border-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                style={{
+                  borderColor: deity.color,
+                  color: deity.color,
+                  background: `${deity.color}10`,
+                }}
+              >
+                Pick Another Card
+              </button>
+            </div>
+          )}
 
           {/* Mantra Box */}
           <div 
