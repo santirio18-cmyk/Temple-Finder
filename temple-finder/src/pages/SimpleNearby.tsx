@@ -77,11 +77,6 @@ const SimpleNearby: React.FC = () => {
   }, [location, radius])
 
   const useLive = livePlaces.length > 0
-  const dataSource = useLive
-    ? 'Live: Google Maps — Hindu temples near you'
-    : 'Sample list (curated) — enable Maps + Places API for live results'
-
-
   const listReady = !loading && location && (useLive || staticNearby.length > 0)
 
   return (
@@ -103,9 +98,6 @@ const SimpleNearby: React.FC = () => {
             </div>
           ) : location ? (
             <div>
-              <p className="text-darshanam-brown-light text-sm mb-4">
-                Location: {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
-              </p>
               <button
                 type="button"
                 onClick={getCurrentLocation}
@@ -117,7 +109,6 @@ const SimpleNearby: React.FC = () => {
           ) : null}
         </div>
 
-        <p className="text-xs text-darshanam-brown-light mb-3 px-1">{dataSource}</p>
         {radius > 50 && (
           <p className="text-xs text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 mb-4">
             Live search uses up to 50 km (Google Places limit). Sample list below uses your full radius.
