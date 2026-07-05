@@ -1,11 +1,27 @@
 import { useState, useMemo, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Sunrise, Sunset } from "lucide-react";
-import vishnuTilak from "@/assets/panchang/vishnu-tilak.png";
 import {
   getPanchangForDate,
   DEFAULT_LAT,
   DEFAULT_LNG,
 } from "@/services/panchangService";
+
+// Day-specific deity info
+const getDayDeity = (date: Date) => {
+  const dayOfWeek = date.getDay(); // 0=Sunday, 6=Saturday
+  
+  const dayDeities = {
+    0: { name: "Surya", emoji: "☀️", color: "#FF6B35", mantra: "Om Suryaya Namah" },
+    1: { name: "Chandra", emoji: "🌙", color: "#A8DADC", mantra: "Om Somaya Namah" },
+    2: { name: "Mangal", emoji: "🔱", color: "#E63946", mantra: "Om Angarakaya Namah" },
+    3: { name: "Budha", emoji: "🕉️", color: "#06D6A0", mantra: "Om Budhaya Namah" },
+    4: { name: "Guru", emoji: "🪔", color: "#FFD60A", mantra: "Om Brihaspataye Namah" },
+    5: { name: "Shukra", emoji: "💐", color: "#F72585", mantra: "Om Shukraya Namah" },
+    6: { name: "Shani", emoji: "⚫", color: "#457B9D", mantra: "Om Shanaischaraya Namah" },
+  };
+  
+  return dayDeities[dayOfWeek as keyof typeof dayDeities];
+};
 
 const Panchang = () => {
   const today = new Date();
@@ -67,6 +83,7 @@ const Panchang = () => {
   const auspiciousTimings = data.auspiciousTimings;
   const inauspiciousTimings = data.inauspiciousTimings;
   const auspiciousDays = data.auspiciousDays;
+  const dayDeity = getDayDeity(selectedDate);
 
   return (
     <div className="min-h-screen bg-background max-w-lg mx-auto relative pb-24">
@@ -139,17 +156,29 @@ const Panchang = () => {
             </div>
 
             <div className="flex flex-col items-center gap-1 ml-3">
-              <div className="w-20 h-20 rounded-full bg-secondary flex items-center justify-center">
-                <img src={vishnuTilak} alt="Vishnu Tilak" className="w-[75%] h-[75%] object-contain" />
+              <div 
+                className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
+                style={{ 
+                  background: `linear-gradient(135deg, ${dayDeity.color}20 0%, ${dayDeity.color}40 100%)`,
+                  border: `2px solid ${dayDeity.color}`,
+                }}
+              >
+                <span className="text-4xl">{dayDeity.emoji}</span>
               </div>
-              <span className="text-xs font-body font-medium text-foreground text-center max-w-[5rem] leading-tight">
-                {data.tithi}
+              <span 
+                className="text-xs font-body font-bold text-center max-w-[5rem] leading-tight"
+                style={{ color: dayDeity.color }}
+              >
+                {dayDeity.name}
               </span>
             </div>
           </div>
 
-          <p className="text-sm font-body italic text-saffron border-t border-[hsl(var(--temple-gold)/0.2)] pt-3 pl-3">
-            ❝ {data.mantra} ❞
+          <p 
+            className="text-sm font-body italic border-t border-[hsl(var(--temple-gold)/0.2)] pt-3 pl-3 font-semibold"
+            style={{ color: dayDeity.color }}
+          >
+            ❝ {dayDeity.mantra} ❞
           </p>
           <p className="text-[10px] text-muted-foreground mt-2 pl-3 pr-1">{data.sourceNote}</p>
         </div>
