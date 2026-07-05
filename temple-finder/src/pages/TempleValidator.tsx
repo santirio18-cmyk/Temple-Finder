@@ -515,6 +515,97 @@ export default function TempleValidator() {
                   />
                 </div>
 
+                {/* Phase 1 Fields */}
+                <div className="border-t-2 border-orange-200 pt-4 mt-4">
+                  <h4 className="text-md font-semibold text-orange-600 mb-3">✨ Additional Information (Phase 1)</h4>
+                </div>
+
+                {/* Opening Hours */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">⏰ Opening Hours</label>
+                  <input
+                    type="text"
+                    value={editedTemple.openingHours || ''}
+                    onChange={(e) => setEditedTemple({ ...editedTemple, openingHours: e.target.value })}
+                    placeholder="e.g., 6:00 AM - 12:00 PM, 4:00 PM - 8:00 PM"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                  />
+                </div>
+
+                {/* Phone Number */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">📞 Phone Number</label>
+                  <input
+                    type="tel"
+                    value={editedTemple.phoneNumber || ''}
+                    onChange={(e) => setEditedTemple({ ...editedTemple, phoneNumber: e.target.value })}
+                    placeholder="e.g., +91 98765 43210"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                  />
+                </div>
+
+                {/* Special Significance */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">⭐ Special Significance</label>
+                  <textarea
+                    value={editedTemple.specialSignificance || ''}
+                    onChange={(e) => setEditedTemple({ ...editedTemple, specialSignificance: e.target.value })}
+                    placeholder="What is this temple famous for? (1-2 sentences)"
+                    rows={2}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                  />
+                </div>
+
+                {/* Festivals */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">🎉 Major Festivals</label>
+                  <textarea
+                    value={editedTemple.festivals?.join('\n') || ''}
+                    onChange={(e) => setEditedTemple({ 
+                      ...editedTemple, 
+                      festivals: e.target.value.split('\n').filter(f => f.trim()) 
+                    })}
+                    placeholder="Enter one festival per line&#10;e.g.,&#10;Panguni Uthiram (March)&#10;Karthigai Deepam (November)"
+                    rows={4}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">One festival per line</p>
+                </div>
+
+                {/* Parking */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">🚗 Parking</label>
+                  <select
+                    value={editedTemple.parking === undefined ? 'unknown' : editedTemple.parking ? 'yes' : 'no'}
+                    onChange={(e) => setEditedTemple({ 
+                      ...editedTemple, 
+                      parking: e.target.value === 'unknown' ? undefined : e.target.value === 'yes' 
+                    })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                  >
+                    <option value="unknown">Not specified</option>
+                    <option value="yes">Available</option>
+                    <option value="no">Not Available</option>
+                  </select>
+                </div>
+
+                {/* Photography */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">📸 Photography</label>
+                  <select
+                    value={editedTemple.photographyAllowed === undefined ? 'unknown' : editedTemple.photographyAllowed ? 'yes' : 'no'}
+                    onChange={(e) => setEditedTemple({ 
+                      ...editedTemple, 
+                      photographyAllowed: e.target.value === 'unknown' ? undefined : e.target.value === 'yes' 
+                    })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                  >
+                    <option value="unknown">Not specified</option>
+                    <option value="yes">Allowed</option>
+                    <option value="no">Not Allowed</option>
+                  </select>
+                </div>
+
                 {/* Actions */}
                 <div className="flex gap-2 pt-4">
                   <button

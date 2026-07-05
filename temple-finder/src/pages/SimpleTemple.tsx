@@ -118,7 +118,81 @@ const SimpleTemple: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
             <h2 className="text-lg font-bold text-darshanam-brown mb-3">About</h2>
             <p className="text-darshanam-brown-light leading-relaxed">{staticTemple.description}</p>
+            
+            {staticTemple.specialSignificance && (
+              <div className="mt-4 p-3 bg-orange-50 border-l-4 border-darshanam-orange rounded-r-lg">
+                <p className="text-sm font-medium text-darshanam-orange mb-1">⭐ Special Significance</p>
+                <p className="text-sm text-darshanam-brown">{staticTemple.specialSignificance}</p>
+              </div>
+            )}
           </div>
+
+          {(staticTemple.openingHours || staticTemple.phoneNumber || staticTemple.parking !== undefined || staticTemple.photographyAllowed !== undefined) && (
+            <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+              <h3 className="text-lg font-bold text-darshanam-brown mb-4">Visitor Information</h3>
+              <div className="space-y-3">
+                {staticTemple.openingHours && (
+                  <div className="flex items-start gap-3">
+                    <span className="text-xl">⏰</span>
+                    <div>
+                      <p className="font-medium text-darshanam-brown">Opening Hours</p>
+                      <p className="text-sm text-darshanam-brown-light">{staticTemple.openingHours}</p>
+                    </div>
+                  </div>
+                )}
+                
+                {staticTemple.phoneNumber && (
+                  <div className="flex items-start gap-3">
+                    <span className="text-xl">📞</span>
+                    <div>
+                      <p className="font-medium text-darshanam-brown">Contact</p>
+                      <a href={`tel:${staticTemple.phoneNumber}`} className="text-sm text-darshanam-orange hover:underline">
+                        {staticTemple.phoneNumber}
+                      </a>
+                    </div>
+                  </div>
+                )}
+
+                {staticTemple.parking !== undefined && (
+                  <div className="flex items-start gap-3">
+                    <span className="text-xl">🚗</span>
+                    <div>
+                      <p className="font-medium text-darshanam-brown">Parking</p>
+                      <p className="text-sm text-darshanam-brown-light">
+                        {staticTemple.parking ? 'Available' : 'Not Available'}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {staticTemple.photographyAllowed !== undefined && (
+                  <div className="flex items-start gap-3">
+                    <span className="text-xl">📸</span>
+                    <div>
+                      <p className="font-medium text-darshanam-brown">Photography</p>
+                      <p className="text-sm text-darshanam-brown-light">
+                        {staticTemple.photographyAllowed ? 'Allowed' : 'Not Allowed'}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {staticTemple.festivals && staticTemple.festivals.length > 0 && (
+            <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+              <h3 className="text-lg font-bold text-darshanam-brown mb-4">🎉 Festivals Celebrated</h3>
+              <div className="space-y-2">
+                {staticTemple.festivals.map((festival, idx) => (
+                  <div key={idx} className="flex items-center gap-2 text-darshanam-brown-light">
+                    <span className="w-2 h-2 bg-darshanam-orange rounded-full"></span>
+                    <span>{festival}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
             <h3 className="text-lg font-bold text-darshanam-brown mb-3">Location</h3>
