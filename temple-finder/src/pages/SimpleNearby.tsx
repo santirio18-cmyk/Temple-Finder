@@ -231,9 +231,6 @@ const SimpleNearby: React.FC = () => {
           </div>
         ) : (
           <div>
-            <h2 className="text-lg font-bold text-darshanam-brown mb-4">
-              {staticNearby.length} {staticNearby.length === 1 ? 'Temple' : 'Temples'} (sample)
-            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {staticNearby.map((temple) => (
                 <div
