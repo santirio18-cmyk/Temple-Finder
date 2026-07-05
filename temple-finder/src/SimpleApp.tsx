@@ -14,6 +14,7 @@ import Panchang from './pages/Panchang'
 import Horoscope from './pages/Horoscope'
 import Kundli from './pages/Kundli'
 import Ritual from './pages/Ritual'
+import AdminPanel from './pages/AdminPanel'
 import OnboardingLogin from './pages/OnboardingLogin'
 import OnboardingDeity from './pages/OnboardingDeity'
 import OnboardingDifficulty from './pages/OnboardingDifficulty'
@@ -37,6 +38,7 @@ function AppShell() {
         <Route path="/horoscope" element={<Horoscope />} />
         <Route path="/kundli" element={<Kundli />} />
         <Route path="/ritual" element={<Ritual />} />
+        <Route path="/admin" element={<AdminPanel />} />
         <Route path="/onboarding/login" element={<OnboardingLogin />} />
         <Route path="/onboarding/difficulty" element={<OnboardingDifficulty />} />
         <Route path="/onboarding/deity" element={<OnboardingDeity />} />
