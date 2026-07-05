@@ -81,15 +81,15 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/70"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70"
       onClick={onClose}
     >
       <div 
-        className="relative w-full max-w-md rounded-3xl shadow-2xl overflow-y-auto animate-fade-in-up"
+        className="relative w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-fade-in-up"
         onClick={(e) => e.stopPropagation()}
         style={{
-          background: `linear-gradient(160deg, #FFFFFF 0%, ${deity.color}12 100%)`,
-          maxHeight: '85vh',
+          background: '#FFFFFF',
+          maxHeight: '92vh',
           border: `3px solid ${deity.color}`,
           boxShadow: `0 30px 80px -15px ${deity.color}60, 0 15px 40px -10px rgba(0,0,0,0.3)`,
         }}
@@ -109,13 +109,13 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
         </button>
 
         {/* Header with Deity Image */}
-        <div className="relative p-6 pb-4">
-          <div className="flex items-center gap-4 mb-4">
+        <div className="relative p-5 pb-3">
+          <div className="flex items-center gap-3 mb-2">
             <div
-              className="w-24 h-24 rounded-full overflow-hidden shadow-2xl"
+              className="w-20 h-20 rounded-full overflow-hidden shadow-2xl"
               style={{ 
-                border: `4px solid ${deity.color}`,
-                boxShadow: `0 8px 24px ${deity.color}40, 0 0 0 1px ${deity.color}20`,
+                border: `3px solid ${deity.color}`,
+                boxShadow: `0 6px 20px ${deity.color}40`,
               }}
             >
               <img
@@ -125,16 +125,16 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
               />
             </div>
             <div>
-              <div className="flex items-center gap-2 mb-1.5">
-                <Sparkles className="w-5 h-5" style={{ color: deity.color }} />
-                <h2 className="text-xs font-body font-bold uppercase tracking-wider" style={{ color: deity.color }}>
+              <div className="flex items-center gap-1.5 mb-1">
+                <Sparkles className="w-4 h-4" style={{ color: deity.color }} />
+                <h2 className="text-[10px] font-body font-bold uppercase tracking-wider" style={{ color: deity.color }}>
                   Daily Affirmations
                 </h2>
               </div>
-              <h3 className="font-display text-3xl font-bold" style={{ color: deity.color }}>
+              <h3 className="font-display text-2xl font-bold leading-tight" style={{ color: deity.color }}>
                 Lord {deity.name}
               </h3>
-              <p className="text-sm font-body font-medium text-foreground/70 mt-1">
+              <p className="text-xs font-body font-medium text-foreground/70 mt-0.5">
                 {deity.dayName}'s Blessings ✨
               </p>
             </div>
@@ -142,21 +142,21 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
         </div>
 
         {/* Interactive Card Selection */}
-        <div className="px-4 pb-6">
+        <div className="px-4 pb-4">
           {selectedCard === null ? (
             /* Step 1: Show multiple face-down cards to pick */
-            <div className="space-y-6">
+            <div className="space-y-3">
               <div className="text-center px-4">
-                <p className="text-xl font-display font-bold mb-2" style={{ color: deity.color }}>
+                <p className="text-lg font-display font-bold mb-1" style={{ color: deity.color }}>
                   🙏 Pick Your Blessing Card
                 </p>
-                <p className="text-sm font-body font-medium text-foreground/60">
+                <p className="text-xs font-body font-medium text-foreground/60">
                   Trust your intuition and choose a card
                 </p>
               </div>
 
               {/* Card Spread - Fan Layout */}
-              <div className="relative h-72 flex items-center justify-center">
+              <div className="relative h-56 flex items-center justify-center">
                 {cardsToShow.map((cardIndex, arrayIndex) => {
                   const totalCards = cardsToShow.length;
                   const middleIndex = (totalCards - 1) / 2;
@@ -172,7 +172,7 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
                       key={cardIndex}
                       type="button"
                       onClick={() => handleCardClick(cardIndex)}
-                      className="absolute w-32 transition-all duration-300 hover:scale-110 hover:-translate-y-4 cursor-pointer group"
+                      className="absolute w-28 transition-all duration-300 hover:scale-110 hover:-translate-y-4 cursor-pointer group"
                       style={{
                         transform: `translateX(${translateX}px) translateY(${translateY}px) rotate(${rotation}deg)`,
                         zIndex: arrayIndex === Math.floor(middleIndex) ? 10 : 5,
@@ -238,15 +238,15 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
               </div>
 
               <div className="text-center">
-                <p className="text-sm font-body font-medium text-foreground/60 italic">
-                  ✨ Each card holds a divine message for you
+                <p className="text-xs font-body font-medium text-foreground/60 italic">
+                  ✨ Each card holds a divine message
                 </p>
               </div>
             </div>
           ) : (
             /* Step 2: Show revealed card with affirmation */
             <div 
-              className="space-y-6 animate-fade-in-up"
+              className="space-y-3 animate-fade-in-up"
               style={{
                 animation: 'fadeInUp 0.6s ease-out',
               }}
@@ -327,11 +327,11 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
                   animationFillMode: 'both',
                 }}
               >
-                <p className="text-sm font-body font-semibold mb-1" style={{ color: deity.color }}>
-                  🎊 Your Blessing Has Been Revealed!
+                <p className="text-xs font-body font-semibold mb-0.5" style={{ color: deity.color }}>
+                  🎊 Your Blessing Revealed!
                 </p>
-                <p className="text-xs text-muted-foreground">
-                  Carry this message in your heart today
+                <p className="text-[10px] text-muted-foreground">
+                  Carry this in your heart today
                 </p>
               </div>
 
@@ -339,7 +339,7 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
               <button
                 type="button"
                 onClick={handleReset}
-                className="w-full py-2.5 rounded-full font-body text-sm font-medium border-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full py-2 rounded-full font-body text-xs font-medium border-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
                 style={{
                   borderColor: deity.color,
                   color: deity.color,
@@ -353,17 +353,17 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
 
           {/* Mantra Box */}
           <div 
-            className="mt-6 p-4 rounded-xl border-2"
+            className="mt-3 p-3 rounded-xl border-2"
             style={{ 
               borderColor: `${deity.color}40`,
               background: `linear-gradient(135deg, ${deity.color}10 0%, ${deity.color}05 100%)`
             }}
           >
-            <p className="text-[10px] font-body font-semibold uppercase tracking-wider text-muted-foreground mb-2 text-center">
+            <p className="text-[9px] font-body font-semibold uppercase tracking-wider text-muted-foreground mb-1.5 text-center">
               Chant Today
             </p>
             <p 
-              className="text-lg font-display font-bold text-center italic"
+              className="text-base font-display font-bold text-center italic leading-tight"
               style={{ color: deity.color }}
             >
               {deity.mantra}
@@ -373,7 +373,7 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="w-full mt-4 py-3 rounded-full font-body text-sm font-semibold text-primary-foreground transition-all hover:brightness-110 active:scale-[0.98]"
+            className="w-full mt-3 py-2.5 rounded-full font-body text-sm font-semibold text-primary-foreground transition-all hover:brightness-110 active:scale-[0.98]"
             style={{
               background: `linear-gradient(135deg, ${deity.color} 0%, ${deity.color}dd 100%)`,
               boxShadow: `0 4px 12px -2px ${deity.color}40`,
