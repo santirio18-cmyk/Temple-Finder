@@ -194,6 +194,13 @@ const SimpleTemple: React.FC = () => {
             </div>
           )}
 
+          {staticTemple.theertham && (
+            <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
+              <h3 className="text-lg font-bold text-darshanam-brown mb-3">💧 Theertham (Sacred Tank)</h3>
+              <p className="text-darshanam-brown-light leading-relaxed">{staticTemple.theertham}</p>
+            </div>
+          )}
+
           <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
             <h3 className="text-lg font-bold text-darshanam-brown mb-3">Location</h3>
             <div className="flex items-start gap-3">

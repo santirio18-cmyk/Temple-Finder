@@ -18,6 +18,7 @@ export interface Temple {
   specialSignificance?: string
   parking?: boolean
   photographyAllowed?: boolean
+  theertham?: string  // Sacred water tank/pond information
 }
 
 export interface DeityCategory {

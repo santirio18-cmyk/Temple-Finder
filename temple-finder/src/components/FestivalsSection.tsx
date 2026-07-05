@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getUpcomingFestivals, type Festival } from '@/services/festivalService';
 
 const FestivalsSection = () => {
+  const navigate = useNavigate();
   const [festivals, setFestivals] = useState<Festival[]>([]);
 
   useEffect(() => {
@@ -41,9 +43,13 @@ const FestivalsSection = () => {
             Upcoming Sacred Days
           </p>
         </div>
-        <span className="text-xs font-body text-saffron font-medium cursor-pointer">
+        <button
+          type="button"
+          onClick={() => navigate('/festivals')}
+          className="text-xs font-body text-saffron font-medium cursor-pointer hover:underline"
+        >
           View All →
-        </span>
+        </button>
       </div>
 
       {/* Temple notice board card */}

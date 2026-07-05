@@ -10,6 +10,7 @@ import SimpleSearch from './pages/SimpleSearch'
 import SimpleTemple from './pages/SimpleTemple'
 import SimpleNearby from './pages/SimpleNearby'
 import SimpleCategories from './pages/SimpleCategories'
+import SimpleFestivals from './pages/SimpleFestivals'
 import Panchang from './pages/Panchang'
 import Horoscope from './pages/Horoscope'
 import Kundli from './pages/Kundli'
@@ -35,6 +36,7 @@ function AppShell() {
         <Route path="/temple/:id" element={<SimpleTemple />} />
         <Route path="/nearby" element={<SimpleNearby />} />
         <Route path="/categories" element={<SimpleCategories />} />
+        <Route path="/festivals" element={<SimpleFestivals />} />
         <Route path="/panchang" element={<Panchang />} />
         <Route path="/horoscope" element={<Horoscope />} />
         <Route path="/kundli" element={<Kundli />} />

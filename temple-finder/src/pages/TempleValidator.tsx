@@ -606,6 +606,19 @@ export default function TempleValidator() {
                   </select>
                 </div>
 
+                {/* Theertham */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">💧 Theertham (Sacred Tank)</label>
+                  <textarea
+                    value={editedTemple.theertham || ''}
+                    onChange={(e) => setEditedTemple({ ...editedTemple, theertham: e.target.value })}
+                    placeholder="Information about sacred water tank/pond (if applicable)"
+                    rows={2}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">e.g., "Kapali Theertham - Sacred tank used for Abhishekam"</p>
+                </div>
+
                 {/* Actions */}
                 <div className="flex gap-2 pt-4">
                   <button
