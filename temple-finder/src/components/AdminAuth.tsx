@@ -4,10 +4,12 @@ interface AdminAuthProps {
   children: React.ReactNode
 }
 
-const ADMIN_PASSWORD = 'temple2026' // Change this to your preferred password
+const ADMIN_USERNAME = 'admin'
+const ADMIN_PASSWORD = 'temple2026'
 
 export default function AdminAuth({ children }: AdminAuthProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
@@ -22,12 +24,13 @@ export default function AdminAuth({ children }: AdminAuthProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (password === ADMIN_PASSWORD) {
+    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
       setIsAuthenticated(true)
       sessionStorage.setItem('admin_authenticated', 'true')
       setError('')
     } else {
-      setError('Incorrect password')
+      setError('Incorrect username or password')
+      setUsername('')
       setPassword('')
     }
   }
@@ -65,15 +68,28 @@ export default function AdminAuth({ children }: AdminAuthProps) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
+              Username
+            </label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter username"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              autoFocus
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Password
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter admin password"
+              placeholder="Enter password"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              autoFocus
             />
           </div>
 
