@@ -5,7 +5,6 @@ import { getNearbyTemples } from '../data'
 import type { Temple } from '../data'
 import PageHeader from '../components/PageHeader'
 import ProfileModal from '../components/ProfileModal'
-import TempleMap from '../components/TempleMap'
 import { searchNearbyTemples, type NearbyPlaceTemple } from '../services/placesService'
 
 const FALLBACK_IMAGE =
@@ -82,23 +81,6 @@ const SimpleNearby: React.FC = () => {
     ? 'Live: Google Maps — Hindu temples near you'
     : 'Sample list (curated) — enable Maps + Places API for live results'
 
-  const mapMarkers = useMemo(() => {
-    if (!location) return []
-    if (useLive) {
-      return livePlaces.map((p) => ({
-        id: p.id,
-        lat: p.lat,
-        lng: p.lng,
-        title: p.name,
-      }))
-    }
-    return staticNearby.map((t) => ({
-      id: t.id,
-      lat: t.latitude,
-      lng: t.longitude,
-      title: t.name,
-    }))
-  }, [location, useLive, livePlaces, staticNearby])
 
   const listReady = !loading && location && (useLive || staticNearby.length > 0)
 
@@ -162,18 +144,6 @@ const SimpleNearby: React.FC = () => {
 
         {placesLoading && (
           <p className="text-sm text-darshanam-brown-light mb-4">Loading nearby temples…</p>
-        )}
-
-        {listReady && mapMarkers.length > 0 && location && (
-          <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
-            <h2 className="text-lg font-bold text-darshanam-brown mb-4">Map View</h2>
-            <TempleMap
-              center={{ lat: location.latitude, lng: location.longitude }}
-              zoom={12}
-              markers={mapMarkers}
-              height="280px"
-            />
-          </div>
         )}
 
         {!listReady && !placesLoading ? (

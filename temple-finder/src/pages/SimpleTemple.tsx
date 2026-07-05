@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, MapPin, Star, User, ExternalLink } from 'lucide-react'
 import { getTempleById } from '../data'
 import ProfileModal from '../components/ProfileModal'
-import TempleMap from '../components/TempleMap'
 import { mapsService } from '../services/mapsService'
 import { getPlaceDetails, type PlaceDetailsResult } from '../services/placesService'
 
@@ -133,24 +132,38 @@ const SimpleTemple: React.FC = () => {
           </div>
 
           <div className="bg-white rounded-2xl shadow-sm p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-darshanam-brown">Map</h3>
+            <h3 className="text-lg font-bold text-darshanam-brown mb-4">Navigation</h3>
+            <div className="space-y-3">
               <a
                 href={mapsService.getDirectionsUrl({ lat: staticTemple.latitude, lng: staticTemple.longitude })}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-sm font-medium text-darshanam-orange hover:underline"
+                className="flex items-center justify-between w-full px-4 py-3 bg-darshanam-orange text-white rounded-xl hover:bg-darshanam-orange/90 transition-colors"
               >
-                Get Directions
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-5 h-5" />
+                  <span className="font-medium">Get Directions</span>
+                </div>
+                <ExternalLink className="w-4 h-4" />
+              </a>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${staticTemple.latitude},${staticTemple.longitude}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between w-full px-4 py-3 bg-white border-2 border-darshanam-orange text-darshanam-orange rounded-xl hover:bg-darshanam-cream transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 0C7.31 0 3.5 3.81 3.5 8.5c0 5.25 7.5 14.5 8.5 15.5 1-1 8.5-10.25 8.5-15.5C20.5 3.81 16.69 0 12 0zm0 11.5c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
+                  </svg>
+                  <span className="font-medium">View on Google Maps</span>
+                </div>
                 <ExternalLink className="w-4 h-4" />
               </a>
             </div>
-            <TempleMap
-              center={{ lat: staticTemple.latitude, lng: staticTemple.longitude }}
-              zoom={15}
-              markers={[{ id: staticTemple.id, lat: staticTemple.latitude, lng: staticTemple.longitude, title: staticTemple.name }]}
-              height="256px"
-            />
+            <p className="text-xs text-darshanam-brown-light mt-3 text-center">
+              Opens in Google Maps • Free • Works offline
+            </p>
           </div>
         </div>
 
@@ -213,27 +226,38 @@ const SimpleTemple: React.FC = () => {
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-darshanam-brown">Map</h3>
+          <h3 className="text-lg font-bold text-darshanam-brown mb-4">Navigation</h3>
+          <div className="space-y-3">
             <a
-              href={
-                place.googleMapsUrl ||
-                mapsService.getDirectionsUrl({ lat: place.lat, lng: place.lng })
-              }
+              href={mapsService.getDirectionsUrl({ lat: place.lat, lng: place.lng })}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 text-sm font-medium text-darshanam-orange hover:underline"
+              className="flex items-center justify-between w-full px-4 py-3 bg-darshanam-orange text-white rounded-xl hover:bg-darshanam-orange/90 transition-colors"
             >
-              Open in Google Maps
+              <div className="flex items-center gap-3">
+                <MapPin className="w-5 h-5" />
+                <span className="font-medium">Get Directions</span>
+              </div>
+              <ExternalLink className="w-4 h-4" />
+            </a>
+            <a
+              href={place.googleMapsUrl || `https://www.google.com/maps/search/?api=1&query=${place.lat},${place.lng}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between w-full px-4 py-3 bg-white border-2 border-darshanam-orange text-darshanam-orange rounded-xl hover:bg-darshanam-cream transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 0C7.31 0 3.5 3.81 3.5 8.5c0 5.25 7.5 14.5 8.5 15.5 1-1 8.5-10.25 8.5-15.5C20.5 3.81 16.69 0 12 0zm0 11.5c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
+                </svg>
+                <span className="font-medium">View on Google Maps</span>
+              </div>
               <ExternalLink className="w-4 h-4" />
             </a>
           </div>
-          <TempleMap
-            center={{ lat: place.lat, lng: place.lng }}
-            zoom={15}
-            markers={[{ id: id, lat: place.lat, lng: place.lng, title: place.name }]}
-            height="256px"
-          />
+          <p className="text-xs text-darshanam-brown-light mt-3 text-center">
+            Opens in Google Maps • Free • Works offline
+          </p>
         </div>
       </div>
 
