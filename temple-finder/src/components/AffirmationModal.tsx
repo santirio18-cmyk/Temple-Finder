@@ -246,18 +246,19 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
           ) : (
             /* Step 2: Show revealed card with affirmation */
             <div 
-              className="space-y-3 animate-fade-in-up"
+              className="space-y-2 animate-fade-in-up"
               style={{
                 animation: 'fadeInUp 0.6s ease-out',
               }}
             >
               {/* Revealed Card */}
-              <div className="relative max-w-xs mx-auto">
+              <div className="relative max-w-[280px] mx-auto">
                 <div
                   className="relative overflow-hidden rounded-2xl transform"
                   style={{
-                    aspectRatio: '2/3',
-                    boxShadow: '0 30px 60px rgba(0,0,0,0.4), 0 12px 24px rgba(0,0,0,0.3)',
+                    aspectRatio: '3/4',
+                    maxHeight: '300px',
+                    boxShadow: '0 20px 40px rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.2)',
                     animation: 'cardFlip 0.8s ease-out',
                   }}
                 >
@@ -280,11 +281,11 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
                   />
                   
                   {/* Content Overlay */}
-                  <div className="relative z-10 flex flex-col justify-between h-full p-6">
+                  <div className="relative z-10 flex flex-col justify-between h-full p-4">
                     {/* Top - Deity Name */}
                     <div className="text-center">
                       <p 
-                        className="font-display text-lg font-bold text-white tracking-wide animate-fade-in" 
+                        className="font-display text-base font-bold text-white tracking-wide animate-fade-in" 
                         style={{ 
                           textShadow: '0 2px 8px rgba(0,0,0,0.5)',
                           fontStyle: 'italic',
@@ -297,9 +298,9 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
                     </div>
                     
                     {/* Center - Affirmation Quote */}
-                    <div className="flex-1 flex items-center justify-center px-2">
+                    <div className="flex-1 flex items-center justify-center px-1">
                       <p 
-                        className="font-display text-base font-semibold text-white leading-relaxed text-center animate-fade-in" 
+                        className="font-display text-sm font-semibold text-white leading-snug text-center animate-fade-in" 
                         style={{ 
                           textShadow: '0 3px 10px rgba(0,0,0,0.6)',
                           letterSpacing: '0.02em',
@@ -313,57 +314,41 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
                     
                     {/* Bottom - Sparkle decoration */}
                     <div className="flex justify-center">
-                      <Sparkles className="w-8 h-8 text-white opacity-80 animate-pulse" />
+                      <Sparkles className="w-6 h-6 text-white opacity-80 animate-pulse" />
                     </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Success Message */}
-              <div 
-                className="text-center px-4 animate-fade-in"
-                style={{
-                  animationDelay: '0.7s',
-                  animationFillMode: 'both',
-                }}
-              >
-                <p className="text-xs font-body font-semibold mb-0.5" style={{ color: deity.color }}>
-                  🎊 Your Blessing Revealed!
-                </p>
-                <p className="text-[10px] text-muted-foreground">
-                  Carry this in your heart today
-                </p>
               </div>
 
               {/* Pick Another Button */}
               <button
                 type="button"
                 onClick={handleReset}
-                className="w-full py-2 rounded-full font-body text-xs font-medium border-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full py-2 rounded-full font-body text-xs font-semibold border-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
                 style={{
                   borderColor: deity.color,
                   color: deity.color,
                   background: `${deity.color}10`,
                 }}
               >
-                Pick Another Card
+                🔄 Pick Another Card
               </button>
             </div>
           )}
 
           {/* Mantra Box */}
           <div 
-            className="mt-3 p-3 rounded-xl border-2"
+            className="mt-2 p-2.5 rounded-xl border-2"
             style={{ 
               borderColor: `${deity.color}40`,
               background: `linear-gradient(135deg, ${deity.color}10 0%, ${deity.color}05 100%)`
             }}
           >
-            <p className="text-[9px] font-body font-semibold uppercase tracking-wider text-muted-foreground mb-1.5 text-center">
+            <p className="text-[8px] font-body font-semibold uppercase tracking-wider text-muted-foreground mb-1 text-center">
               Chant Today
             </p>
             <p 
-              className="text-base font-display font-bold text-center italic leading-tight"
+              className="text-sm font-display font-bold text-center italic leading-tight"
               style={{ color: deity.color }}
             >
               {deity.mantra}
@@ -373,7 +358,7 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
           {/* Close Button */}
           <button
             onClick={onClose}
-            className="w-full mt-3 py-2.5 rounded-full font-body text-sm font-semibold text-primary-foreground transition-all hover:brightness-110 active:scale-[0.98]"
+            className="w-full mt-2 py-2.5 rounded-full font-body text-sm font-semibold text-primary-foreground transition-all hover:brightness-110 active:scale-[0.98]"
             style={{
               background: `linear-gradient(135deg, ${deity.color} 0%, ${deity.color}dd 100%)`,
               boxShadow: `0 4px 12px -2px ${deity.color}40`,
