@@ -276,3 +276,35 @@
 .animate-smoke {
   animation: smoke-rise 4s ease-out infinite;
 }
+
+/* Card flip animation for blessing cards */
+@keyframes cardFlip {
+  0% {
+    transform: perspective(1000px) rotateY(90deg) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: perspective(1000px) rotateY(45deg) scale(0.9);
+    opacity: 0.5;
+  }
+  100% {
+    transform: perspective(1000px) rotateY(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Fade in animation */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInUp 0.6s ease-out both;
+}
