@@ -18,7 +18,7 @@ const deityMapping: Record<number, DeityOfDay> = {
     name: 'Surya',
     dayName: 'Sunday',
     description: 'Lord Surya, the Sun God, brings vitality, health, and success',
-    imageKey: 'vishnu', // Using Vishnu as placeholder for Surya
+    imageKey: 'surya',
     mantra: 'Om Suryaya Namaha',
     benefits: 'Worship Surya for health, vitality, confidence, and success',
     color: 'hsl(15, 80%, 55%)'

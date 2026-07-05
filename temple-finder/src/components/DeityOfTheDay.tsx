@@ -9,18 +9,20 @@ import vishnuImg from '@/assets/deities/vishnu.jpg';
 import shivaImg from '@/assets/deities/shiva.jpg';
 import hanumanImg from '@/assets/deities/hanuman.jpg';
 import ganeshaImg from '@/assets/deities/ganpati.jpg';
-import lakshmiImg from '@/assets/deities/shakti.jpg';
+import lakshmiImg from '@/assets/deities/lakshmi-deity.jpg';
 import muruganImg from '@/assets/deities/murugan.jpg';
-import ramImg from '@/assets/deities/ram.jpg';
+import saibabaImg from '@/assets/deities/saibaba-deity.jpg';
+import suryaImg from '@/assets/deities/surya-deity.jpg';
 
 const deityImages: Record<string, string> = {
+  surya: suryaImg,
   vishnu: vishnuImg,
   shiva: shivaImg,
   hanuman: hanumanImg,
   ganesha: ganeshaImg,
-  lakshmi: lakshmiImg, // Using Shakti/Devi image for Lakshmi
+  lakshmi: lakshmiImg,
   murugan: muruganImg,
-  saibaba: ramImg,
+  saibaba: saibabaImg,
 };
 
 const DeityOfTheDay = () => {
