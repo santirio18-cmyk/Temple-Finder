@@ -1,4 +1,5 @@
 import { MhahPanchang } from 'mhah-panchang'
+import { computeGowriPanchangam, type GowriPanchangam } from './gowriPanchangam'
 
 /** Default: Chennai — used until geolocation is available */
 export const DEFAULT_LAT = 13.0827
@@ -76,17 +77,6 @@ const YAMA_SEGMENT: number[] = [5, 1, 6, 4, 3, 2, 7]
 /** Gulikai segment (1–8). */
 const GULIKAI_SEGMENT: number[] = [7, 6, 5, 4, 3, 2, 1]
 
-/** Nalla Neram segments (1–8) - multiple auspicious periods per day */
-const NALLA_NERAM_SEGMENTS: Record<number, number[]> = {
-  0: [3, 6], // Sunday
-  1: [1, 4, 7], // Monday
-  2: [2, 5, 8], // Tuesday
-  3: [3, 6], // Wednesday
-  4: [1, 4, 7], // Thursday
-  5: [2, 5], // Friday
-  6: [3, 6], // Saturday
-}
-
 export interface TimingRow {
   name: string
   time: string
@@ -110,7 +100,8 @@ export interface PanchangDay {
   masa: string
   auspiciousTimings: TimingRow[]
   inauspiciousTimings: TimingRow[]
-  auspiciousDays: string[]  // Special days like Shashti, Ekadashi
+  auspiciousDays: string[]
+  gowriPanchangam: GowriPanchangam | null
   /** Short disclaimer for UI */
   sourceNote: string
 }
@@ -205,12 +196,21 @@ export function getPanchangForDate(
 
   const auspiciousTimings: TimingRow[] = []
   const inauspiciousTimings: TimingRow[] = []
+  let gowriPanchangam: GowriPanchangam | null = null
 
   if (sunrise && sunset) {
     const wd = sunrise.getDay()
     const rahu = daySegmentRange(sunrise, sunset, RAHU_SEGMENT[wd])
     const yama = daySegmentRange(sunrise, sunset, YAMA_SEGMENT[wd])
     const gulikai = daySegmentRange(sunrise, sunset, GULIKAI_SEGMENT[wd])
+
+    const nextDay = new Date(localNoon)
+    nextDay.setDate(nextDay.getDate() + 1)
+    const nextSun = engine.sunTimer(nextDay, lat, lng)
+    const nextSunrise =
+      nextSun.sunRise instanceof Date ? nextSun.sunRise : new Date(sunset.getTime() + 12 * 60 * 60 * 1000)
+
+    gowriPanchangam = computeGowriPanchangam(sunrise, sunset, nextSunrise, wd)
     
     // Inauspicious timings
     inauspiciousTimings.push({
@@ -237,17 +237,6 @@ export function getPanchangForDate(
       time: formatRange(brahmaStart, brahmaEnd),
       emoji: '🪔',
     })
-    
-    // Nalla Neram (multiple good times)
-    const nallaSegments = NALLA_NERAM_SEGMENTS[wd] || []
-    nallaSegments.forEach((seg, idx) => {
-      const period = daySegmentRange(sunrise, sunset, seg)
-      auspiciousTimings.push({
-        name: `Nalla Neram ${idx + 1}`,
-        time: formatRange(period.start, period.end),
-        emoji: '🌟',
-      })
-    })
   }
 
   if (solarNoon && sunrise && sunset) {
@@ -257,15 +246,6 @@ export function getPanchangForDate(
       name: 'Abhijit Muhurta',
       time: formatRange(abStart, abEnd),
       emoji: '✨',
-    })
-    
-    // Gowri Nalla Neram (Goddess Gowri's auspicious time - after noon on specific days)
-    const gowriStart = new Date(solarNoon.getTime() + 60 * 60 * 1000) // 1 hour after noon
-    const gowriEnd = new Date(solarNoon.getTime() + 90 * 60 * 1000) // 1.5 hours after noon
-    auspiciousTimings.push({
-      name: 'Gowri Nalla Neram',
-      time: formatRange(gowriStart, gowriEnd),
-      emoji: '💐',
     })
   }
 
@@ -304,6 +284,7 @@ export function getPanchangForDate(
     auspiciousTimings,
     inauspiciousTimings,
     auspiciousDays,
+    gowriPanchangam,
     sourceNote:
       'Panchang is computed for your location using astronomical algorithms. Regional almanacs may differ slightly.',
   }

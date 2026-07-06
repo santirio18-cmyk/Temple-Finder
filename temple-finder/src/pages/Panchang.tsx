@@ -83,7 +83,15 @@ const Panchang = () => {
   const auspiciousTimings = data.auspiciousTimings;
   const inauspiciousTimings = data.inauspiciousTimings;
   const auspiciousDays = data.auspiciousDays;
+  const gowri = data.gowriPanchangam;
   const dayDeity = getDayDeity(selectedDate);
+
+  const dateTitle = selectedDate.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 
   return (
     <div className="min-h-screen bg-background max-w-lg mx-auto relative pb-24">
@@ -263,7 +271,127 @@ const Panchang = () => {
         <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--temple-gold)/0.25)] to-transparent" />
       </div>
 
-      {/* AUSPICIOUS TIMINGS - Premium Gold Theme */}
+      {/* NALLA NERAM & GOWRI NALLA NERAM */}
+      {gowri && (
+        <div className="px-3 mb-4">
+          <div className="bg-[hsl(30,40%,97%)] rounded-xl border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm p-4 relative overflow-hidden">
+            <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-[hsl(var(--saffron))] via-[hsl(var(--temple-gold))] to-[hsl(var(--saffron-light))]" />
+            <div className="pl-3">
+              <h3 className="text-base font-display font-bold text-foreground mb-1">
+                Nalla Neram & Gowri Nalla Neram
+              </h3>
+              <p className="text-[11px] text-muted-foreground mb-4">{dateTitle}</p>
+              <div className="overflow-x-auto rounded-lg border border-[hsl(var(--temple-gold)/0.2)]">
+                <table className="w-full text-sm font-body">
+                  <thead>
+                    <tr className="bg-[hsl(var(--saffron)/0.08)]">
+                      <th className="text-left px-3 py-2 font-semibold text-foreground">Nalla Neram (நல்ல நேரம்)</th>
+                      <th className="text-left px-3 py-2 font-semibold text-foreground">Gowri Nalla Neram (கௌரி நல்ல நேரம்)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-t border-[hsl(var(--temple-gold)/0.15)]">
+                      <td className="px-3 py-2.5">
+                        <span className="text-xs text-muted-foreground block">Morning (காலை)</span>
+                        <span className="font-semibold text-emerald-800">{gowri.nallaNeram.morning}</span>
+                      </td>
+                      <td className="px-3 py-2.5">
+                        <span className="text-xs text-muted-foreground block">Day (பகல்)</span>
+                        <span className="font-semibold text-emerald-800">{gowri.nallaNeram.gowriDay}</span>
+                      </td>
+                    </tr>
+                    <tr className="border-t border-[hsl(var(--temple-gold)/0.15)]">
+                      <td className="px-3 py-2.5">
+                        <span className="text-xs text-muted-foreground block">Evening (மாலை)</span>
+                        <span className="font-semibold text-emerald-800">{gowri.nallaNeram.evening}</span>
+                      </td>
+                      <td className="px-3 py-2.5">
+                        <span className="text-xs text-muted-foreground block">Night (இரவு)</span>
+                        <span className="font-semibold text-emerald-800">{gowri.nallaNeram.gowriNight}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* GOWRI PANCHANGAM */}
+      {gowri && (
+        <div className="px-3 mb-4">
+          <div className="bg-[hsl(30,40%,97%)] rounded-xl border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm p-4 relative overflow-hidden">
+            <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-[hsl(var(--saffron))] via-[hsl(var(--temple-gold))] to-[hsl(var(--saffron-light))]" />
+            <div className="pl-3">
+              <h3 className="text-base font-display font-bold text-foreground mb-1">Gowri Panchangam</h3>
+              <p className="text-[11px] text-muted-foreground mb-4">
+                Auspicious (green) and inauspicious (red) timings · * next calendar day
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <p className="text-xs font-semibold text-foreground mb-2 uppercase tracking-wide">Day (பகல்)</p>
+                  <div className="rounded-lg border border-[hsl(var(--temple-gold)/0.2)] overflow-hidden">
+                    <table className="w-full text-xs font-body">
+                      <tbody>
+                        {gowri.day.map((row) => (
+                          <tr
+                            key={`day-${row.name}-${row.time}`}
+                            className={row.auspicious ? 'bg-emerald-50' : 'bg-red-50'}
+                          >
+                            <td className={`px-2.5 py-2 font-bold ${row.auspicious ? 'text-emerald-900' : 'text-red-900'}`}>
+                              {row.name}
+                            </td>
+                            <td className={`px-2.5 py-2 text-right font-medium ${row.auspicious ? 'text-emerald-800' : 'text-red-800'}`}>
+                              {row.time}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-foreground mb-2 uppercase tracking-wide">Night (இரவு)</p>
+                  <div className="rounded-lg border border-[hsl(var(--temple-gold)/0.2)] overflow-hidden">
+                    <table className="w-full text-xs font-body">
+                      <tbody>
+                        {gowri.night.map((row) => (
+                          <tr
+                            key={`night-${row.name}-${row.time}`}
+                            className={row.auspicious ? 'bg-emerald-50' : 'bg-red-50'}
+                          >
+                            <td className={`px-2.5 py-2 font-bold ${row.auspicious ? 'text-emerald-900' : 'text-red-900'}`}>
+                              {row.name}
+                            </td>
+                            <td className={`px-2.5 py-2 text-right font-medium ${row.auspicious ? 'text-emerald-800' : 'text-red-800'}`}>
+                              {row.time}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-4 mt-3 text-[10px] text-muted-foreground">
+                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-emerald-100 border border-emerald-300" /> Auspicious</span>
+                <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-red-100 border border-red-300" /> Inauspicious</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="px-8 mb-4">
+        <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--temple-gold)/0.25)] to-transparent" />
+      </div>
+
+      {/* OTHER MUHURTAS + DURMUHURTAM */}
+      {(auspiciousTimings.length > 0 || inauspiciousTimings.length > 0) && (
+        <>
+      {/* AUSPICIOUS MUHURTAS */}
+      {auspiciousTimings.length > 0 && (
       <div className="px-3 mb-4">
         <div
           className="rounded-2xl shadow-2xl p-6 relative overflow-hidden"
@@ -300,11 +428,11 @@ const Panchang = () => {
                   backgroundClip: 'text',
                 }}
               >
-                Auspicious Timings
+                Auspicious Muhurtas
               </h3>
             </div>
             <p className="text-xs font-body font-semibold mb-4 text-amber-700/80">
-              🙏 Best times for new beginnings, worship, and important activities
+              Brahma Muhurta & Abhijit Muhurta
             </p>
             <div className="space-y-3">
               {auspiciousTimings.map((item) => (
@@ -328,8 +456,10 @@ const Panchang = () => {
           </div>
         </div>
       </div>
+      )}
 
-      {/* INAUSPICIOUS TIMINGS - Premium Red Theme */}
+      {/* INAUSPICIOUS TIMINGS - Durmuhurtam */}
+      {inauspiciousTimings.length > 0 && (
       <div className="px-3 mb-4">
         <div
           className="rounded-2xl shadow-2xl p-6 relative overflow-hidden"
@@ -366,11 +496,11 @@ const Panchang = () => {
                   backgroundClip: 'text',
                 }}
               >
-                Inauspicious Timings
+                Durmuhurtam
               </h3>
             </div>
             <p className="text-xs font-body font-semibold mb-4 text-red-700/80">
-              🚫 Avoid starting new ventures or important tasks during these periods
+              Rahu Kaal, Yamaganda & Gulikai
             </p>
             <div className="space-y-3">
               {inauspiciousTimings.map((item) => (
@@ -394,6 +524,9 @@ const Panchang = () => {
           </div>
         </div>
       </div>
+      )}
+        </>
+      )}
 
       {/* AUSPICIOUS DAYS - Special Sacred Days */}
       {auspiciousDays.length > 0 && (
