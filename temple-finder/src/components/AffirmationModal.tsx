@@ -1,5 +1,6 @@
 import { X, Sparkles } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { type DeityOfDay } from '@/services/deityOfDayService';
 
 interface AffirmationModalProps {
@@ -58,6 +59,19 @@ const deityAffirmations: Record<string, string[]> = {
 const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationModalProps) => {
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) setSelectedCard(null);
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const affirmations = deityAffirmations[deity.name] || [
@@ -66,12 +80,11 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
     "I am surrounded by divine grace"
   ];
 
-  // Show 5 cards max, or all if less than 5
   const numberOfCards = Math.min(affirmations.length, 5);
   const cardsToShow = Array.from({ length: numberOfCards }, (_, i) => i);
 
   const handleCardClick = (cardIndex: number) => {
-    if (selectedCard !== null) return; // Already selected
+    if (selectedCard !== null) return;
     setSelectedCard(cardIndex);
   };
 
@@ -79,13 +92,13 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
     setSelectedCard(null);
   };
 
-  return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70"
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70"
       onClick={onClose}
     >
-      <div 
-        className="relative w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-fade-in-up"
+      <div
+        className="relative w-full max-w-sm mx-auto rounded-3xl shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
         style={{
           background: '#FFFFFF',
@@ -94,26 +107,23 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
           boxShadow: `0 30px 80px -15px ${deity.color}60, 0 15px 40px -10px rgba(0,0,0,0.3)`,
         }}
       >
-        {/* Close Button - Top Right X */}
         <button
           type="button"
           onClick={onClose}
           className="absolute top-3 right-3 z-20 w-10 h-10 rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-all active:scale-95 bg-white border-2"
           aria-label="Close"
-          style={{ 
+          style={{
             borderColor: deity.color,
-            boxShadow: `0 4px 12px rgba(0,0,0,0.2)`,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
           }}
         >
           <X className="w-6 h-6" style={{ color: deity.color }} strokeWidth={3} />
         </button>
 
-        {/* Header with Deity Image */}
         <div className="relative p-6 pb-4 flex flex-col items-center">
-          {/* Large Centered Deity Image */}
           <div
             className="w-32 h-32 rounded-full overflow-hidden shadow-2xl mb-4 mx-auto"
-            style={{ 
+            style={{
               border: `5px solid ${deity.color}`,
               boxShadow: `0 8px 32px ${deity.color}60, 0 0 0 12px ${deity.color}20`,
             }}
@@ -124,8 +134,7 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
               className="w-full h-full object-cover"
             />
           </div>
-          
-          {/* Text Content */}
+
           <div className="text-center w-full">
             <div className="flex items-center justify-center gap-2 mb-1.5">
               <Sparkles className="w-4 h-4" style={{ color: deity.color }} />
@@ -142,10 +151,8 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
           </div>
         </div>
 
-        {/* Interactive Card Selection */}
         <div className="px-4 pb-4 overflow-y-auto" style={{ maxHeight: 'calc(92vh - 140px)' }}>
           {selectedCard === null ? (
-            /* Step 1: Show multiple face-down cards to pick */
             <div className="space-y-3">
               <div className="text-center px-4">
                 <p className="text-lg font-display font-bold mb-1" style={{ color: deity.color }}>
@@ -156,18 +163,15 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
                 </p>
               </div>
 
-              {/* Card Spread - Fan Layout */}
               <div className="relative h-56 flex items-center justify-center">
                 {cardsToShow.map((cardIndex, arrayIndex) => {
                   const totalCards = cardsToShow.length;
                   const middleIndex = (totalCards - 1) / 2;
                   const offset = arrayIndex - middleIndex;
-                  
-                  // Calculate rotation and position
-                  const rotation = offset * 8; // degrees
-                  const translateX = offset * 35; // px
-                  const translateY = Math.abs(offset) * 15; // px (higher for cards on sides)
-                  
+                  const rotation = offset * 8;
+                  const translateX = offset * 35;
+                  const translateY = Math.abs(offset) * 15;
+
                   return (
                     <button
                       key={cardIndex}
@@ -179,7 +183,6 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
                         zIndex: arrayIndex === Math.floor(middleIndex) ? 10 : 5,
                       }}
                     >
-                      {/* Card Back - Face Down */}
                       <div
                         className="relative overflow-hidden rounded-2xl"
                         style={{
@@ -189,7 +192,6 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
                           border: `2px solid ${deity.color}`,
                         }}
                       >
-                        {/* Decorative Pattern */}
                         <div className="absolute inset-0 opacity-25">
                           <div className="absolute inset-0 flex items-center justify-center">
                             <Sparkles className="w-20 h-20 text-white drop-shadow-lg" />
@@ -200,36 +202,18 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
                           <div className="absolute bottom-4 right-4">
                             <Sparkles className="w-7 h-7 text-white" />
                           </div>
-                          <div className="absolute top-1/3 right-6">
-                            <Sparkles className="w-5 h-5 text-white" />
-                          </div>
-                          <div className="absolute bottom-1/3 left-6">
-                            <Sparkles className="w-5 h-5 text-white" />
-                          </div>
                         </div>
-                        
-                        {/* Card Number (hidden initially) */}
+
                         <div className="absolute inset-0 flex items-center justify-center">
                           <div className="w-14 h-14 rounded-full border-3 border-white/60 flex items-center justify-center bg-white/10 backdrop-blur-sm">
-                            <span className="text-3xl font-display font-bold text-white">
-                              ?
-                            </span>
+                            <span className="text-3xl font-display font-bold text-white">?</span>
                           </div>
                         </div>
 
-                        {/* Glow effect on hover */}
-                        <div 
+                        <div
                           className="absolute inset-0 opacity-0 group-hover:opacity-40 transition-opacity duration-300"
                           style={{
                             background: 'radial-gradient(circle at center, rgba(255,255,255,0.9) 0%, transparent 60%)',
-                          }}
-                        />
-                        
-                        {/* Shine effect */}
-                        <div 
-                          className="absolute inset-0 opacity-40"
-                          style={{
-                            background: 'linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.1) 45%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.1) 55%, transparent 100%)',
                           }}
                         />
                       </div>
@@ -245,17 +229,10 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
               </div>
             </div>
           ) : (
-            /* Step 2: Show revealed card with affirmation */
-            <div 
-              className="space-y-2 animate-fade-in-up flex flex-col items-center"
-              style={{
-                animation: 'fadeInUp 0.6s ease-out',
-              }}
-            >
-              {/* Revealed Card */}
-              <div className="relative w-[260px] mx-auto">
+            <div className="flex flex-col items-center w-full space-y-2">
+              <div className="w-full flex justify-center">
                 <div
-                  className="relative overflow-hidden rounded-2xl transform"
+                  className="relative w-[min(100%,260px)] overflow-hidden rounded-2xl"
                   style={{
                     aspectRatio: '4/5',
                     maxHeight: '240px',
@@ -263,57 +240,43 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
                     animation: 'cardFlip 0.8s ease-out',
                   }}
                 >
-                  {/* Deity Image - Full Background */}
-                  <div 
+                  <div
                     className="absolute inset-0"
-                    style={{ 
+                    style={{
                       backgroundImage: `url(${deityImage})`,
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
                     }}
                   />
-                  
-                  {/* Dark Overlay for Text Readability */}
-                  <div 
+                  <div
                     className="absolute inset-0"
-                    style={{ 
+                    style={{
                       background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.4) 100%)',
                     }}
                   />
-                  
-                  {/* Content Overlay */}
                   <div className="relative z-10 flex flex-col justify-between h-full p-3">
-                    {/* Top - Deity Name */}
                     <div className="text-center">
-                      <p 
-                        className="font-display text-sm font-bold text-white tracking-wide animate-fade-in" 
-                        style={{ 
+                      <p
+                        className="font-display text-sm font-bold text-white tracking-wide"
+                        style={{
                           textShadow: '0 2px 8px rgba(0,0,0,0.5)',
                           fontStyle: 'italic',
-                          animationDelay: '0.3s',
-                          animationFillMode: 'both',
                         }}
                       >
                         {deity.name}
                       </p>
                     </div>
-                    
-                    {/* Center - Affirmation Quote */}
                     <div className="flex-1 flex items-center justify-center px-1">
-                      <p 
-                        className="font-display text-xs font-semibold text-white leading-snug text-center animate-fade-in" 
-                        style={{ 
+                      <p
+                        className="font-display text-xs font-semibold text-white leading-snug text-center"
+                        style={{
                           textShadow: '0 3px 10px rgba(0,0,0,0.6)',
                           letterSpacing: '0.02em',
-                          animationDelay: '0.5s',
-                          animationFillMode: 'both',
                         }}
                       >
                         {affirmations[selectedCard]}
                       </p>
                     </div>
-                    
-                    {/* Bottom - Sparkle decoration */}
                     <div className="flex justify-center">
                       <Sparkles className="w-5 h-5 text-white opacity-80 animate-pulse" />
                     </div>
@@ -321,11 +284,10 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
                 </div>
               </div>
 
-              {/* Pick Another Button */}
               <button
                 type="button"
                 onClick={handleReset}
-                className="w-[260px] py-1.5 rounded-full font-body text-xs font-semibold border-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="w-[min(100%,260px)] py-1.5 rounded-full font-body text-xs font-semibold border-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
                 style={{
                   borderColor: deity.color,
                   color: deity.color,
@@ -337,18 +299,17 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
             </div>
           )}
 
-          {/* Mantra Box */}
-          <div 
+          <div
             className="mt-2 p-2 rounded-xl border-2"
-            style={{ 
+            style={{
               borderColor: `${deity.color}40`,
-              background: `linear-gradient(135deg, ${deity.color}10 0%, ${deity.color}05 100%)`
+              background: `linear-gradient(135deg, ${deity.color}10 0%, ${deity.color}05 100%)`,
             }}
           >
             <p className="text-[8px] font-body font-semibold uppercase tracking-wider text-muted-foreground mb-0.5 text-center">
               Chant Today
             </p>
-            <p 
+            <p
               className="text-xs font-display font-bold text-center italic leading-tight"
               style={{ color: deity.color }}
             >
@@ -356,7 +317,6 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
             </p>
           </div>
 
-          {/* Close Button */}
           <button
             onClick={onClose}
             className="w-full mt-2 py-2 rounded-full font-body text-sm font-semibold text-primary-foreground transition-all hover:brightness-110 active:scale-[0.98]"
@@ -369,7 +329,8 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

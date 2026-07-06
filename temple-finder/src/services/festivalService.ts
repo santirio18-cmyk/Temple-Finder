@@ -85,10 +85,30 @@ function daysBetween(date1: Date, date2: Date): number {
 /**
  * Get current tithi information for "Sacred Today" display.
  */
+export type TithiDeityKey = 'vishnu' | 'shiva' | 'murugan' | 'ganesha' | 'devi' | 'divine'
+
+function getTithiDeityKey(tithiNumber: number): TithiDeityKey {
+  switch (tithiNumber) {
+    case 11:
+      return 'vishnu'
+    case 13:
+      return 'shiva'
+    case 6:
+      return 'murugan'
+    case 4:
+      return 'ganesha'
+    case 8:
+      return 'devi'
+    default:
+      return 'divine'
+  }
+}
+
 export function getCurrentTithi(): {
   tithi: string
   description: string
   nextEkadashi: number
+  deityKey: TithiDeityKey
 } {
   const today = new Date()
   today.setHours(12, 0, 0, 0)
@@ -124,6 +144,9 @@ export function getCurrentTithi(): {
       case 4:
         description = 'Sacred for Lord Ganesha worship'
         break
+      case 6:
+        description = 'Sacred day for Lord Murugan worship'
+        break
       default:
         description = 'A sacred day to connect with the Divine'
     }
@@ -132,7 +155,8 @@ export function getCurrentTithi(): {
   return {
     tithi: tithiName,
     description,
-    nextEkadashi: daysToEkadashi
+    nextEkadashi: daysToEkadashi,
+    deityKey: tithiInfo ? getTithiDeityKey(tithiInfo.number) : 'divine'
   }
 }
 

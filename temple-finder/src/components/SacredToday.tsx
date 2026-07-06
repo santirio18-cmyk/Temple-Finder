@@ -2,14 +2,29 @@ import { ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import vishnuImg from "@/assets/deities/vishnu-sacred.png";
-import { getCurrentTithi } from "@/services/festivalService";
+import shivaImg from "@/assets/deities/shiva.jpg";
+import muruganImg from "@/assets/deities/murugan.jpg";
+import ganeshaImg from "@/assets/deities/ganpati.jpg";
+import deviImg from "@/assets/deities/shakti.jpg";
+import divineImg from "@/assets/deities/vishnu-watercolor.png";
+import { getCurrentTithi, type TithiDeityKey } from "@/services/festivalService";
+
+const tithiDeityImages: Record<TithiDeityKey, string> = {
+  vishnu: vishnuImg,
+  shiva: shivaImg,
+  murugan: muruganImg,
+  ganesha: ganeshaImg,
+  devi: deviImg,
+  divine: divineImg,
+};
 
 const SacredToday = () => {
   const navigate = useNavigate();
   const [tithiData, setTithiData] = useState({
     tithi: 'Ekadashi',
     description: 'A sacred day to connect with Lord Vishnu',
-    nextEkadashi: 15
+    nextEkadashi: 15,
+    deityKey: 'vishnu' as TithiDeityKey,
   });
 
   useEffect(() => {
@@ -54,7 +69,7 @@ const SacredToday = () => {
           {/* Deity illustration - taller */}
           <div className="absolute right-0 top-0 bottom-0 w-[38%] pointer-events-none overflow-hidden">
             <img
-              src={vishnuImg}
+              src={tithiDeityImages[tithiData.deityKey]}
               alt=""
               className="absolute right-[-4px] bottom-[-6px] h-[130%] object-contain opacity-90 drop-shadow-sm"
             />
