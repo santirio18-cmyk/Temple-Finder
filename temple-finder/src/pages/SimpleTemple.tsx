@@ -242,9 +242,6 @@ const SimpleTemple: React.FC = () => {
                 <ExternalLink className="w-4 h-4" />
               </a>
             </div>
-            <p className="text-xs text-darshanam-brown-light mt-3 text-center">
-              Opens in Google Maps • Free • Works offline
-            </p>
           </div>
         </div>
 
@@ -336,9 +333,6 @@ const SimpleTemple: React.FC = () => {
               <ExternalLink className="w-4 h-4" />
             </a>
           </div>
-          <p className="text-xs text-darshanam-brown-light mt-3 text-center">
-            Opens in Google Maps • Free • Works offline
-          </p>
         </div>
       </div>
 
