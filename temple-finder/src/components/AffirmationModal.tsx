@@ -109,13 +109,14 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
         </button>
 
         {/* Header with Deity Image */}
-        <div className="relative p-4 pb-2">
-          <div className="flex items-center gap-2.5 mb-1.5">
+        <div className="relative p-4 pb-3">
+          <div className="flex flex-col items-center text-center">
+            {/* Large Centered Deity Image */}
             <div
-              className="w-16 h-16 rounded-full overflow-hidden shadow-2xl"
+              className="w-24 h-24 rounded-full overflow-hidden shadow-2xl mb-3"
               style={{ 
-                border: `3px solid ${deity.color}`,
-                boxShadow: `0 4px 16px ${deity.color}40`,
+                border: `4px solid ${deity.color}`,
+                boxShadow: `0 6px 24px ${deity.color}50, 0 0 0 8px ${deity.color}15`,
               }}
             >
               <img
@@ -124,17 +125,19 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
                 className="w-full h-full object-cover"
               />
             </div>
+            
+            {/* Text Content */}
             <div>
-              <div className="flex items-center gap-1 mb-0.5">
-                <Sparkles className="w-3.5 h-3.5" style={{ color: deity.color }} />
-                <h2 className="text-[9px] font-body font-bold uppercase tracking-wider" style={{ color: deity.color }}>
+              <div className="flex items-center justify-center gap-1.5 mb-1">
+                <Sparkles className="w-4 h-4" style={{ color: deity.color }} />
+                <h2 className="text-[10px] font-body font-bold uppercase tracking-wider" style={{ color: deity.color }}>
                   Daily Affirmations
                 </h2>
               </div>
-              <h3 className="font-display text-xl font-bold leading-tight" style={{ color: deity.color }}>
+              <h3 className="font-display text-2xl font-bold leading-tight mb-1" style={{ color: deity.color }}>
                 Lord {deity.name}
               </h3>
-              <p className="text-[11px] font-body font-medium text-foreground/70 mt-0.5">
+              <p className="text-xs font-body font-medium text-foreground/70">
                 {deity.dayName}'s Blessings ✨
               </p>
             </div>
