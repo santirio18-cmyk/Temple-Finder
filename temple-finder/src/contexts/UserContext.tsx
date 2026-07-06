@@ -18,13 +18,14 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const setUserName = (name: string) => {
-    const trimmed = name.trim() || 'Guest'
+    const trimmed = name.trim()
     setUserNameState(trimmed)
-    localStorage.setItem(USER_NAME_KEY, trimmed)
+    if (trimmed) localStorage.setItem(USER_NAME_KEY, trimmed)
+    else localStorage.removeItem(USER_NAME_KEY)
   }
 
   return (
-    <UserContext.Provider value={{ userName: userName || 'Guest', setUserName }}>
+    <UserContext.Provider value={{ userName, setUserName }}>
       {children}
     </UserContext.Provider>
   )

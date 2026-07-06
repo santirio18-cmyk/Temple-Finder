@@ -5,12 +5,11 @@ import '@fontsource/crimson-text/400.css'
 import templeHeaderBg from '@/assets/temple-header-bg.png'
 import { useUser } from '@/contexts/UserContext'
 
-function getTamilGreeting(): string {
-  const hour = new Date().getHours()
-  if (hour < 12) return 'Iniya Kaalai Vanakkam'        // Morning (before noon)
-  if (hour < 17) return 'Iniya Madhyanam Vanakkam'     // Afternoon (12 PM - 5 PM)
-  if (hour < 21) return 'Iniya Sayanthiram Vanakkam'   // Evening (5 PM - 9 PM)
-  return 'Iniya Iravu Vanakkam'                         // Night (9 PM onwards)
+function getGreetingLine(userName: string): string {
+  const greeting = 'Vanakkam'
+  const name = userName.trim()
+  if (!name || name.toLowerCase() === 'guest') return greeting
+  return `${greeting}, ${name}`
 }
 
 interface HeaderSectionProps {
@@ -62,7 +61,7 @@ export default function HeaderSection({ onProfileClick }: HeaderSectionProps) {
             className="font-normal text-2xl font-serif px-[12px]"
             style={{ color: '#312116', fontFamily: "'Crimson Text', serif", fontSize: '28px' }}
           >
-            {getTamilGreeting()}, {userName}
+            {getGreetingLine(userName)}
           </h1>
           <p className="text-sm font-body px-[12px]" style={{ color: '#664633', marginTop: '2px' }}>
             May your day be filled with divine energy.
