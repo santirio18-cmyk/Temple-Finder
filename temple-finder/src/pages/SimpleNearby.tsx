@@ -7,7 +7,7 @@ import {
   getUniqueTemples,
   getTopTemples,
   getUniqueTemplesByDeity,
-  hasRichDetails,
+  isTopTemple,
 } from '../data/templeUtils'
 import type { Temple } from '../data'
 import PageHeader from '../components/PageHeader'
@@ -76,7 +76,7 @@ const SimpleNearby: React.FC = () => {
 
   const topTempleCount = useMemo(() => {
     if (deityFilter) {
-      return getUniqueTemplesByDeity(deityFilter).filter((t) => hasRichDetails(t)).length
+      return getUniqueTemplesByDeity(deityFilter).filter((t) => isTopTemple(t)).length
     }
     return getTopTemples().length
   }, [deityFilter])
@@ -286,7 +286,7 @@ const SimpleNearby: React.FC = () => {
                       alt={temple.name}
                       className="w-full h-full object-cover"
                     />
-                    {hasRichDetails(temple) && (
+                    {isTopTemple(temple) && (
                       <span className="absolute top-2 left-2 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-darshanam-orange text-white text-[10px] font-bold uppercase tracking-wide">
                         <Sparkles className="w-3 h-3" />
                         Top

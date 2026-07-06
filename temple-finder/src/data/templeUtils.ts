@@ -1,7 +1,7 @@
 import { temples, type Temple } from '../data'
 import { topTempleDetailsById, TOP_TEMPLE_IDS } from './topTempleDetails'
 
-const GENERIC_DESCRIPTION = /^Hindu temple in Chennai\. Rated by/i
+const GENERIC_DESCRIPTION = /^Hindu temple in Chennai(\. Rated by [\d,]+ visitors)?\.?$/i
 
 function parseVisitorCount(description: string): number {
   const match = description.match(/Rated by ([\d,]+) visitors/i)
@@ -19,7 +19,7 @@ function templeRank(temple: Temple): number {
   const enriched = enrichTemple(temple)
   let score = 0
   if (TOP_TEMPLE_IDS.has(temple.id)) score += 10_000
-  if (hasRichDetails(enriched)) score += 5_000
+  if (isTopTemple(enriched)) score += 5_000
   score += parseVisitorCount(temple.description)
   score += Math.round(temple.rating * 100)
   return score
@@ -29,6 +29,15 @@ export function enrichTemple(temple: Temple): Temple {
   const extra = topTempleDetailsById[temple.id]
   if (!extra) return temple
   return { ...temple, ...extra }
+}
+
+export function hasTempleImage(temple: Temple): boolean {
+  return Boolean(temple.image?.trim())
+}
+
+export function isTopTemple(temple: Temple): boolean {
+  const enriched = enrichTemple(temple)
+  return TOP_TEMPLE_IDS.has(enriched.id) && hasTempleImage(enriched)
 }
 
 export function hasRichDetails(temple: Temple): boolean {
@@ -62,7 +71,7 @@ export function getUniqueTemples(): Temple[] {
 
 export function getTopTemples(): Temple[] {
   return getUniqueTemples()
-    .filter((temple) => hasRichDetails(enrichTemple(temple)))
+    .filter((temple) => isTopTemple(temple))
     .sort((a, b) => templeRank(b) - templeRank(a))
 }
 
