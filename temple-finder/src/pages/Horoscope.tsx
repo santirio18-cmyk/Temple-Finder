@@ -3,18 +3,48 @@ import { Sparkles, Star, Clock, Lightbulb, TrendingUp, AlertCircle, Users } from
 import {
   zodiacSigns,
   getDailyHoroscope,
+  getTodayDateKey,
   type DailyHoroscope,
 } from '@/services/horoscopeService'
 
 const Horoscope = () => {
   const [selectedSign, setSelectedSign] = useState<string>('Aries')
   const [horoscope, setHoroscope] = useState<DailyHoroscope | null>(null)
+  const [dateKey, setDateKey] = useState(getTodayDateKey)
+
+  useEffect(() => {
+    const refreshForToday = () => setDateKey(getTodayDateKey())
+
+    const now = new Date()
+    const tomorrow = new Date(now)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    tomorrow.setHours(0, 0, 0, 0)
+    const msUntilMidnight = tomorrow.getTime() - now.getTime()
+
+    let dailyInterval: ReturnType<typeof setInterval> | undefined
+
+    const midnightTimer = setTimeout(() => {
+      refreshForToday()
+      dailyInterval = setInterval(refreshForToday, 24 * 60 * 60 * 1000)
+    }, msUntilMidnight)
+
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') refreshForToday()
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+
+    return () => {
+      clearTimeout(midnightTimer)
+      if (dailyInterval) clearInterval(dailyInterval)
+      document.removeEventListener('visibilitychange', onVisibility)
+    }
+  }, [])
 
   useEffect(() => {
     if (selectedSign) {
       setHoroscope(getDailyHoroscope(selectedSign))
     }
-  }, [selectedSign])
+  }, [selectedSign, dateKey])
 
   useEffect(() => {
     const savedSign = localStorage.getItem('selectedZodiacSign')

@@ -278,19 +278,34 @@ const nakshatraAdvice: Record<string, string> = {
   'Revati': 'Journey\'s end brings new beginnings. Completion and fulfillment.',
 }
 
+function getDaySeed(date: Date): number {
+  return Math.floor(date.getTime() / (24 * 60 * 60 * 1000))
+}
+
+export function getTodayDateKey(): string {
+  const today = new Date()
+  return `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`
+}
+
+function resolveNakshatraAdvice(nakshatra: string): string {
+  const key = Object.keys(nakshatraAdvice).find((name) =>
+    nakshatra.toLowerCase().includes(name.toLowerCase())
+  )
+  return key ? nakshatraAdvice[key] : 'Trust your inner wisdom today.'
+}
+
 let cachedPanchang: any = null
 let cachedDate: string | null = null
 
 function getTodaysPanchang() {
   const today = new Date()
-  const dateStr = today.toDateString()
+  const dateStr = getTodayDateKey()
   
   if (cachedPanchang && cachedDate === dateStr) {
     return cachedPanchang
   }
 
   try {
-    // Calculate panchang using our existing service
     const panchang = getPanchangForDate(today, DEFAULT_LAT, DEFAULT_LNG)
     
     cachedPanchang = panchang
@@ -298,6 +313,8 @@ function getTodaysPanchang() {
     return panchang
   } catch (error) {
     console.error('Error calculating panchang:', error)
+    cachedPanchang = null
+    cachedDate = null
     return null
   }
 }
@@ -315,8 +332,9 @@ function generatePredictionFromPanchang(
   
   // Use nakshatra for spiritual guidance
   const nakshatra = panchang?.nakshatra || 'Ashwini'
-  const advice = nakshatraAdvice[nakshatra] || 'Trust your inner wisdom today.'
+  const advice = resolveNakshatraAdvice(nakshatra)
   
+  const daySeed = getDaySeed(today)
   // Extract tithi name and parse number (e.g., "Shukla Tritiya" -> 3)
   const tithiName = panchang?.tithi || 'Pratipada'
   const tithiMatch = tithiName.match(/(\d+|Pratipada|Dwitiya|Tritiya|Chaturthi|Panchami|Shashthi|Saptami|Ashtami|Navami|Dashami|Ekadashi|Dwadashi|Trayodashi|Chaturdashi|Purnima|Amavasya)/)
@@ -339,13 +357,13 @@ function generatePredictionFromPanchang(
   const luckyTime = abhijit?.time || brahma?.time || '11:00 AM - 12:00 PM'
   
   // Generate prediction based on planetary influence and date
-  const predictionIdx = today.getDate() % planetInfo.positive.length
+  const predictionIdx = (daySeed + zodiacIndex) % planetInfo.positive.length
   const prediction = planetInfo.positive[predictionIdx]
   
-  const challengesIdx = (today.getDate() + zodiacIndex) % planetInfo.challenges.length
+  const challengesIdx = (daySeed + zodiacIndex + 1) % planetInfo.challenges.length
   const challenges = planetInfo.challenges[challengesIdx]
   
-  const opportunitiesIdx = (today.getDate() + zodiacIndex + 1) % planetInfo.opportunities.length
+  const opportunitiesIdx = (daySeed + zodiacIndex + 2) % planetInfo.opportunities.length
   const opportunities = planetInfo.opportunities[opportunitiesIdx]
   
   // Determine compatible signs based on element
@@ -356,7 +374,12 @@ function generatePredictionFromPanchang(
     Water: ['Cancer', 'Scorpio', 'Pisces'],
   }
   const compatibility = compatibilityMap[zodiac.element]
-    .filter(s => s !== signName)
+    .filter((s) => s !== signName)
+    .sort((a, b) => {
+      const aIdx = zodiacSigns.findIndex((z) => z.name === a)
+      const bIdx = zodiacSigns.findIndex((z) => z.name === b)
+      return ((aIdx + daySeed) % 12) - ((bIdx + daySeed) % 12)
+    })
     .slice(0, 2)
   
   // Planetary influence description based on real panchang data
