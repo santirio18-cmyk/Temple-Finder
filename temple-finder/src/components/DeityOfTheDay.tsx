@@ -10,7 +10,7 @@ import shivaImg from '@/assets/deities/shiva.jpg';
 import hanumanImg from '@/assets/deities/hanuman.jpg';
 import ganeshaImg from '@/assets/deities/ganpati.jpg';
 import lakshmiImg from '@/assets/deities/lakshmi-deity.jpg';
-import muruganImg from '@/assets/deities/murugan.jpg';
+import muruganImg from '@/assets/deities/murugan-sacred.jpg';
 import saibabaImg from '@/assets/deities/saibaba-deity.jpg';
 import suryaImg from '@/assets/deities/surya-deity.jpg';
 

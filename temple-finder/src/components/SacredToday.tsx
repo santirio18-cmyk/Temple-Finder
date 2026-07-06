@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import vishnuImg from "@/assets/deities/vishnu-sacred.png";
 import shivaImg from "@/assets/deities/shiva.jpg";
-import muruganImg from "@/assets/deities/murugan.jpg";
+import muruganImg from "@/assets/deities/murugan-sacred.jpg";
 import ganeshaImg from "@/assets/deities/ganpati.jpg";
 import deviImg from "@/assets/deities/shakti.jpg";
 import divineImg from "@/assets/deities/vishnu-watercolor.png";
