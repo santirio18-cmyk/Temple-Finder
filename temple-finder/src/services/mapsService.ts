@@ -96,8 +96,11 @@ export class MapsService {
     }
   }
 
-  getDirectionsUrl(dest: { lat: number; lng: number }, origin?: { lat: number; lng: number }): string {
-    const d = `${dest.lat},${dest.lng}`
+  getDirectionsUrl(dest: { lat: number; lng: number; name?: string }, origin?: { lat: number; lng: number }): string {
+    // Use place name if available, otherwise just coordinates
+    const d = dest.name 
+      ? `${encodeURIComponent(dest.name)}+@${dest.lat},${dest.lng}`
+      : `${dest.lat},${dest.lng}`
     const o = origin ? `${origin.lat},${origin.lng}` : ''
     return o ? `https://www.google.com/maps/dir/${o}/${d}` : `https://www.google.com/maps?q=${d}`
   }

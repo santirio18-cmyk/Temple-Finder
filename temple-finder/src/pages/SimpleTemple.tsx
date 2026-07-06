@@ -216,7 +216,7 @@ const SimpleTemple: React.FC = () => {
             <h3 className="text-lg font-bold text-darshanam-brown mb-4">Navigation</h3>
             <div className="space-y-3">
               <a
-                href={mapsService.getDirectionsUrl({ lat: staticTemple.latitude, lng: staticTemple.longitude })}
+                href={mapsService.getDirectionsUrl({ lat: staticTemple.latitude, lng: staticTemple.longitude, name: staticTemple.name })}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-between w-full px-4 py-3 bg-darshanam-orange text-white rounded-xl hover:bg-darshanam-orange/90 transition-colors"
@@ -307,7 +307,7 @@ const SimpleTemple: React.FC = () => {
           <h3 className="text-lg font-bold text-darshanam-brown mb-4">Navigation</h3>
           <div className="space-y-3">
             <a
-              href={mapsService.getDirectionsUrl({ lat: place.lat, lng: place.lng })}
+              href={mapsService.getDirectionsUrl({ lat: place.lat, lng: place.lng, name: place.name })}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-between w-full px-4 py-3 bg-darshanam-orange text-white rounded-xl hover:bg-darshanam-orange/90 transition-colors"
