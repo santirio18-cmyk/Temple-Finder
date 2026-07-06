@@ -246,13 +246,13 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
           ) : (
             /* Step 2: Show revealed card with affirmation */
             <div 
-              className="space-y-2 animate-fade-in-up"
+              className="space-y-2 animate-fade-in-up flex flex-col items-center"
               style={{
                 animation: 'fadeInUp 0.6s ease-out',
               }}
             >
               {/* Revealed Card */}
-              <div className="relative max-w-[260px] mx-auto">
+              <div className="relative w-[260px]">
                 <div
                   className="relative overflow-hidden rounded-2xl transform"
                   style={{
@@ -324,7 +324,7 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
               <button
                 type="button"
                 onClick={handleReset}
-                className="w-full py-1.5 rounded-full font-body text-xs font-semibold border-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="w-[260px] py-1.5 rounded-full font-body text-xs font-semibold border-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
                 style={{
                   borderColor: deity.color,
                   color: deity.color,
