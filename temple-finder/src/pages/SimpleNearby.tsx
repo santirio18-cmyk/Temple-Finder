@@ -12,7 +12,6 @@ import {
 import type { Temple } from '../data'
 import PageHeader from '../components/PageHeader'
 import ProfileModal from '../components/ProfileModal'
-import { searchNearbyTemples, type NearbyPlaceTemple } from '../services/placesService'
 
 const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=400&h=300&fit=crop'
@@ -35,8 +34,6 @@ const SimpleNearby: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [showProfile, setShowProfile] = useState(false)
-  const [livePlaces, setLivePlaces] = useState<NearbyPlaceTemple[]>([])
-  const [placesLoading, setPlacesLoading] = useState(false)
 
   useEffect(() => {
     getCurrentLocation()
@@ -81,7 +78,7 @@ const SimpleNearby: React.FC = () => {
     return getTopTemples().length
   }, [deityFilter])
 
-  const staticNearby = useMemo(() => {
+  const nearbyTemples = useMemo(() => {
     if (!location) return [] as (Temple & { distance: number })[]
     if (activeTab === 'top') {
       return getTopNearbyTemples(location.latitude, location.longitude, radius, deityFilter || null)
@@ -89,27 +86,7 @@ const SimpleNearby: React.FC = () => {
     return getUniqueNearbyTemples(location.latitude, location.longitude, radius, deityFilter || null)
   }, [location, radius, activeTab, deityFilter])
 
-  useEffect(() => {
-    if (!location || deityFilter) {
-      setLivePlaces([])
-      setPlacesLoading(false)
-      return
-    }
-    const effectiveKm = Math.min(radius, 50)
-    setPlacesLoading(true)
-    searchNearbyTemples(location.latitude, location.longitude, effectiveKm)
-      .then((rows) => {
-        setLivePlaces(rows)
-        setPlacesLoading(false)
-      })
-      .catch(() => {
-        setLivePlaces([])
-        setPlacesLoading(false)
-      })
-  }, [location, radius, deityFilter])
-
-  const useLive = !deityFilter && livePlaces.length > 0
-  const listReady = !loading && location && (useLive || staticNearby.length > 0)
+  const listReady = !loading && location && nearbyTemples.length > 0
   const pageTitle = deityFilter ? `${deityFilter} Temples Nearby` : 'Nearby Temples'
 
   return (
@@ -147,12 +124,6 @@ const SimpleNearby: React.FC = () => {
             </div>
           ) : null}
         </div>
-
-        {radius > 50 && !deityFilter && (
-          <p className="text-xs text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 mb-4">
-            Live search uses up to 50 km (Google Places limit). Curated list below uses your full radius.
-          </p>
-        )}
 
         <div className="bg-white rounded-2xl shadow-sm p-6 mb-6">
           <label className="block text-sm font-medium text-darshanam-brown mb-2">
@@ -197,11 +168,7 @@ const SimpleNearby: React.FC = () => {
           </button>
         </div>
 
-        {placesLoading && (
-          <p className="text-sm text-darshanam-brown-light mb-4">Loading nearby temples…</p>
-        )}
-
-        {!listReady && !placesLoading ? (
+        {!listReady ? (
           <div className="bg-white rounded-2xl p-12 text-center shadow-sm">
             <div className="text-6xl mb-4">📍</div>
             <h3 className="text-xl font-bold text-darshanam-brown mb-2">No temples found nearby</h3>
@@ -211,57 +178,10 @@ const SimpleNearby: React.FC = () => {
                 : 'Try increasing the search radius'}
             </p>
           </div>
-        ) : useLive ? (
-          <div>
-            <h2 className="text-lg font-bold text-darshanam-brown mb-4">
-              {livePlaces.length} {livePlaces.length === 1 ? 'Temple' : 'Temples'} Found
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {livePlaces.map((p) => (
-                <div
-                  key={p.id}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => navigate(`/temple/${encodeURIComponent(p.id)}`)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') navigate(`/temple/${encodeURIComponent(p.id)}`)
-                  }}
-                  className="bg-white rounded-2xl shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
-                >
-                  <div className="h-40 overflow-hidden bg-darshanam-cream">
-                    <img
-                      src={p.photoUrl || FALLBACK_IMAGE}
-                      alt={p.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className="font-bold text-darshanam-brown flex-1">{p.name}</h3>
-                      <span className="text-sm font-medium text-darshanam-orange flex-shrink-0 ml-2">
-                        {p.distanceKm.toFixed(1)} km
-                      </span>
-                    </div>
-                    <p className="text-darshanam-orange text-sm mb-2">Hindu temple</p>
-                    <div className="flex items-center gap-1.5 text-sm text-darshanam-brown-light">
-                      <MapPin className="w-4 h-4 text-red-500" />
-                      <span>{p.vicinity || 'See map'}</span>
-                    </div>
-                    {p.rating != null && (
-                      <p className="text-xs text-darshanam-brown-light mt-1">
-                        ★ {p.rating.toFixed(1)}
-                        {p.userRatingsTotal != null ? ` (${p.userRatingsTotal} reviews)` : ''}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
         ) : (
           <div>
             <h2 className="text-lg font-bold text-darshanam-brown mb-4">
-              {staticNearby.length} {staticNearby.length === 1 ? 'Temple' : 'Temples'} Found
+              {nearbyTemples.length} {nearbyTemples.length === 1 ? 'Temple' : 'Temples'} Found
               {activeTab === 'top' && (
                 <span className="block text-sm font-normal text-darshanam-brown-light mt-0.5">
                   Featured temples with full details, timings & festivals
@@ -269,7 +189,7 @@ const SimpleNearby: React.FC = () => {
               )}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {staticNearby.map((temple) => (
+              {nearbyTemples.map((temple) => (
                 <div
                   key={temple.id}
                   role="button"

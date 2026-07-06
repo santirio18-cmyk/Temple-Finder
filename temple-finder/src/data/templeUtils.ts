@@ -3,6 +3,9 @@ import { topTempleDetailsById, TOP_TEMPLE_IDS } from './topTempleDetails'
 
 const GENERIC_DESCRIPTION = /^Hindu temple in Chennai(\. Rated by [\d,]+ visitors)?\.?$/i
 
+/** Names that are not real temple listings (trusts, services, etc.). */
+const NON_TEMPLE_NAME = /educational trust|astronomy\s*&\s*astrology|marriage arrangements|bhavabhodhakaru/i
+
 function parseVisitorCount(description: string): number {
   const match = description.match(/Rated by ([\d,]+) visitors/i)
   return match ? parseInt(match[1].replace(/,/g, ''), 10) : 0
@@ -33,6 +36,11 @@ export function enrichTemple(temple: Temple): Temple {
 
 export function hasTempleImage(temple: Temple): boolean {
   return Boolean(temple.image?.trim())
+}
+
+export function isValidTempleListing(temple: Temple): boolean {
+  if (NON_TEMPLE_NAME.test(temple.name)) return false
+  return hasTempleImage(temple)
 }
 
 export function isTopTemple(temple: Temple): boolean {
@@ -66,7 +74,9 @@ export function deduplicateTemples(list: Temple[]): Temple[] {
 }
 
 export function getUniqueTemples(): Temple[] {
-  return deduplicateTemples(temples).map(enrichTemple)
+  return deduplicateTemples(temples)
+    .map(enrichTemple)
+    .filter(isValidTempleListing)
 }
 
 export function getTopTemples(): Temple[] {
