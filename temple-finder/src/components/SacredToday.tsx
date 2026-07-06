@@ -7,7 +7,7 @@ import muruganImg from "@/assets/deities/murugan-sacred.jpg";
 import ganeshaImg from "@/assets/deities/ganpati.jpg";
 import deviImg from "@/assets/deities/shakti.jpg";
 import divineImg from "@/assets/deities/vishnu-watercolor.png";
-import { getCurrentTithi, type TithiDeityKey } from "@/services/festivalService";
+import { getCurrentTithi, getTithiDeityFilterParam, type TithiDeityKey } from "@/services/festivalService";
 
 const tithiDeityImages: Record<TithiDeityKey, string> = {
   vishnu: vishnuImg,
@@ -100,7 +100,10 @@ const SacredToday = () => {
             {/* Visit Nearby Temple CTA */}
             <button
               type="button"
-              onClick={() => navigate("/nearby")}
+              onClick={() => {
+                const deity = getTithiDeityFilterParam(tithiData.deityKey)
+                navigate(deity ? `/nearby?deity=${encodeURIComponent(deity)}` : '/nearby')
+              }}
               className="mt-3.5 flex items-center gap-1.5 px-5 py-2.5 rounded-full font-body text-sm font-semibold text-primary-foreground transition-all hover:brightness-110 active:scale-[0.98] w-fit"
               style={{
                 background: "linear-gradient(135deg, hsl(var(--saffron)) 0%, hsl(var(--saffron-light)) 100%)",

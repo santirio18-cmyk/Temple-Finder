@@ -104,6 +104,18 @@ function getTithiDeityKey(tithiNumber: number): TithiDeityKey {
   }
 }
 
+export function getTithiDeityFilterParam(deityKey: TithiDeityKey): string | null {
+  const map: Record<TithiDeityKey, string | null> = {
+    vishnu: 'Vishnu',
+    shiva: 'Shiva',
+    murugan: 'Murugan',
+    ganesha: 'Ganesha',
+    devi: 'Devi',
+    divine: null,
+  }
+  return map[deityKey]
+}
+
 export function getCurrentTithi(): {
   tithi: string
   description: string

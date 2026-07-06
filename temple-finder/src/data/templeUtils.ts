@@ -83,7 +83,74 @@ export function searchUniqueTemples(query: string): Temple[] {
 }
 
 export function getUniqueTemplesByDeity(deity: string): Temple[] {
-  return getUniqueTemples().filter(
-    (temple) => temple.deity.toLowerCase() === deity.toLowerCase()
-  )
+  return getUniqueTemples().filter((temple) => matchesDeityFilter(temple, deity))
+}
+
+const DEITY_KEYWORDS: Record<string, string[]> = {
+  Murugan: ['murugan', 'muruga', 'subramanya', 'subramaniam', 'skanda', 'kandan', 'andavar', 'palani'],
+  Shiva: ['shiva', 'siva', 'eswara', 'eeswarar', 'eeswar', 'nataraja', 'lingam', 'kapaleeshwar'],
+  Vishnu: ['vishnu', 'perumal', 'venkatesh', 'venkateswara', 'narayana', 'ranganath', 'krishna', 'parthasarathy', 'parthasarathi'],
+  Ganesha: ['ganesha', 'ganapati', 'vinayagar', 'vinayaka', 'pillayar', 'ganapathy'],
+  Devi: ['devi', 'amman', 'lakshmi', 'durga', 'parvati', 'shakti', 'kali', 'mariamman', 'mari'],
+  Hanuman: ['hanuman', 'anjaneya', 'anjaneyar', 'maruti'],
+}
+
+export function matchesDeityFilter(temple: Temple, deityFilter: string): boolean {
+  const filter = deityFilter.trim()
+  if (!filter) return true
+
+  const deity = temple.deity.toLowerCase()
+  const name = temple.name.toLowerCase()
+  const filterLower = filter.toLowerCase()
+
+  if (deity.includes(filterLower)) return true
+
+  const keywords = DEITY_KEYWORDS[filter] ?? [filterLower]
+  return keywords.some((kw) => name.includes(kw) || deity.includes(kw))
+}
+
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371
+  const dLat = ((lat2 - lat1) * Math.PI) / 180
+  const dLon = ((lon2 - lon1) * Math.PI) / 180
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  return R * c
+}
+
+export function getUniqueNearbyTemples(
+  lat: number,
+  lng: number,
+  radiusKm: number = 50,
+  deityFilter?: string | null
+): (Temple & { distance: number })[] {
+  return getUniqueTemples()
+    .filter((temple) => !deityFilter || matchesDeityFilter(temple, deityFilter))
+    .map((temple) => ({
+      ...temple,
+      distance: calculateDistance(lat, lng, temple.latitude, temple.longitude),
+    }))
+    .filter((temple) => temple.distance <= radiusKm)
+    .sort((a, b) => a.distance - b.distance)
+}
+
+export function getTopNearbyTemples(
+  lat: number,
+  lng: number,
+  radiusKm: number = 50,
+  deityFilter?: string | null
+): (Temple & { distance: number })[] {
+  return getTopTemples()
+    .filter((temple) => !deityFilter || matchesDeityFilter(temple, deityFilter))
+    .map((temple) => ({
+      ...temple,
+      distance: calculateDistance(lat, lng, temple.latitude, temple.longitude),
+    }))
+    .filter((temple) => temple.distance <= radiusKm)
+    .sort((a, b) => a.distance - b.distance)
 }
