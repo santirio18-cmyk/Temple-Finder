@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, MapPin, Star, User, ExternalLink } from 'lucide-react'
 import { getTempleById } from '../data'
+import { getTempleByIdEnriched } from '../data/templeUtils'
 import ProfileModal from '../components/ProfileModal'
 import { mapsService } from '../services/mapsService'
 import { getPlaceDetails, type PlaceDetailsResult } from '../services/placesService'
@@ -18,7 +19,7 @@ const SimpleTemple: React.FC = () => {
   const [placeLoading, setPlaceLoading] = useState(false)
   const [placeError, setPlaceError] = useState<string | null>(null)
 
-  const staticTemple = id ? getTempleById(id) : undefined
+  const staticTemple = id ? getTempleByIdEnriched(id) ?? getTempleById(id) : undefined
 
   useEffect(() => {
     if (staticTemple || !id) {

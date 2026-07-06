@@ -1,10 +1,10 @@
 import { MapPin } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { temples } from '@/data'
+import { getTopTemples } from '@/data/templeUtils'
 
 export default function NearbyTemples() {
   const navigate = useNavigate()
-  const list = temples.slice(0, 6)
+  const list = getTopTemples().slice(0, 6)
 
   return (
     <section className="pt-5 pb-5 bg-background relative z-10 animate-fade-in-up">
