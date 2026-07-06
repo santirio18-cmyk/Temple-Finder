@@ -121,11 +121,17 @@ const Panchang = () => {
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-muted-foreground text-sm">📅</span>
                 <h2 className="text-lg font-display font-bold text-foreground">
-                  {selectedDate.toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+                  {selectedDate.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", year: "numeric" })}
                 </h2>
               </div>
-              <p className="text-sm font-body text-muted-foreground ml-6 mb-4">
-                ({data.tamilMonthLabel} · {data.masa} paksha)
+              <p className="text-sm font-body text-foreground ml-6 mb-1">
+                <span className="font-semibold text-saffron">{data.tamilMonthRoman}</span>
+                <span className="text-muted-foreground"> ({data.tamilMonthLabel})</span>
+                <span className="text-muted-foreground"> · </span>
+                <span className="font-medium">{data.tamilPaksha}</span>
+              </p>
+              <p className="text-xs font-body text-muted-foreground ml-6 mb-4">
+                {data.tithi} · {data.paksha} Paksha
               </p>
 
               <div className="space-y-1.5 mb-4">
@@ -139,7 +145,7 @@ const Panchang = () => {
                   <span className="font-semibold text-saffron">Yoga:</span> {data.yoga}
                 </p>
                 <p className="text-sm font-body text-foreground">
-                  <span className="font-semibold text-saffron">Paksha:</span> {data.paksha}
+                  <span className="font-semibold text-saffron">Paksha:</span> {data.tamilPaksha} ({data.paksha})
                 </p>
               </div>
 
@@ -202,7 +208,10 @@ const Panchang = () => {
               >
                 <ChevronLeft className="w-6 h-6" strokeWidth={2.5} />
               </button>
-              <span className="text-base font-display font-semibold text-foreground min-w-[140px] text-center">{data.tamilMonthLabel}</span>
+              <span className="text-base font-display font-semibold text-foreground min-w-[140px] text-center">
+                {data.tamilMonthRoman}
+                <span className="block text-xs font-body text-muted-foreground">{data.tamilMonthLabel}</span>
+              </span>
               <button 
                 type="button"
                 onClick={goToNextWeek}

@@ -6,20 +6,47 @@ export const DEFAULT_LNG = 80.2707
 
 const engine = new MhahPanchang()
 
-/** Approximate Sanskrit lunar month → Tamil name (regional calendars vary). */
-const MASA_TO_TAMIL: Record<string, string> = {
-  Chaitra: 'சித்திரை',
-  Vaisakha: 'வைகாசி',
-  Jyeshtha: 'ஆனி',
-  Ashadha: 'ஆடி',
-  Shravana: 'ஆவணி',
-  Bhadrapada: 'புரட்டாசி',
-  Ashwin: 'ஐப்பசி',
-  Kartik: 'கார்த்திகை',
-  Margashirsha: 'மார்கழி',
-  Pausha: 'தை',
-  Magha: 'மாசி',
-  Phalguna: 'பங்குனி',
+/** Sanskrit lunar month → Tamil (script + roman). Regional almanacs may vary slightly. */
+const MASA_TO_TAMIL: Record<string, { tamil: string; roman: string }> = {
+  Chaitra: { tamil: 'சித்திரை', roman: 'Chithirai' },
+  Vaisakha: { tamil: 'வைகாசி', roman: 'Vaikasi' },
+  Jyeshtha: { tamil: 'ஆனி', roman: 'Aani' },
+  Ashadha: { tamil: 'ஆடி', roman: 'Aadi' },
+  Asadha: { tamil: 'ஆடி', roman: 'Aadi' },
+  Shravana: { tamil: 'ஆவணி', roman: 'Avani' },
+  Sravana: { tamil: 'ஆவணி', roman: 'Avani' },
+  Bhadrapada: { tamil: 'புரட்டாசி', roman: 'Purattasi' },
+  Bhadra: { tamil: 'புரட்டாசி', roman: 'Purattasi' },
+  Ashwin: { tamil: 'ஐப்பசி', roman: 'Aippasi' },
+  Asvina: { tamil: 'ஐப்பசி', roman: 'Aippasi' },
+  Kartik: { tamil: 'கார்த்திகை', roman: 'Karthigai' },
+  Kartika: { tamil: 'கார்த்திகை', roman: 'Karthigai' },
+  Margashirsha: { tamil: 'மார்கழி', roman: 'Margazhi' },
+  Margasirsa: { tamil: 'மார்கழி', roman: 'Margazhi' },
+  Pausha: { tamil: 'தை', roman: 'Thai' },
+  Pausa: { tamil: 'தை', roman: 'Thai' },
+  Magha: { tamil: 'மாசி', roman: 'Masi' },
+  Phalguna: { tamil: 'பங்குனி', roman: 'Panguni' },
+}
+
+const PAKSHA_TO_TAMIL: Record<string, string> = {
+  Shukla: 'Valarpirai',
+  Krishna: 'Theipirai',
+}
+
+function resolveTamilMonth(masaName: string): { tamil: string; roman: string; masa: string } {
+  const key = masaName.trim()
+  const mapped = MASA_TO_TAMIL[key]
+  if (mapped) return { ...mapped, masa: key }
+  return { tamil: key, roman: key, masa: key }
+}
+
+function resolveTamilPaksha(pakshaName: string): string {
+  const trimmed = pakshaName.trim()
+  for (const [key, tamil] of Object.entries(PAKSHA_TO_TAMIL)) {
+    if (trimmed.toLowerCase().includes(key.toLowerCase())) return tamil
+  }
+  return trimmed
 }
 
 function formatTime(d: Date): string {
@@ -78,6 +105,8 @@ export interface PanchangDay {
   sunrise: string
   sunset: string
   tamilMonthLabel: string
+  tamilMonthRoman: string
+  tamilPaksha: string
   mantra: string
   yoga: string
   paksha: string
@@ -172,7 +201,7 @@ export function getPanchangForDate(
   const solarNoon = sun.solarNoon instanceof Date ? sun.solarNoon : null
 
   const masaName = (cal.Masa?.name_en_UK as string) || (cal.Masa?.name_en_IN as string) || ''
-  const tamilMonth = MASA_TO_TAMIL[masaName] ?? masaName
+  const { tamil: tamilMonth, roman: tamilMonthRoman, masa } = resolveTamilMonth(masaName)
 
   const mantra = getDailyMantraLine(calc)
 
@@ -244,6 +273,7 @@ export function getPanchangForDate(
 
   const yogaName = (cal.Yoga?.name_en_IN as string) || '—'
   const pakshaName = (cal.Paksha?.name_en_IN as string) || '—'
+  const tamilPaksha = resolveTamilPaksha(pakshaName)
   
   // Auspicious Days
   const auspiciousDays: string[] = []
@@ -266,10 +296,12 @@ export function getPanchangForDate(
     sunrise: sunrise ? formatTime(sunrise) : '—',
     sunset: sunset ? formatTime(sunset) : '—',
     tamilMonthLabel: tamilMonth,
+    tamilMonthRoman,
+    tamilPaksha,
     mantra,
     yoga: yogaName,
     paksha: pakshaName,
-    masa: masaName,
+    masa,
     auspiciousTimings,
     inauspiciousTimings,
     auspiciousDays,
