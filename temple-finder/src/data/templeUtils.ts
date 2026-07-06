@@ -111,6 +111,7 @@ const DEITY_KEYWORDS: Record<string, string[]> = {
   Vishnu: ['vishnu', 'perumal', 'venkatesh', 'venkateswara', 'narayana', 'ranganath', 'krishna', 'parthasarathy', 'parthasarathi'],
   Ganesha: ['ganesha', 'ganapati', 'vinayagar', 'vinayaka', 'pillayar', 'ganapathy'],
   Devi: ['devi', 'amman', 'lakshmi', 'durga', 'parvati', 'shakti', 'kali', 'mariamman', 'mari'],
+  Surya: ['surya', 'suryan', 'sun', 'navagraha', 'ratha saptami'],
   Hanuman: ['hanuman', 'anjaneya', 'anjaneyar', 'maruti'],
 }
 

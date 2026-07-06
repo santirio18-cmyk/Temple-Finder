@@ -6,6 +6,7 @@ import shivaImg from "@/assets/deities/shiva.jpg";
 import muruganImg from "@/assets/deities/murugan-sacred.jpg";
 import ganeshaImg from "@/assets/deities/ganpati.jpg";
 import deviImg from "@/assets/deities/shakti.jpg";
+import suryaImg from "@/assets/deities/surya-deity.jpg";
 import divineImg from "@/assets/deities/vishnu-watercolor.png";
 import { getCurrentTithi, getTithiDeityFilterParam, type TithiDeityKey } from "@/services/festivalService";
 
@@ -15,6 +16,7 @@ const tithiDeityImages: Record<TithiDeityKey, string> = {
   murugan: muruganImg,
   ganesha: ganeshaImg,
   devi: deviImg,
+  surya: suryaImg,
   divine: divineImg,
 };
 
@@ -66,12 +68,12 @@ const SacredToday = () => {
             background: "linear-gradient(135deg, hsl(var(--warm-cream)) 0%, hsl(28 60% 92%) 40%, hsl(25 55% 90%) 100%)",
           }}
         >
-          {/* Deity illustration - taller */}
-          <div className="absolute right-0 top-0 bottom-0 w-[38%] pointer-events-none overflow-hidden">
+          {/* Deity illustration */}
+          <div className="absolute right-0 top-0 bottom-0 w-[40%] pointer-events-none flex items-end justify-end pr-1 pb-1">
             <img
               src={tithiDeityImages[tithiData.deityKey]}
               alt=""
-              className="absolute right-[-4px] bottom-[-6px] h-[130%] object-contain opacity-90 drop-shadow-sm"
+              className="h-full w-auto max-w-full object-contain object-bottom opacity-90 drop-shadow-sm"
             />
           </div>
 
