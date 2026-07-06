@@ -387,187 +387,99 @@ const Panchang = () => {
         <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--temple-gold)/0.25)] to-transparent" />
       </div>
 
-      {/* OTHER MUHURTAS + DURMUHURTAM */}
+      {/* MUHURTAS & DURMUHURTAM — unified with Gowri styling */}
       {(auspiciousTimings.length > 0 || inauspiciousTimings.length > 0) && (
-        <>
-      {/* AUSPICIOUS MUHURTAS */}
-      {auspiciousTimings.length > 0 && (
-      <div className="px-3 mb-4">
-        <div
-          className="rounded-2xl shadow-2xl p-6 relative overflow-hidden"
-          style={{
-            background: 'linear-gradient(135deg, #FFF9F0 0%, #FFFBF5 50%, #FFF9F0 100%)',
-            border: '2px solid #D4AF37',
-            boxShadow: '0 8px 32px rgba(212, 175, 55, 0.25), 0 4px 16px rgba(0, 0, 0, 0.1)',
-          }}
-        >
-          <div
-            className="absolute left-0 top-0 bottom-0 w-1 rounded-full"
-            style={{
-              background: 'linear-gradient(to bottom, #FFD700, #DAA520, #B8860B)',
-            }}
-          />
-
-          <div className="pl-2">
-            <div className="flex items-center gap-3 mb-3">
-              <div 
-                className="w-9 h-9 rounded-full flex items-center justify-center"
-                style={{
-                  background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',
-                  boxShadow: '0 4px 12px rgba(255, 215, 0, 0.4)',
-                }}
-              >
-                <span className="text-xl">✨</span>
-              </div>
-              <h3 
-                className="text-xl font-display font-bold"
-                style={{ 
-                  background: 'linear-gradient(135deg, #B8860B 0%, #DAA520 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
-                Auspicious Muhurtas
+        <div className="px-3 mb-4">
+          <div className="bg-[hsl(30,40%,97%)] rounded-xl border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm p-4 relative overflow-hidden">
+            <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-[hsl(var(--saffron))] via-[hsl(var(--temple-gold))] to-[hsl(var(--saffron-light))]" />
+            <div className="pl-3">
+              <h3 className="text-base font-display font-bold text-foreground mb-1">
+                Muhurtas & Durmuhurtam
               </h3>
-            </div>
-            <p className="text-xs font-body font-semibold mb-4 text-amber-700/80">
-              Brahma Muhurta & Abhijit Muhurta
-            </p>
-            <div className="space-y-3">
-              {auspiciousTimings.map((item) => (
-                <div 
-                  key={item.name} 
-                  className="flex items-center justify-between p-3 rounded-xl"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(255, 215, 0, 0.04) 100%)',
-                    border: '1px solid rgba(212, 175, 55, 0.2)',
-                  }}
-                >
-                  <p className="text-sm font-body font-bold text-amber-900">
-                    {item.emoji} {item.name}
-                  </p>
-                  <p className="text-xs font-body font-semibold text-amber-700">
-                    {item.time}
-                  </p>
-                </div>
-              ))}
+              <p className="text-[11px] text-muted-foreground mb-4">
+                Special auspicious windows and periods to avoid
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {auspiciousTimings.length > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold text-foreground mb-2 uppercase tracking-wide">
+                      Auspicious (நல்ல நேரம்)
+                    </p>
+                    <div className="rounded-lg border border-[hsl(var(--temple-gold)/0.2)] overflow-hidden">
+                      <table className="w-full text-xs font-body">
+                        <tbody>
+                          {auspiciousTimings.map((item) => (
+                            <tr key={item.name} className="bg-emerald-50 border-t border-[hsl(var(--temple-gold)/0.1)] first:border-t-0">
+                              <td className="px-2.5 py-2 font-bold text-emerald-900">
+                                {item.name}
+                              </td>
+                              <td className="px-2.5 py-2 text-right font-medium text-emerald-800">
+                                {item.time}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+                {inauspiciousTimings.length > 0 && (
+                  <div>
+                    <p className="text-xs font-semibold text-foreground mb-2 uppercase tracking-wide">
+                      Durmuhurtam (தவிர்க்க வேண்டிய நேரம்)
+                    </p>
+                    <div className="rounded-lg border border-[hsl(var(--temple-gold)/0.2)] overflow-hidden">
+                      <table className="w-full text-xs font-body">
+                        <tbody>
+                          {inauspiciousTimings.map((item) => (
+                            <tr key={item.name} className="bg-red-50 border-t border-[hsl(var(--temple-gold)/0.1)] first:border-t-0">
+                              <td className="px-2.5 py-2 font-bold text-red-900">
+                                {item.name}
+                              </td>
+                              <td className="px-2.5 py-2 text-right font-medium text-red-800">
+                                {item.time}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="flex gap-4 mt-3 text-[10px] text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <span className="w-3 h-3 rounded bg-emerald-100 border border-emerald-300" /> Auspicious
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-3 h-3 rounded bg-red-100 border border-red-300" /> Avoid
+                </span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      )}
-
-      {/* INAUSPICIOUS TIMINGS - Durmuhurtam */}
-      {inauspiciousTimings.length > 0 && (
-      <div className="px-3 mb-4">
-        <div
-          className="rounded-2xl shadow-2xl p-6 relative overflow-hidden"
-          style={{
-            background: 'linear-gradient(135deg, #FFF5F5 0%, #FFFAFA 50%, #FFF5F5 100%)',
-            border: '2px solid #DC143C',
-            boxShadow: '0 8px 32px rgba(220, 20, 60, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1)',
-          }}
-        >
-          <div
-            className="absolute left-0 top-0 bottom-0 w-1 rounded-full"
-            style={{
-              background: 'linear-gradient(to bottom, #DC143C, #C41E3A, #8B0000)',
-            }}
-          />
-
-          <div className="pl-2">
-            <div className="flex items-center gap-3 mb-3">
-              <div 
-                className="w-9 h-9 rounded-full flex items-center justify-center"
-                style={{
-                  background: 'linear-gradient(135deg, #FF6B6B 0%, #DC143C 100%)',
-                  boxShadow: '0 4px 12px rgba(220, 20, 60, 0.4)',
-                }}
-              >
-                <span className="text-xl">⚠️</span>
-              </div>
-              <h3 
-                className="text-xl font-display font-bold"
-                style={{ 
-                  background: 'linear-gradient(135deg, #8B0000 0%, #DC143C 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
-                Durmuhurtam
-              </h3>
-            </div>
-            <p className="text-xs font-body font-semibold mb-4 text-red-700/80">
-              Rahu Kaal, Yamaganda & Gulikai
-            </p>
-            <div className="space-y-3">
-              {inauspiciousTimings.map((item) => (
-                <div 
-                  key={item.name} 
-                  className="flex items-center justify-between p-3 rounded-xl"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(220, 20, 60, 0.08) 0%, rgba(220, 20, 60, 0.04) 100%)',
-                    border: '1px solid rgba(220, 20, 60, 0.2)',
-                  }}
-                >
-                  <p className="text-sm font-body font-bold text-red-900">
-                    {item.emoji} {item.name}
-                  </p>
-                  <p className="text-xs font-body font-semibold text-red-700">
-                    {item.time}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-      )}
-        </>
       )}
 
       {/* AUSPICIOUS DAYS - Special Sacred Days */}
       {auspiciousDays.length > 0 && (
         <div className="px-3 mb-4">
-          <div
-            className="rounded-xl border-2 shadow-card-warm p-5 relative overflow-hidden"
-            style={{
-              backgroundColor: 'hsl(280, 70%, 97%)',
-              borderColor: 'hsl(280, 50%, 70%)',
-            }}
-          >
-            <div
-              className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full"
-              style={{
-                background: 'linear-gradient(to bottom, hsl(280, 70%, 50%), hsl(280, 70%, 60%))',
-              }}
-            />
+          <div className="bg-[hsl(30,40%,97%)] rounded-xl border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm p-4 relative overflow-hidden">
+            <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-[hsl(var(--saffron))] via-[hsl(var(--temple-gold))] to-[hsl(var(--saffron-light))]" />
 
             <div className="pl-3">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-xl">🌺</span>
-                <h3 className="text-lg font-display font-bold" style={{ color: 'hsl(280, 70%, 35%)' }}>
-                  Today's Special Day
-                </h3>
-              </div>
-              <p className="text-xs font-body mb-4" style={{ color: 'hsl(280, 50%, 40%)' }}>
-                🙏 Observe special prayers and rituals
+              <h3 className="text-base font-display font-bold text-foreground mb-1">
+                Today&apos;s Special Day
+              </h3>
+              <p className="text-[11px] text-muted-foreground mb-3">
+                Observe special prayers and rituals
               </p>
-              <div className="space-y-2">
+              <div className="rounded-lg border border-[hsl(var(--temple-gold)/0.2)] overflow-hidden">
                 {auspiciousDays.map((day, idx) => (
                   <div
                     key={idx}
-                    className="p-3 rounded-lg"
-                    style={{
-                      backgroundColor: 'hsl(280, 60%, 95%)',
-                      border: '1px solid hsl(280, 50%, 85%)',
-                    }}
+                    className="px-3 py-2.5 text-sm font-body font-semibold text-foreground bg-[hsl(var(--saffron)/0.06)] border-t border-[hsl(var(--temple-gold)/0.1)] first:border-t-0"
                   >
-                    <p className="text-sm font-body font-semibold" style={{ color: 'hsl(280, 70%, 30%)' }}>
-                      {day}
-                    </p>
+                    {day}
                   </div>
                 ))}
               </div>
