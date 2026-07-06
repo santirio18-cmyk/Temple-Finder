@@ -6,27 +6,23 @@ export const DEFAULT_LNG = 80.2707
 
 const engine = new MhahPanchang()
 
-/** Sanskrit lunar month → Tamil (script + roman). Regional almanacs may vary slightly. */
-const MASA_TO_TAMIL: Record<string, { tamil: string; roman: string }> = {
-  Chaitra: { tamil: 'சித்திரை', roman: 'Chithirai' },
-  Vaisakha: { tamil: 'வைகாசி', roman: 'Vaikasi' },
-  Jyeshtha: { tamil: 'ஆனி', roman: 'Aani' },
-  Ashadha: { tamil: 'ஆடி', roman: 'Aadi' },
-  Asadha: { tamil: 'ஆடி', roman: 'Aadi' },
-  Shravana: { tamil: 'ஆவணி', roman: 'Avani' },
-  Sravana: { tamil: 'ஆவணி', roman: 'Avani' },
-  Bhadrapada: { tamil: 'புரட்டாசி', roman: 'Purattasi' },
-  Bhadra: { tamil: 'புரட்டாசி', roman: 'Purattasi' },
-  Ashwin: { tamil: 'ஐப்பசி', roman: 'Aippasi' },
-  Asvina: { tamil: 'ஐப்பசி', roman: 'Aippasi' },
-  Kartik: { tamil: 'கார்த்திகை', roman: 'Karthigai' },
-  Kartika: { tamil: 'கார்த்திகை', roman: 'Karthigai' },
-  Margashirsha: { tamil: 'மார்கழி', roman: 'Margazhi' },
-  Margasirsa: { tamil: 'மார்கழி', roman: 'Margazhi' },
-  Pausha: { tamil: 'தை', roman: 'Thai' },
-  Pausa: { tamil: 'தை', roman: 'Thai' },
-  Magha: { tamil: 'மாசி', roman: 'Masi' },
-  Phalguna: { tamil: 'பங்குனி', roman: 'Panguni' },
+/**
+ * Tamil solar months follow the Sun's rashi (sidereal sign), not the Sanskrit lunar masa label.
+ * e.g. Sun in Gemini (mid-Jun to mid-Jul) = Aani, not Aadi.
+ */
+const RAASI_TO_TAMIL_MONTH: Record<string, { tamil: string; roman: string }> = {
+  Aries: { tamil: 'சித்திரை', roman: 'Chithirai' },
+  Taurus: { tamil: 'வைகாசி', roman: 'Vaikasi' },
+  Gemini: { tamil: 'ஆனி', roman: 'Aani' },
+  Cancer: { tamil: 'ஆடி', roman: 'Aadi' },
+  Leo: { tamil: 'ஆவணி', roman: 'Avani' },
+  Virgo: { tamil: 'புரட்டாசி', roman: 'Purattasi' },
+  Libra: { tamil: 'ஐப்பசி', roman: 'Aippasi' },
+  Scorpio: { tamil: 'கார்த்திகை', roman: 'Karthigai' },
+  Sagittarius: { tamil: 'மார்கழி', roman: 'Margazhi' },
+  Capricorn: { tamil: 'தை', roman: 'Thai' },
+  Aquarius: { tamil: 'மாசி', roman: 'Masi' },
+  Pisces: { tamil: 'பங்குனி', roman: 'Panguni' },
 }
 
 const PAKSHA_TO_TAMIL: Record<string, string> = {
@@ -34,11 +30,11 @@ const PAKSHA_TO_TAMIL: Record<string, string> = {
   Krishna: 'Theipirai',
 }
 
-function resolveTamilMonth(masaName: string): { tamil: string; roman: string; masa: string } {
-  const key = masaName.trim()
-  const mapped = MASA_TO_TAMIL[key]
-  if (mapped) return { ...mapped, masa: key }
-  return { tamil: key, roman: key, masa: key }
+function resolveTamilSolarMonth(raasiName: string): { tamil: string; roman: string; raasi: string } {
+  const key = raasiName.trim()
+  const mapped = RAASI_TO_TAMIL_MONTH[key]
+  if (mapped) return { ...mapped, raasi: key }
+  return { tamil: key, roman: key, raasi: key }
 }
 
 function resolveTamilPaksha(pakshaName: string): string {
@@ -107,6 +103,7 @@ export interface PanchangDay {
   tamilMonthLabel: string
   tamilMonthRoman: string
   tamilPaksha: string
+  raasi: string
   mantra: string
   yoga: string
   paksha: string
@@ -200,8 +197,9 @@ export function getPanchangForDate(
   const sunset = sun.sunSet instanceof Date ? sun.sunSet : null
   const solarNoon = sun.solarNoon instanceof Date ? sun.solarNoon : null
 
-  const masaName = (cal.Masa?.name_en_UK as string) || (cal.Masa?.name_en_IN as string) || ''
-  const { tamil: tamilMonth, roman: tamilMonthRoman, masa } = resolveTamilMonth(masaName)
+  const raasiName = (cal.Raasi?.name_en_UK as string) || ''
+  const { tamil: tamilMonth, roman: tamilMonthRoman, raasi } = resolveTamilSolarMonth(raasiName)
+  const lunarMasaName = (cal.MoonMasa?.name_en_IN as string) || ''
 
   const mantra = getDailyMantraLine(calc)
 
@@ -298,10 +296,11 @@ export function getPanchangForDate(
     tamilMonthLabel: tamilMonth,
     tamilMonthRoman,
     tamilPaksha,
+    raasi,
     mantra,
     yoga: yogaName,
     paksha: pakshaName,
-    masa,
+    masa: lunarMasaName,
     auspiciousTimings,
     inauspiciousTimings,
     auspiciousDays,

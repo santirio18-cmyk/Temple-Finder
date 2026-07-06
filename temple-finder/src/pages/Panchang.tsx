@@ -131,7 +131,7 @@ const Panchang = () => {
                 <span className="font-medium">{data.tamilPaksha}</span>
               </p>
               <p className="text-xs font-body text-muted-foreground ml-6 mb-4">
-                {data.tithi} · {data.paksha} Paksha
+                {data.tithi} · {data.tamilPaksha} · Sun in {data.raasi}
               </p>
 
               <div className="space-y-1.5 mb-4">
