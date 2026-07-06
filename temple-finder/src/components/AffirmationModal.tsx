@@ -94,18 +94,18 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
           boxShadow: `0 30px 80px -15px ${deity.color}60, 0 15px 40px -10px rgba(0,0,0,0.3)`,
         }}
       >
-        {/* Close Button - More Visible */}
+        {/* Close Button - Top Right X */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 z-20 w-11 h-11 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-all active:scale-95"
+          className="absolute top-3 right-3 z-20 w-10 h-10 rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-all active:scale-95 bg-white border-2"
           aria-label="Close"
           style={{ 
-            background: `linear-gradient(135deg, ${deity.color} 0%, ${deity.color}dd 100%)`,
-            boxShadow: `0 4px 16px ${deity.color}60`,
+            borderColor: deity.color,
+            boxShadow: `0 4px 12px rgba(0,0,0,0.2)`,
           }}
         >
-          <X className="w-6 h-6 text-white" strokeWidth={3} />
+          <X className="w-6 h-6" style={{ color: deity.color }} strokeWidth={3} />
         </button>
 
         {/* Header with Deity Image */}
@@ -253,7 +253,7 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
               }}
             >
               {/* Revealed Card */}
-              <div className="relative w-[260px]">
+              <div className="relative w-[260px] mx-auto">
                 <div
                   className="relative overflow-hidden rounded-2xl transform"
                   style={{
