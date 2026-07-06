@@ -3,13 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { MapPin, User, Search } from 'lucide-react'
 import '@fontsource/crimson-text/400.css'
 import templeHeaderBg from '@/assets/temple-header-bg.png'
-import { useUser } from '@/contexts/UserContext'
 
-function getGreetingLine(userName: string): string {
-  const greeting = 'Vanakkam'
-  const name = userName.trim()
-  if (!name || name.toLowerCase() === 'guest') return greeting
-  return `${greeting}, ${name}`
+function getGreetingLine(): string {
+  return 'Happy Birthday Ashwini'
 }
 
 interface HeaderSectionProps {
@@ -18,7 +14,6 @@ interface HeaderSectionProps {
 
 export default function HeaderSection({ onProfileClick }: HeaderSectionProps) {
   const navigate = useNavigate()
-  const { userName } = useUser()
   const [searchQuery, setSearchQuery] = useState('')
 
   const handleSearch = (e: FormEvent) => {
@@ -61,7 +56,7 @@ export default function HeaderSection({ onProfileClick }: HeaderSectionProps) {
             className="font-normal text-2xl font-serif px-[12px]"
             style={{ color: '#312116', fontFamily: "'Crimson Text', serif", fontSize: '28px' }}
           >
-            {getGreetingLine(userName)}
+            {getGreetingLine()}
           </h1>
           <p className="text-sm font-body px-[12px]" style={{ color: '#664633', marginTop: '2px' }}>
             May your day be filled with divine energy.
