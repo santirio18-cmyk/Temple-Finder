@@ -71,6 +71,8 @@ export interface LunarPeriod {
   name: string
   tamil?: string
   end: string
+  startAt?: Date
+  endAt?: Date
 }
 
 /** Library label → standard Vedic name */
@@ -131,10 +133,13 @@ function buildNakshatraPeriods(sunrise: Date, nextSunrise: Date, dayAnchor: Date
     if (!name || !end) break
 
     const periodEnd = end < nextSunrise ? end : nextSunrise
+    const periodStart = new Date(cursor)
     periods.push({
       name,
       tamil: nakshatraTamil(name),
       end: formatEndTime(periodEnd, dayAnchor),
+      startAt: periodStart,
+      endAt: periodEnd,
     })
 
     if (end >= nextSunrise) break

@@ -1,10 +1,13 @@
 import { useState, useMemo, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Sunrise, Sunset } from "lucide-react";
-import { useUser } from "@/contexts/UserContext";
-import { NAKSHATRA_LIST, chandrashtamaNakshatra, getChandrashtamaPeriods } from "@/constants/nakshatras";
+import { ChevronLeft, ChevronRight, Sunrise, Sunset, Hourglass } from "lucide-react";
+import {
+  buildChandrashtamaSlots,
+  resolveChandrashtamaNow,
+  formatChandrashtamaDateTime,
+  formatCountdown,
+} from "@/constants/nakshatras";
 import {
   getPanchangForDate,
-  getChandrashtamaFromPeriods,
   getMonthCalendar,
   DEFAULT_LAT,
   DEFAULT_LNG,
@@ -19,8 +22,8 @@ function formatPeriodLine(period: LunarPeriod, showTamil = false): string {
 }
 
 const Panchang = () => {
-  const { birthNakshatra, setBirthNakshatra } = useUser();
   const today = new Date();
+  const [now, setNow] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState<Date>(today);
   const [calendarView, setCalendarView] = useState<"week" | "month">("week");
   const [monthCells, setMonthCells] = useState<CalendarDaySummary[]>([]);
@@ -53,6 +56,11 @@ const Panchang = () => {
       },
       { enableHighAccuracy: false, timeout: 12_000, maximumAge: 300_000 }
     );
+  }, []);
+
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 1000);
+    return () => window.clearInterval(id);
   }, []);
 
   const getWeekDates = (startDate: Date) => {
@@ -92,15 +100,22 @@ const Panchang = () => {
     [selectedDate, lat, lng]
   );
 
-  const chandrashtama = useMemo(
-    () => getChandrashtamaFromPeriods(data.nakshatraPeriods, birthNakshatra),
-    [data.nakshatraPeriods, birthNakshatra]
-  );
-
-  const chandrashtamaToday = useMemo(
-    () => getChandrashtamaPeriods(data.nakshatraPeriods),
+  const chandrashtamaSlots = useMemo(
+    () => buildChandrashtamaSlots(data.nakshatraPeriods),
     [data.nakshatraPeriods]
   );
+
+  const isSelectedToday =
+    selectedDate.getDate() === today.getDate() &&
+    selectedDate.getMonth() === today.getMonth() &&
+    selectedDate.getFullYear() === today.getFullYear();
+
+  const { active: chandraActive, next: chandraNext } = useMemo(() => {
+    if (!isSelectedToday) {
+      return { active: chandrashtamaSlots[0] ?? null, next: chandrashtamaSlots[1] ?? null };
+    }
+    return resolveChandrashtamaNow(chandrashtamaSlots, now);
+  }, [chandrashtamaSlots, now, isSelectedToday]);
 
   useEffect(() => {
     if (calendarView !== "month") return;
@@ -119,10 +134,6 @@ const Panchang = () => {
     }, 0);
     return () => window.clearTimeout(timer);
   }, [lat, lng]);
-
-  const chandrashtamaStarLabel = birthNakshatra
-    ? chandrashtamaNakshatra(birthNakshatra)
-    : null;
 
   const auspiciousTimings = data.auspiciousTimings;
   const inauspiciousTimings = data.inauspiciousTimings;
@@ -262,7 +273,7 @@ const Panchang = () => {
         </div>
       </div>
 
-      {/* Chandrashtama + birth nakshatra */}
+      {/* Chandrashtama — simple active / next cards */}
       <div className="px-3 mb-4">
         <div className="bg-[hsl(30,40%,97%)] rounded-xl border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm p-4 relative overflow-hidden">
           <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-[hsl(var(--saffron))] via-[hsl(var(--temple-gold))] to-[hsl(var(--saffron-light))]" />
@@ -271,90 +282,98 @@ const Panchang = () => {
               Chandrashtama (சந்திராஷ்டமம்)
             </h3>
             <p className="text-[11px] text-muted-foreground mb-3">
-              Moon in the 8th nakshatra from birth star — avoid major new beginnings
+              Which rasi & nakshatra births should avoid new beginnings now
             </p>
 
-            <div className="rounded-lg border border-[hsl(var(--temple-gold)/0.2)] overflow-hidden mb-4">
-              <table className="w-full text-sm font-body">
-                <tbody>
-                  <tr className="border-b border-[hsl(var(--temple-gold)/0.12)] bg-[hsl(var(--saffron)/0.04)]">
-                    <td colSpan={2} className="px-3 py-2 text-xs font-semibold text-saffron uppercase tracking-wide">
-                      Chandrashtama today
-                    </td>
-                  </tr>
-                  {chandrashtamaToday.map((row, i) => {
-                    const isYours =
-                      birthNakshatra &&
-                      row.birthNakshatra.toLowerCase() === birthNakshatra.toLowerCase();
-                    const moonLabel = row.moonNakshatraTamil
-                      ? `${row.moonNakshatra} (${row.moonNakshatraTamil})`
-                      : row.moonNakshatra;
-                    const birthLabel = row.birthNakshatraTamil
-                      ? `${row.birthNakshatra} (${row.birthNakshatraTamil})`
-                      : row.birthNakshatra;
-                    return (
-                      <tr
-                        key={`ch-period-${i}`}
-                        className={`border-b border-[hsl(var(--temple-gold)/0.1)] last:border-b-0 ${
-                          isYours ? "bg-red-50" : ""
-                        }`}
-                      >
-                        <td className="px-3 py-2.5 align-top font-semibold text-saffron w-[5.5rem] whitespace-nowrap">
-                          {i === 0 ? "Moon in" : "then"}
-                        </td>
-                        <td className="px-3 py-2.5 align-top leading-relaxed">
-                          <p className="text-foreground/90">
-                            <span className="font-medium text-foreground">{moonLabel}</span>
-                            <span className="text-muted-foreground"> until {row.until}</span>
-                          </p>
-                          <p className={`text-xs mt-1 ${isYours ? "text-red-800 font-semibold" : "text-muted-foreground"}`}>
-                            Birth star in Chandrashtama:{" "}
-                            <span className={isYours ? "text-red-900" : "text-foreground font-medium"}>
-                              {birthLabel}
-                            </span>
-                            {isYours && " · You"}
-                          </p>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {chandraActive ? (
+                <div className="rounded-xl border border-red-200 bg-gradient-to-br from-red-50 to-white p-3">
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                    <span className="text-[10px] font-bold tracking-widest text-red-600 uppercase">
+                      {isSelectedToday ? "Active now" : "First period"}
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center text-xl shrink-0">
+                      {chandraActive.rasiSymbol}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-lg font-display font-bold text-foreground leading-tight">
+                        {chandraActive.rasiRoman}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">{chandraActive.rasiTamil}</p>
+                      <p className="text-xs font-semibold text-foreground mt-1">
+                        {chandraActive.birthNakshatra}
+                        {chandraActive.birthNakshatraTamil && (
+                          <span className="text-muted-foreground font-normal"> ({chandraActive.birthNakshatraTamil})</span>
+                        )}
+                      </p>
+                      <p className="text-[10px] text-red-700 font-medium mt-0.5">Chandrashtama active</p>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-2 border-t border-red-100 text-right">
+                    <p className="text-[10px] font-bold text-red-600 uppercase">
+                      Ends: {formatChandrashtamaDateTime(chandraActive.endAt)}
+                    </p>
+                    {isSelectedToday && (
+                      <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center justify-end gap-1">
+                        <Hourglass className="w-3 h-3" />
+                        {formatCountdown(chandraActive.endAt.getTime() - now.getTime())} remaining
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-xl border border-[hsl(var(--temple-gold)/0.2)] bg-white/60 p-3 text-sm text-muted-foreground">
+                  No active Chandrashtama window
+                </div>
+              )}
 
-            <label className="text-xs font-semibold text-foreground block mb-1">Your birth nakshatra</label>
-            <select
-              value={birthNakshatra}
-              onChange={(e) => setBirthNakshatra(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-[hsl(var(--temple-gold)/0.3)] text-sm bg-white text-foreground mb-3"
-            >
-              <option value="">Choose nakshatra…</option>
-              {NAKSHATRA_LIST.map((n) => (
-                <option key={n.name} value={n.name}>
-                  {n.name} ({n.tamil})
-                </option>
-              ))}
-            </select>
-            {birthNakshatra && chandrashtamaStarLabel && (
-              <p className="text-xs text-muted-foreground mb-2">
-                Your 8th star: <span className="font-semibold text-foreground">{chandrashtamaStarLabel}</span>
-                <span className="block text-[10px] mt-0.5">Saved in Profile</span>
-              </p>
-            )}
-            {chandrashtama?.active ? (
-              <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2.5 text-sm text-red-900">
-                <span className="font-bold">Active for you today</span>
-                {chandrashtama.until ? ` until ${chandrashtama.until}` : ""}
-              </div>
-            ) : birthNakshatra ? (
-              <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-2.5 text-sm text-emerald-900">
-                Not active for you on this day
-              </div>
-            ) : (
-              <div className="rounded-lg bg-[hsl(var(--saffron)/0.06)] border border-[hsl(var(--temple-gold)/0.2)] px-3 py-2.5 text-sm text-muted-foreground">
-                Set birth nakshatra to get alerts (or from Kundli / Profile)
-              </div>
-            )}
+              {chandraNext ? (
+                <div className="rounded-xl border border-amber-200 bg-gradient-to-br from-amber-50 to-white p-3">
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <span className="w-2 h-2 rounded-full bg-amber-500" />
+                    <span className="text-[10px] font-bold tracking-widest text-amber-700 uppercase">
+                      {isSelectedToday ? "Coming up next" : "Next period"}
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-2.5">
+                    <div className="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center text-xl shrink-0">
+                      {chandraNext.rasiSymbol}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-lg font-display font-bold text-foreground leading-tight">
+                        {chandraNext.rasiRoman}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">{chandraNext.rasiTamil}</p>
+                      <p className="text-xs font-semibold text-foreground mt-1">
+                        {chandraNext.birthNakshatra}
+                        {chandraNext.birthNakshatraTamil && (
+                          <span className="text-muted-foreground font-normal"> ({chandraNext.birthNakshatraTamil})</span>
+                        )}
+                      </p>
+                      <p className="text-[10px] text-amber-800 font-medium mt-0.5">Upcoming transit</p>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-2 border-t border-amber-100 text-right">
+                    <p className="text-[10px] font-bold text-amber-700 uppercase">
+                      Starts: {formatChandrashtamaDateTime(chandraNext.startAt)}
+                    </p>
+                    {isSelectedToday && (
+                      <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center justify-end gap-1">
+                        <Hourglass className="w-3 h-3" />
+                        Starts in {formatCountdown(chandraNext.startAt.getTime() - now.getTime())}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-xl border border-[hsl(var(--temple-gold)/0.2)] bg-white/60 p-3 text-sm text-muted-foreground">
+                  No further period today
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
