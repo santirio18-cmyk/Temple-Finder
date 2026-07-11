@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Sunrise, Sunset } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
-import { NAKSHATRA_LIST, chandrashtamaNakshatra } from "@/constants/nakshatras";
+import { NAKSHATRA_LIST, chandrashtamaNakshatra, getChandrashtamaPeriods } from "@/constants/nakshatras";
 import {
   getPanchangForDate,
   getChandrashtamaFromPeriods,
@@ -95,6 +95,11 @@ const Panchang = () => {
   const chandrashtama = useMemo(
     () => getChandrashtamaFromPeriods(data.nakshatraPeriods, birthNakshatra),
     [data.nakshatraPeriods, birthNakshatra]
+  );
+
+  const chandrashtamaToday = useMemo(
+    () => getChandrashtamaPeriods(data.nakshatraPeriods),
+    [data.nakshatraPeriods]
   );
 
   useEffect(() => {
@@ -266,8 +271,57 @@ const Panchang = () => {
               Chandrashtama (சந்திராஷ்டமம்)
             </h3>
             <p className="text-[11px] text-muted-foreground mb-3">
-              Moon in the 8th nakshatra from your birth star — avoid major new beginnings
+              Moon in the 8th nakshatra from birth star — avoid major new beginnings
             </p>
+
+            <div className="rounded-lg border border-[hsl(var(--temple-gold)/0.2)] overflow-hidden mb-4">
+              <table className="w-full text-sm font-body">
+                <tbody>
+                  <tr className="border-b border-[hsl(var(--temple-gold)/0.12)] bg-[hsl(var(--saffron)/0.04)]">
+                    <td colSpan={2} className="px-3 py-2 text-xs font-semibold text-saffron uppercase tracking-wide">
+                      Chandrashtama today
+                    </td>
+                  </tr>
+                  {chandrashtamaToday.map((row, i) => {
+                    const isYours =
+                      birthNakshatra &&
+                      row.birthNakshatra.toLowerCase() === birthNakshatra.toLowerCase();
+                    const moonLabel = row.moonNakshatraTamil
+                      ? `${row.moonNakshatra} (${row.moonNakshatraTamil})`
+                      : row.moonNakshatra;
+                    const birthLabel = row.birthNakshatraTamil
+                      ? `${row.birthNakshatra} (${row.birthNakshatraTamil})`
+                      : row.birthNakshatra;
+                    return (
+                      <tr
+                        key={`ch-period-${i}`}
+                        className={`border-b border-[hsl(var(--temple-gold)/0.1)] last:border-b-0 ${
+                          isYours ? "bg-red-50" : ""
+                        }`}
+                      >
+                        <td className="px-3 py-2.5 align-top font-semibold text-saffron w-[5.5rem] whitespace-nowrap">
+                          {i === 0 ? "Moon in" : "then"}
+                        </td>
+                        <td className="px-3 py-2.5 align-top leading-relaxed">
+                          <p className="text-foreground/90">
+                            <span className="font-medium text-foreground">{moonLabel}</span>
+                            <span className="text-muted-foreground"> until {row.until}</span>
+                          </p>
+                          <p className={`text-xs mt-1 ${isYours ? "text-red-800 font-semibold" : "text-muted-foreground"}`}>
+                            Birth star in Chandrashtama:{" "}
+                            <span className={isYours ? "text-red-900" : "text-foreground font-medium"}>
+                              {birthLabel}
+                            </span>
+                            {isYours && " · You"}
+                          </p>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
             <label className="text-xs font-semibold text-foreground block mb-1">Your birth nakshatra</label>
             <select
               value={birthNakshatra}
@@ -283,18 +337,18 @@ const Panchang = () => {
             </select>
             {birthNakshatra && chandrashtamaStarLabel && (
               <p className="text-xs text-muted-foreground mb-2">
-                8th star for you: <span className="font-semibold text-foreground">{chandrashtamaStarLabel}</span>
-                <span className="block text-[10px] mt-0.5">Also saved in Profile</span>
+                Your 8th star: <span className="font-semibold text-foreground">{chandrashtamaStarLabel}</span>
+                <span className="block text-[10px] mt-0.5">Saved in Profile</span>
               </p>
             )}
             {chandrashtama?.active ? (
               <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2.5 text-sm text-red-900">
-                <span className="font-bold">Active today</span> — Moon in {chandrashtama.chandrashtamaStar}
+                <span className="font-bold">Active for you today</span>
                 {chandrashtama.until ? ` until ${chandrashtama.until}` : ""}
               </div>
             ) : birthNakshatra ? (
               <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-2.5 text-sm text-emerald-900">
-                Not active on this day
+                Not active for you on this day
               </div>
             ) : (
               <div className="rounded-lg bg-[hsl(var(--saffron)/0.06)] border border-[hsl(var(--temple-gold)/0.2)] px-3 py-2.5 text-sm text-muted-foreground">

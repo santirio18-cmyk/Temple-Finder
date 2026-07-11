@@ -41,3 +41,33 @@ export function chandrashtamaNakshatra(birthNakshatra: string): string | null {
   if (idx < 0) return null
   return NAKSHATRA_LIST[(idx + 7) % 27].name
 }
+
+/** Birth nakshatra affected when Moon transits the given nakshatra today */
+export function birthNakshatraForChandrashtamaMoon(moonNakshatra: string): (typeof NAKSHATRA_LIST)[number] | null {
+  const moonIdx = nakshatraIndex(moonNakshatra)
+  if (moonIdx < 0) return null
+  return NAKSHATRA_LIST[(moonIdx - 7 + 27) % 27]
+}
+
+export interface ChandrashtamaPeriod {
+  moonNakshatra: string
+  moonNakshatraTamil?: string
+  until: string
+  birthNakshatra: string
+  birthNakshatraTamil: string
+}
+
+export function getChandrashtamaPeriods(
+  nakshatraPeriods: Array<{ name: string; tamil?: string; end: string }>
+): ChandrashtamaPeriod[] {
+  return nakshatraPeriods.map((period) => {
+    const birth = birthNakshatraForChandrashtamaMoon(period.name)
+    return {
+      moonNakshatra: period.name,
+      moonNakshatraTamil: period.tamil,
+      until: period.end,
+      birthNakshatra: birth?.name ?? '—',
+      birthNakshatraTamil: birth?.tamil ?? '',
+    }
+  })
+}
