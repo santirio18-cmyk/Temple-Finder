@@ -258,6 +258,40 @@ function shortNakshatra(name: string, tamil?: string): string {
   return name.length > 5 ? name.slice(0, 5) : name
 }
 
+/** Lightweight sunrise-only tithi/nakshatra — for month grid (avoids full day calc). */
+export function getPanchangSummaryForDate(
+  date: Date,
+  lat: number,
+  lng: number
+): { tithi: string; nakshatra: string; nakshatraTamil?: string } {
+  const localNoon = new Date(date)
+  localNoon.setHours(12, 0, 0, 0)
+  const sun = engine.sunTimer(localNoon, lat, lng)
+  const sunrise = sun.sunRise instanceof Date ? sun.sunRise : localNoon
+  const calc = engine.calculate(sunrise)
+  const tithi = calc.Tithi?.name_en_IN ?? '—'
+  const nak = normalizeNakshatraName(calc.Nakshatra?.name_en_IN ?? '—')
+  return { tithi, nakshatra: nak, nakshatraTamil: nakshatraTamil(nak) }
+}
+
+export function getChandrashtamaFromPeriods(
+  nakshatraPeriods: LunarPeriod[],
+  birthNakshatra: string | null | undefined
+): ChandrashtamaInfo | null {
+  if (!birthNakshatra?.trim()) return null
+  const chStar = chandrashtamaNakshatra(birthNakshatra)
+  if (!chStar) return null
+  const activePeriod = nakshatraPeriods.find(
+    (period) => period.name.toLowerCase() === chStar.toLowerCase()
+  )
+  return {
+    active: Boolean(activePeriod),
+    birthNakshatra: birthNakshatra.trim(),
+    chandrashtamaStar: chStar,
+    until: activePeriod?.end,
+  }
+}
+
 export function getChandrashtamaForDate(
   date: Date,
   birthNakshatra: string | null | undefined,
@@ -269,16 +303,7 @@ export function getChandrashtamaForDate(
   if (!chStar) return null
 
   const p = getPanchangForDate(date, lat, lng)
-  const activePeriod = p.nakshatraPeriods.find(
-    (period) => period.name.toLowerCase() === chStar.toLowerCase()
-  )
-
-  return {
-    active: Boolean(activePeriod),
-    birthNakshatra: birthNakshatra.trim(),
-    chandrashtamaStar: chStar,
-    until: activePeriod?.end,
-  }
+  return getChandrashtamaFromPeriods(p.nakshatraPeriods, birthNakshatra)
 }
 
 export function getMonthCalendar(
@@ -315,16 +340,16 @@ export function getMonthCalendar(
       continue
     }
 
-    const p = getPanchangForDate(date, lat, lng)
+    const summary = getPanchangSummaryForDate(date, lat, lng)
     cells.push({
       date,
       day: date.getDate(),
       inMonth: true,
-      tithi: p.tithi,
-      tithiShort: shortTithi(p.tithi),
-      nakshatra: p.nakshatra,
-      nakshatraTamil: p.nakshatraTamil,
-      nakshatraShort: shortNakshatra(p.nakshatra, p.nakshatraTamil),
+      tithi: summary.tithi,
+      tithiShort: shortTithi(summary.tithi),
+      nakshatra: summary.nakshatra,
+      nakshatraTamil: summary.nakshatraTamil,
+      nakshatraShort: shortNakshatra(summary.nakshatra, summary.nakshatraTamil),
       festival: festivalByDay.get(date.getDate()),
     })
   }

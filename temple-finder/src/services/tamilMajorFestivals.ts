@@ -143,11 +143,21 @@ function findKarthigaiDeepam(year: number, lat: number, lng: number): Date | nul
   return null
 }
 
+const festivalYearCache = new Map<string, TamilFestival[]>()
+
+function festivalCacheKey(year: number, lat: number, lng: number): string {
+  return `${year}:${lat.toFixed(2)}:${lng.toFixed(2)}`
+}
+
 export function getMajorTamilFestivals(
   year: number,
   lat = DEFAULT_LAT,
   lng = DEFAULT_LNG
 ): TamilFestival[] {
+  const key = festivalCacheKey(year, lat, lng)
+  const cached = festivalYearCache.get(key)
+  if (cached) return cached
+
   const items: Array<TamilFestival | null> = [
     (() => {
       const date = findPanguniUthiram(year, lat, lng)
@@ -190,7 +200,9 @@ export function getMajorTamilFestivals(
     })(),
   ]
 
-  return items.filter((f): f is TamilFestival => f !== null).sort((a, b) => a.date.getTime() - b.date.getTime())
+  const result = items.filter((f): f is TamilFestival => f !== null).sort((a, b) => a.date.getTime() - b.date.getTime())
+  festivalYearCache.set(key, result)
+  return result
 }
 
 export function getMajorFestivalsForMonth(

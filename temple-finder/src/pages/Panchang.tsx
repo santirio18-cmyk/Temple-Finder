@@ -4,13 +4,14 @@ import { useUser } from "@/contexts/UserContext";
 import { NAKSHATRA_LIST, chandrashtamaNakshatra } from "@/constants/nakshatras";
 import {
   getPanchangForDate,
-  getChandrashtamaForDate,
+  getChandrashtamaFromPeriods,
   getMonthCalendar,
   DEFAULT_LAT,
   DEFAULT_LNG,
   type LunarPeriod,
+  type CalendarDaySummary,
 } from "@/services/panchangService";
-import { getMajorFestivalsForMonth, getUpcomingMajorFestivals } from "@/services/tamilMajorFestivals";
+import { getMajorFestivalsForMonth, getUpcomingMajorFestivals, type TamilFestival } from "@/services/tamilMajorFestivals";
 
 function formatPeriodLine(period: LunarPeriod, showTamil = false): string {
   const label = showTamil && period.tamil ? `${period.name} (${period.tamil})` : period.name
@@ -21,7 +22,11 @@ const Panchang = () => {
   const { birthNakshatra, setBirthNakshatra } = useUser();
   const today = new Date();
   const [selectedDate, setSelectedDate] = useState<Date>(today);
-  const [calendarView, setCalendarView] = useState<"week" | "month">("month");
+  const [calendarView, setCalendarView] = useState<"week" | "month">("week");
+  const [monthCells, setMonthCells] = useState<CalendarDaySummary[]>([]);
+  const [monthLoading, setMonthLoading] = useState(false);
+  const [monthFestivals, setMonthFestivals] = useState<TamilFestival[]>([]);
+  const [upcomingFestivals, setUpcomingFestivals] = useState<TamilFestival[]>([]);
   const [monthCursor, setMonthCursor] = useState<Date>(() => new Date(today.getFullYear(), today.getMonth(), 1));
   const [weekStartDate, setWeekStartDate] = useState<Date>(() => {
     // Initialize with Monday of current week
@@ -88,21 +93,27 @@ const Panchang = () => {
   );
 
   const chandrashtama = useMemo(
-    () => getChandrashtamaForDate(selectedDate, birthNakshatra, lat, lng),
-    [selectedDate, birthNakshatra, lat, lng]
+    () => getChandrashtamaFromPeriods(data.nakshatraPeriods, birthNakshatra),
+    [data.nakshatraPeriods, birthNakshatra]
   );
 
-  const monthCells = useMemo(
-    () => getMonthCalendar(monthCursor.getFullYear(), monthCursor.getMonth(), lat, lng),
-    [monthCursor, lat, lng]
-  );
+  useEffect(() => {
+    if (calendarView !== "month") return;
+    setMonthLoading(true);
+    const timer = window.setTimeout(() => {
+      setMonthCells(getMonthCalendar(monthCursor.getFullYear(), monthCursor.getMonth(), lat, lng));
+      setMonthFestivals(getMajorFestivalsForMonth(monthCursor.getFullYear(), monthCursor.getMonth(), lat, lng));
+      setMonthLoading(false);
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [calendarView, monthCursor, lat, lng]);
 
-  const monthFestivals = useMemo(
-    () => getMajorFestivalsForMonth(monthCursor.getFullYear(), monthCursor.getMonth(), lat, lng),
-    [monthCursor, lat, lng]
-  );
-
-  const upcomingFestivals = useMemo(() => getUpcomingMajorFestivals(today, lat, lng, 4), [lat, lng]);
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setUpcomingFestivals(getUpcomingMajorFestivals(today, lat, lng, 4));
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [lat, lng]);
 
   const chandrashtamaStarLabel = birthNakshatra
     ? chandrashtamaNakshatra(birthNakshatra)
@@ -413,6 +424,9 @@ const Panchang = () => {
                   ))}
                 </div>
 
+                {monthLoading ? (
+                  <div className="py-10 text-center text-sm text-muted-foreground">Loading month…</div>
+                ) : (
                 <div className="grid grid-cols-7 gap-0.5">
                   {monthCells.map((cell) => {
                     if (!cell.inMonth) {
@@ -457,6 +471,7 @@ const Panchang = () => {
                     );
                   })}
                 </div>
+                )}
                 <p className="text-[10px] text-muted-foreground mt-2">★ festival day</p>
               </>
             )}
