@@ -1,11 +1,16 @@
 import { useState, useMemo, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Sunrise, Sunset } from "lucide-react";
+import { useUser } from "@/contexts/UserContext";
+import { NAKSHATRA_LIST, chandrashtamaNakshatra } from "@/constants/nakshatras";
 import {
   getPanchangForDate,
+  getChandrashtamaForDate,
+  getMonthCalendar,
   DEFAULT_LAT,
   DEFAULT_LNG,
   type LunarPeriod,
 } from "@/services/panchangService";
+import { getMajorFestivalsForMonth, getUpcomingMajorFestivals } from "@/services/tamilMajorFestivals";
 
 function formatPeriodLine(period: LunarPeriod, showTamil = false): string {
   const label = showTamil && period.tamil ? `${period.name} (${period.tamil})` : period.name
@@ -13,8 +18,11 @@ function formatPeriodLine(period: LunarPeriod, showTamil = false): string {
 }
 
 const Panchang = () => {
+  const { birthNakshatra, setBirthNakshatra } = useUser();
   const today = new Date();
   const [selectedDate, setSelectedDate] = useState<Date>(today);
+  const [calendarView, setCalendarView] = useState<"week" | "month">("month");
+  const [monthCursor, setMonthCursor] = useState<Date>(() => new Date(today.getFullYear(), today.getMonth(), 1));
   const [weekStartDate, setWeekStartDate] = useState<Date>(() => {
     // Initialize with Monday of current week
     const current = new Date(today);
@@ -64,10 +72,41 @@ const Panchang = () => {
     setWeekStartDate(newStart);
   };
 
+  const goToPreviousMonth = () => {
+    setMonthCursor((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+  };
+
+  const goToNextMonth = () => {
+    setMonthCursor((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+  };
+
+  const monthTitle = monthCursor.toLocaleDateString("en-IN", { month: "long", year: "numeric" });
+
   const data = useMemo(
     () => getPanchangForDate(selectedDate, lat, lng),
     [selectedDate, lat, lng]
   );
+
+  const chandrashtama = useMemo(
+    () => getChandrashtamaForDate(selectedDate, birthNakshatra, lat, lng),
+    [selectedDate, birthNakshatra, lat, lng]
+  );
+
+  const monthCells = useMemo(
+    () => getMonthCalendar(monthCursor.getFullYear(), monthCursor.getMonth(), lat, lng),
+    [monthCursor, lat, lng]
+  );
+
+  const monthFestivals = useMemo(
+    () => getMajorFestivalsForMonth(monthCursor.getFullYear(), monthCursor.getMonth(), lat, lng),
+    [monthCursor, lat, lng]
+  );
+
+  const upcomingFestivals = useMemo(() => getUpcomingMajorFestivals(today, lat, lng, 4), [lat, lng]);
+
+  const chandrashtamaStarLabel = birthNakshatra
+    ? chandrashtamaNakshatra(birthNakshatra)
+    : null;
 
   const auspiciousTimings = data.auspiciousTimings;
   const inauspiciousTimings = data.inauspiciousTimings;
@@ -129,52 +168,128 @@ const Panchang = () => {
               {data.tithi} · {data.tamilPaksha} · Sun in {data.raasi}
             </p>
 
-            <div className="space-y-2 mb-4">
-              <div>
-                <p className="text-sm font-body text-foreground">
-                  <span className="font-semibold text-saffron">Tithi</span>
-                  <span className="text-xs text-muted-foreground ml-1">(from sunrise)</span>
-                </p>
-                {data.tithiPeriods.map((period, i) => (
-                  <p key={`tithi-${i}`} className="text-sm font-body text-foreground/90 ml-2">
-                    {i > 0 ? "then " : ""}{formatPeriodLine(period)}
-                  </p>
-                ))}
-              </div>
-              <div>
-                <p className="text-sm font-body text-foreground">
-                  <span className="font-semibold text-saffron">Nakshatra</span>
-                  <span className="text-xs text-muted-foreground ml-1">(from sunrise)</span>
-                </p>
-                {data.nakshatraPeriods.map((period, i) => (
-                  <p key={`nak-${i}`} className="text-sm font-body text-foreground/90 ml-2">
-                    {i > 0 ? "then " : ""}{formatPeriodLine(period, true)}
-                  </p>
-                ))}
-              </div>
-              <p className="text-sm font-body text-foreground">
-                <span className="font-semibold text-saffron">Yoga:</span> {data.yoga}
-              </p>
-              <p className="text-sm font-body text-foreground">
-                <span className="font-semibold text-saffron">Paksha:</span> {data.tamilPaksha} ({data.paksha})
+            <div className="rounded-lg border border-[hsl(var(--temple-gold)/0.2)] overflow-hidden mb-3">
+              <table className="w-full text-sm font-body">
+                <tbody>
+                  <tr className="border-b border-[hsl(var(--temple-gold)/0.12)]">
+                    <td className="px-3 py-2.5 align-top font-semibold text-saffron w-[5.5rem] whitespace-nowrap">
+                      Tithi
+                    </td>
+                    <td className="px-3 py-2.5 align-top text-foreground/90 leading-relaxed">
+                      {data.tithiPeriods.map((period, i) => (
+                        <p key={`tithi-${i}`} className={i > 0 ? "mt-1" : ""}>
+                          {i > 0 && <span className="text-muted-foreground">then </span>}
+                          {formatPeriodLine(period)}
+                        </p>
+                      ))}
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[hsl(var(--temple-gold)/0.12)]">
+                    <td className="px-3 py-2.5 align-top font-semibold text-saffron w-[5.5rem] whitespace-nowrap">
+                      Nakshatra
+                    </td>
+                    <td className="px-3 py-2.5 align-top text-foreground/90 leading-relaxed">
+                      {data.nakshatraPeriods.map((period, i) => (
+                        <p key={`nak-${i}`} className={i > 0 ? "mt-1" : ""}>
+                          {i > 0 && <span className="text-muted-foreground">then </span>}
+                          {formatPeriodLine(period, true)}
+                        </p>
+                      ))}
+                    </td>
+                  </tr>
+                  <tr className="border-b border-[hsl(var(--temple-gold)/0.12)]">
+                    <td className="px-3 py-2.5 align-top font-semibold text-saffron w-[5.5rem] whitespace-nowrap">
+                      Yoga
+                    </td>
+                    <td className="px-3 py-2.5 align-top text-foreground font-medium">{data.yoga}</td>
+                  </tr>
+                  <tr>
+                    <td className="px-3 py-2.5 align-top font-semibold text-saffron w-[5.5rem] whitespace-nowrap">
+                      Paksha
+                    </td>
+                    <td className="px-3 py-2.5 align-top text-foreground font-medium">
+                      {data.tamilPaksha} <span className="text-muted-foreground font-normal">({data.paksha})</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div className="rounded-lg bg-[hsl(var(--saffron)/0.07)] border border-[hsl(var(--saffron)/0.22)] px-3 py-2.5 mb-4">
+              <p className="text-[11px] leading-relaxed text-foreground/90">
+                <span className="font-semibold text-saffron">Note · </span>
+                Tithi and nakshatra from sunrise to next sunrise. Regional almanacs may differ slightly.
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-5 mb-4">
-              <div className="flex items-center gap-1.5">
-                <Sunrise className="w-4 h-4 text-saffron" />
-                <span className="text-sm font-body text-foreground">Sunrise {data.sunrise}</span>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="flex items-center gap-2 rounded-lg bg-white/60 border border-[hsl(var(--temple-gold)/0.15)] px-3 py-2">
+                <Sunrise className="w-4 h-4 text-saffron shrink-0" />
+                <div>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Sunrise</p>
+                  <p className="text-sm font-body font-medium text-foreground">{data.sunrise}</p>
+                </div>
               </div>
-              <div className="flex items-center gap-1.5">
-                <Sunset className="w-4 h-4 text-saffron" />
-                <span className="text-sm font-body text-foreground">Sunset {data.sunset}</span>
+              <div className="flex items-center gap-2 rounded-lg bg-white/60 border border-[hsl(var(--temple-gold)/0.15)] px-3 py-2">
+                <Sunset className="w-4 h-4 text-saffron shrink-0" />
+                <div>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Sunset</p>
+                  <p className="text-sm font-body font-medium text-foreground">{data.sunset}</p>
+                </div>
               </div>
             </div>
 
             <p className="text-sm font-body italic border-t border-[hsl(var(--temple-gold)/0.2)] pt-3 font-medium text-foreground/80">
               {data.mantra}
             </p>
-            <p className="text-[10px] text-muted-foreground mt-2 pr-1">{data.sourceNote}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Chandrashtama + birth nakshatra */}
+      <div className="px-3 mb-4">
+        <div className="bg-[hsl(30,40%,97%)] rounded-xl border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm p-4 relative overflow-hidden">
+          <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-[hsl(var(--saffron))] via-[hsl(var(--temple-gold))] to-[hsl(var(--saffron-light))]" />
+          <div className="pl-3">
+            <h3 className="text-base font-display font-bold text-foreground mb-1">
+              Chandrashtama (சந்திராஷ்டமம்)
+            </h3>
+            <p className="text-[11px] text-muted-foreground mb-3">
+              Moon in the 8th nakshatra from your birth star — avoid major new beginnings
+            </p>
+            <label className="text-xs font-semibold text-foreground block mb-1">Your birth nakshatra</label>
+            <select
+              value={birthNakshatra}
+              onChange={(e) => setBirthNakshatra(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg border border-[hsl(var(--temple-gold)/0.3)] text-sm bg-white text-foreground mb-3"
+            >
+              <option value="">Choose nakshatra…</option>
+              {NAKSHATRA_LIST.map((n) => (
+                <option key={n.name} value={n.name}>
+                  {n.name} ({n.tamil})
+                </option>
+              ))}
+            </select>
+            {birthNakshatra && chandrashtamaStarLabel && (
+              <p className="text-xs text-muted-foreground mb-2">
+                8th star for you: <span className="font-semibold text-foreground">{chandrashtamaStarLabel}</span>
+                <span className="block text-[10px] mt-0.5">Also saved in Profile</span>
+              </p>
+            )}
+            {chandrashtama?.active ? (
+              <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2.5 text-sm text-red-900">
+                <span className="font-bold">Active today</span> — Moon in {chandrashtama.chandrashtamaStar}
+                {chandrashtama.until ? ` until ${chandrashtama.until}` : ""}
+              </div>
+            ) : birthNakshatra ? (
+              <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-2.5 text-sm text-emerald-900">
+                Not active on this day
+              </div>
+            ) : (
+              <div className="rounded-lg bg-[hsl(var(--saffron)/0.06)] border border-[hsl(var(--temple-gold)/0.2)] px-3 py-2.5 text-sm text-muted-foreground">
+                Set birth nakshatra to get alerts (or from Kundli / Profile)
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -188,69 +303,219 @@ const Panchang = () => {
           <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-[hsl(var(--saffron))] via-[hsl(var(--temple-gold))] to-[hsl(var(--saffron-light))]" />
 
           <div className="pl-3">
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <button 
-                type="button" 
-                onClick={goToPreviousWeek}
-                aria-label="Previous week" 
-                className="text-muted-foreground hover:text-saffron transition-colors active:scale-95 p-2 rounded-full hover:bg-[hsl(var(--temple-gold)/0.1)]"
-              >
-                <ChevronLeft className="w-6 h-6" strokeWidth={2.5} />
-              </button>
-              <span className="text-base font-display font-semibold text-foreground min-w-[140px] text-center">
-                {data.tamilMonthRoman}
-                <span className="block text-xs font-body text-muted-foreground">{data.tamilMonthLabel}</span>
-              </span>
-              <button 
-                type="button"
-                onClick={goToNextWeek}
-                aria-label="Next week" 
-                className="text-muted-foreground hover:text-saffron transition-colors active:scale-95 p-2 rounded-full hover:bg-[hsl(var(--temple-gold)/0.1)]"
-              >
-                <ChevronRight className="w-6 h-6" strokeWidth={2.5} />
-              </button>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex rounded-lg border border-[hsl(var(--temple-gold)/0.3)] overflow-hidden text-xs font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setCalendarView("week")}
+                  className={`px-3 py-1.5 ${calendarView === "week" ? "bg-[hsl(var(--saffron))] text-white" : "text-foreground"}`}
+                >
+                  Week
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCalendarView("month")}
+                  className={`px-3 py-1.5 ${calendarView === "month" ? "bg-[hsl(var(--saffron))] text-white" : "text-foreground"}`}
+                >
+                  Month
+                </button>
+              </div>
             </div>
 
-            <div className="grid grid-cols-7 gap-1 mb-2">
-              {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((day) => (
-                <div key={day} className="text-center text-xs font-body font-medium text-muted-foreground">
-                  {day}
+            {calendarView === "week" ? (
+              <>
+                <div className="flex items-center justify-center gap-4 mb-4">
+                  <button
+                    type="button"
+                    onClick={goToPreviousWeek}
+                    aria-label="Previous week"
+                    className="text-muted-foreground hover:text-saffron transition-colors active:scale-95 p-2 rounded-full hover:bg-[hsl(var(--temple-gold)/0.1)]"
+                  >
+                    <ChevronLeft className="w-6 h-6" strokeWidth={2.5} />
+                  </button>
+                  <span className="text-base font-display font-semibold text-foreground min-w-[140px] text-center">
+                    {data.tamilMonthRoman}
+                    <span className="block text-xs font-body text-muted-foreground">{data.tamilMonthLabel}</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={goToNextWeek}
+                    aria-label="Next week"
+                    className="text-muted-foreground hover:text-saffron transition-colors active:scale-95 p-2 rounded-full hover:bg-[hsl(var(--temple-gold)/0.1)]"
+                  >
+                    <ChevronRight className="w-6 h-6" strokeWidth={2.5} />
+                  </button>
                 </div>
-              ))}
-            </div>
 
-            <div className="grid grid-cols-7 gap-1">
-              {weekDates.map((date) => {
-                const isTodayDate = date.getDate() === today.getDate() && date.getMonth() === today.getMonth();
-                const isSelected = date.getDate() === selectedDate.getDate() && date.getMonth() === selectedDate.getMonth();
-                return (
-                  <div key={date.toISOString()} className="flex flex-col items-center gap-0.5">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedDate(new Date(date))}
-                      className={`w-10 h-10 flex flex-col items-center justify-center rounded-lg transition-all ${
-                        isSelected
-                          ? "bg-gradient-to-br from-[hsl(var(--saffron))] to-[hsl(var(--saffron-light))] text-white shadow-temple"
-                          : isTodayDate
-                            ? "ring-1 ring-[hsl(var(--saffron)/0.5)] text-foreground"
-                            : "text-foreground hover:bg-[hsl(var(--temple-gold)/0.1)]"
-                      }`}
-                    >
-                      <span className={`text-base font-body ${isSelected ? "font-bold" : "font-medium"}`}>
-                        {date.getDate()}
-                      </span>
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
+                <div className="grid grid-cols-7 gap-1 mb-2">
+                  {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((day) => (
+                    <div key={day} className="text-center text-xs font-body font-medium text-muted-foreground">
+                      {day}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-7 gap-1">
+                  {weekDates.map((date) => {
+                    const isTodayDate = date.getDate() === today.getDate() && date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
+                    const isSelected = date.getDate() === selectedDate.getDate() && date.getMonth() === selectedDate.getMonth() && date.getFullYear() === selectedDate.getFullYear();
+                    return (
+                      <div key={date.toISOString()} className="flex flex-col items-center gap-0.5">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedDate(new Date(date))}
+                          className={`w-10 h-10 flex flex-col items-center justify-center rounded-lg transition-all ${
+                            isSelected
+                              ? "bg-gradient-to-br from-[hsl(var(--saffron))] to-[hsl(var(--saffron-light))] text-white shadow-temple"
+                              : isTodayDate
+                                ? "ring-1 ring-[hsl(var(--saffron)/0.5)] text-foreground"
+                                : "text-foreground hover:bg-[hsl(var(--temple-gold)/0.1)]"
+                          }`}
+                        >
+                          <span className={`text-base font-body ${isSelected ? "font-bold" : "font-medium"}`}>
+                            {date.getDate()}
+                          </span>
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center justify-center gap-4 mb-3">
+                  <button
+                    type="button"
+                    onClick={goToPreviousMonth}
+                    aria-label="Previous month"
+                    className="text-muted-foreground hover:text-saffron transition-colors active:scale-95 p-2 rounded-full hover:bg-[hsl(var(--temple-gold)/0.1)]"
+                  >
+                    <ChevronLeft className="w-6 h-6" strokeWidth={2.5} />
+                  </button>
+                  <span className="text-base font-display font-semibold text-foreground min-w-[160px] text-center">
+                    {monthTitle}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={goToNextMonth}
+                    aria-label="Next month"
+                    className="text-muted-foreground hover:text-saffron transition-colors active:scale-95 p-2 rounded-full hover:bg-[hsl(var(--temple-gold)/0.1)]"
+                  >
+                    <ChevronRight className="w-6 h-6" strokeWidth={2.5} />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-7 gap-0.5 mb-1">
+                  {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((day) => (
+                    <div key={day} className="text-center text-[10px] font-body font-medium text-muted-foreground py-1">
+                      {day}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-7 gap-0.5">
+                  {monthCells.map((cell) => {
+                    if (!cell.inMonth) {
+                      return <div key={cell.date.toISOString()} className="min-h-[52px]" />;
+                    }
+                    const isTodayDate =
+                      cell.date.getDate() === today.getDate() &&
+                      cell.date.getMonth() === today.getMonth() &&
+                      cell.date.getFullYear() === today.getFullYear();
+                    const isSelected =
+                      cell.date.getDate() === selectedDate.getDate() &&
+                      cell.date.getMonth() === selectedDate.getMonth() &&
+                      cell.date.getFullYear() === selectedDate.getFullYear();
+                    return (
+                      <button
+                        key={cell.date.toISOString()}
+                        type="button"
+                        onClick={() => setSelectedDate(new Date(cell.date))}
+                        className={`min-h-[52px] rounded-md p-0.5 text-left transition-all border ${
+                          isSelected
+                            ? "bg-gradient-to-br from-[hsl(var(--saffron))] to-[hsl(var(--saffron-light))] text-white border-transparent shadow-temple"
+                            : isTodayDate
+                              ? "ring-1 ring-[hsl(var(--saffron)/0.5)] border-[hsl(var(--temple-gold)/0.2)] bg-white"
+                              : "border-[hsl(var(--temple-gold)/0.15)] bg-white hover:bg-[hsl(var(--temple-gold)/0.06)]"
+                        }`}
+                      >
+                        <span className={`block text-xs font-bold leading-tight ${isSelected ? "text-white" : "text-foreground"}`}>
+                          {cell.day}
+                        </span>
+                        <span className={`block text-[8px] leading-tight truncate ${isSelected ? "text-white/90" : "text-saffron"}`}>
+                          {cell.tithiShort}
+                        </span>
+                        <span className={`block text-[8px] leading-tight truncate ${isSelected ? "text-white/80" : "text-muted-foreground"}`}>
+                          {cell.nakshatraShort}
+                        </span>
+                        {cell.festival && (
+                          <span className={`block text-[7px] leading-tight truncate font-semibold ${isSelected ? "text-white" : "text-red-700"}`}>
+                            ★
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-2">★ festival day</p>
+              </>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="px-8 mb-4">
-        <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--temple-gold)/0.25)] to-transparent" />
-      </div>
+      {/* Major festivals this month */}
+      {(monthFestivals.length > 0 || upcomingFestivals.length > 0) && (
+        <div className="px-3 mb-4">
+          <div className="bg-[hsl(30,40%,97%)] rounded-xl border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm p-4 relative overflow-hidden">
+            <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-[hsl(var(--saffron))] via-[hsl(var(--temple-gold))] to-[hsl(var(--saffron-light))]" />
+            <div className="pl-3">
+              <h3 className="text-base font-display font-bold text-foreground mb-1">Major Tamil Festivals</h3>
+              <p className="text-[11px] text-muted-foreground mb-3">Panguni Uthiram · Aadi Perukku · Karthigai Deepam</p>
+              {monthFestivals.length > 0 && (
+                <div className="mb-3">
+                  <p className="text-xs font-semibold text-foreground mb-2">This month</p>
+                  <div className="rounded-lg border border-[hsl(var(--temple-gold)/0.2)] overflow-hidden">
+                    {monthFestivals.map((f) => (
+                      <button
+                        key={f.id}
+                        type="button"
+                        onClick={() => setSelectedDate(new Date(f.date))}
+                        className="w-full text-left px-3 py-2.5 text-sm border-t border-[hsl(var(--temple-gold)/0.1)] first:border-t-0 hover:bg-[hsl(var(--saffron)/0.06)]"
+                      >
+                        <span className="font-semibold text-foreground">{f.name}</span>
+                        <span className="text-muted-foreground"> ({f.tamil})</span>
+                        <span className="block text-xs text-saffron mt-0.5">{f.dateLabel}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {upcomingFestivals.length > 0 && (
+                <div>
+                  <p className="text-xs font-semibold text-foreground mb-2">Upcoming</p>
+                  <div className="rounded-lg border border-[hsl(var(--temple-gold)/0.2)] overflow-hidden">
+                    {upcomingFestivals.map((f) => (
+                      <button
+                        key={`up-${f.id}-${f.dateLabel}`}
+                        type="button"
+                        onClick={() => {
+                          setSelectedDate(new Date(f.date));
+                          setMonthCursor(new Date(f.date.getFullYear(), f.date.getMonth(), 1));
+                        }}
+                        className="w-full text-left px-3 py-2.5 text-sm border-t border-[hsl(var(--temple-gold)/0.1)] first:border-t-0 hover:bg-[hsl(var(--saffron)/0.06)]"
+                      >
+                        <span className="font-semibold text-foreground">{f.name}</span>
+                        <span className="block text-xs text-muted-foreground">{f.dateLabel}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* NALLA NERAM & GOWRI NALLA NERAM */}
       {gowri && (
@@ -368,14 +633,14 @@ const Panchang = () => {
         <div className="h-px bg-gradient-to-r from-transparent via-[hsl(var(--temple-gold)/0.25)] to-transparent" />
       </div>
 
-      {/* MUHURTAS & DURMUHURTAM — unified with Gowri styling */}
-      {(auspiciousTimings.length > 0 || inauspiciousTimings.length > 0) && (
+      {/* MUHURTAS, VARJYAM & DURMUHURTAM */}
+      {(auspiciousTimings.length > 0 || inauspiciousTimings.length > 0 || data.varjyam.length > 0) && (
         <div className="px-3 mb-4">
           <div className="bg-[hsl(30,40%,97%)] rounded-xl border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm p-4 relative overflow-hidden">
             <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-[hsl(var(--saffron))] via-[hsl(var(--temple-gold))] to-[hsl(var(--saffron-light))]" />
             <div className="pl-3">
               <h3 className="text-base font-display font-bold text-foreground mb-1">
-                Muhurtas & Durmuhurtam
+                Muhurtas, Varjyam & Durmuhurtam
               </h3>
               <p className="text-[11px] text-muted-foreground mb-4">
                 Special auspicious windows and periods to avoid
@@ -425,6 +690,30 @@ const Panchang = () => {
                         </tbody>
                       </table>
                     </div>
+                  </div>
+                )}
+                {data.varjyam.length > 0 && (
+                  <div className={inauspiciousTimings.length > 0 ? "sm:col-span-2" : ""}>
+                    <p className="text-xs font-semibold text-foreground mb-2 uppercase tracking-wide">
+                      Varjyam (வர்ஜ்யம்)
+                    </p>
+                    <div className="rounded-lg border border-[hsl(var(--temple-gold)/0.2)] overflow-hidden">
+                      <table className="w-full text-xs font-body">
+                        <tbody>
+                          {data.varjyam.map((item, idx) => (
+                            <tr key={`varjyam-${idx}`} className="bg-red-50 border-t border-[hsl(var(--temple-gold)/0.1)] first:border-t-0">
+                              <td className="px-2.5 py-2 font-bold text-red-900">
+                                {item.nakshatra}
+                              </td>
+                              <td className="px-2.5 py-2 text-right font-medium text-red-800">
+                                {item.time}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-1.5">Inauspicious nakshatra window — avoid new ventures</p>
                   </div>
                 )}
               </div>

@@ -1,5 +1,8 @@
 import { MhahPanchang } from 'mhah-panchang'
+import { chandrashtamaNakshatra } from '../constants/nakshatras'
 import { computeGowriPanchangam, type GowriPanchangam } from './gowriPanchangam'
+import { getMajorFestivalsForMonth } from './tamilMajorFestivals'
+import { computeVarjyam, formatVarjyamRange } from './varjyamService'
 
 /** Default: Chennai — used until geolocation is available */
 export const DEFAULT_LAT = 13.0827
@@ -190,6 +193,30 @@ export interface TimingRow {
   emoji: string
 }
 
+export interface VarjyamRow {
+  nakshatra: string
+  time: string
+}
+
+export interface ChandrashtamaInfo {
+  active: boolean
+  birthNakshatra: string
+  chandrashtamaStar: string
+  until?: string
+}
+
+export interface CalendarDaySummary {
+  date: Date
+  day: number
+  inMonth: boolean
+  tithi: string
+  tithiShort: string
+  nakshatra: string
+  nakshatraTamil?: string
+  nakshatraShort: string
+  festival?: string
+}
+
 export interface PanchangDay {
   tithi: string
   tithiEnd: string
@@ -212,8 +239,97 @@ export interface PanchangDay {
   inauspiciousTimings: TimingRow[]
   auspiciousDays: string[]
   gowriPanchangam: GowriPanchangam | null
+  varjyam: VarjyamRow[]
+  chandrashtama: ChandrashtamaInfo | null
   /** Short disclaimer for UI */
   sourceNote: string
+}
+
+function shortTithi(name: string): string {
+  const num = name.match(/\d+/)?.[0]
+  if (num) return num
+  const words = name.split(/\s+/)
+  const word = words[words.length - 1] ?? name
+  return word.length > 6 ? word.slice(0, 5) : word
+}
+
+function shortNakshatra(name: string, tamil?: string): string {
+  if (tamil) return tamil.length > 4 ? tamil.slice(0, 4) : tamil
+  return name.length > 5 ? name.slice(0, 5) : name
+}
+
+export function getChandrashtamaForDate(
+  date: Date,
+  birthNakshatra: string | null | undefined,
+  lat: number,
+  lng: number
+): ChandrashtamaInfo | null {
+  if (!birthNakshatra?.trim()) return null
+  const chStar = chandrashtamaNakshatra(birthNakshatra)
+  if (!chStar) return null
+
+  const p = getPanchangForDate(date, lat, lng)
+  const activePeriod = p.nakshatraPeriods.find(
+    (period) => period.name.toLowerCase() === chStar.toLowerCase()
+  )
+
+  return {
+    active: Boolean(activePeriod),
+    birthNakshatra: birthNakshatra.trim(),
+    chandrashtamaStar: chStar,
+    until: activePeriod?.end,
+  }
+}
+
+export function getMonthCalendar(
+  year: number,
+  month: number,
+  lat: number,
+  lng: number
+): CalendarDaySummary[] {
+  const first = new Date(year, month, 1)
+  const startPad = (first.getDay() + 6) % 7
+  const gridStart = new Date(year, month, 1 - startPad)
+
+  const festivals = getMajorFestivalsForMonth(year, month, lat, lng)
+  const festivalByDay = new Map<number, string>()
+  for (const f of festivals) {
+    festivalByDay.set(f.date.getDate(), f.name)
+  }
+
+  const cells: CalendarDaySummary[] = []
+  for (let i = 0; i < 42; i++) {
+    const date = new Date(gridStart)
+    date.setDate(gridStart.getDate() + i)
+    const inMonth = date.getMonth() === month
+    if (!inMonth) {
+      cells.push({
+        date,
+        day: date.getDate(),
+        inMonth: false,
+        tithi: '',
+        tithiShort: '',
+        nakshatra: '',
+        nakshatraShort: '',
+      })
+      continue
+    }
+
+    const p = getPanchangForDate(date, lat, lng)
+    cells.push({
+      date,
+      day: date.getDate(),
+      inMonth: true,
+      tithi: p.tithi,
+      tithiShort: shortTithi(p.tithi),
+      nakshatra: p.nakshatra,
+      nakshatraTamil: p.nakshatraTamil,
+      nakshatraShort: shortNakshatra(p.nakshatra, p.nakshatraTamil),
+      festival: festivalByDay.get(date.getDate()),
+    })
+  }
+
+  return cells
 }
 
 /**
@@ -390,6 +506,17 @@ export function getPanchangForDate(
   if (tithiNum === 4) auspiciousDays.push('🐘 Chaturthi - Sacred to Lord Ganesha')
   if (tithiNum === 8) auspiciousDays.push('✨ Ashtami - Sacred to Goddess Durga')
 
+  const varjyamRows: VarjyamRow[] = []
+  if (sunrise && nextSunrise) {
+    const windows = computeVarjyam(sunrise, nextSunrise)
+    for (const w of windows) {
+      varjyamRows.push({
+        nakshatra: w.nakshatra,
+        time: formatVarjyamRange(w.start, w.end, dayAnchor),
+      })
+    }
+  }
+
   return {
     tithi,
     tithiEnd: tEnd,
@@ -412,6 +539,8 @@ export function getPanchangForDate(
     inauspiciousTimings,
     auspiciousDays,
     gowriPanchangam,
+    varjyam: varjyamRows,
+    chandrashtama: null,
     sourceNote:
       'Tithi and nakshatra from sunrise to next sunrise. Regional almanacs may differ slightly.',
   }
