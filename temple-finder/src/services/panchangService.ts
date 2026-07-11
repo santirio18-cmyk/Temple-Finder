@@ -54,6 +54,113 @@ function formatTime(d: Date): string {
   })
 }
 
+function formatEndTime(end: Date, dayAnchor: Date): string {
+  const sameDay =
+    end.getFullYear() === dayAnchor.getFullYear() &&
+    end.getMonth() === dayAnchor.getMonth() &&
+    end.getDate() === dayAnchor.getDate()
+  if (sameDay) return formatTime(end)
+  const datePart = end.toLocaleDateString(undefined, { day: 'numeric', month: 'short' })
+  return `${formatTime(end)}, ${datePart}`
+}
+
+export interface LunarPeriod {
+  name: string
+  tamil?: string
+  end: string
+}
+
+/** Library label → standard Vedic name */
+const NAKSHATRA_ALIASES: Record<string, string> = {
+  Dwija: 'Bharani',
+  Rebati: 'Revati',
+  Mrigashirsha: 'Mrigashira',
+}
+
+const NAKSHATRA_TAMIL: Record<string, string> = {
+  Ashwini: 'அசுவினி',
+  Bharani: 'பரணி',
+  Krittika: 'கார்த்திகை',
+  Rohini: 'ரோகிணி',
+  Mrigashira: 'மிருகசீரிடம்',
+  Ardra: 'திருவாதிரை',
+  Punarvasu: 'புனர்பூசம்',
+  Pushya: 'பூசம்',
+  Ashlesha: 'ஆயில்யம்',
+  Magha: 'மகம்',
+  'Purva Phalguni': 'பூரம்',
+  'Uttara Phalguni': 'உத்திரம்',
+  Hasta: 'ஹஸ்தம்',
+  Chitra: 'சித்திரை',
+  Swati: 'சுவாதி',
+  Vishakha: 'விசாகம்',
+  Anuradha: 'அனுஷம்',
+  Jyeshtha: 'கேட்டை',
+  Mula: 'மூலம்',
+  'Purva Ashadha': 'பூராடம்',
+  'Uttara Ashadha': 'உத்திராடம்',
+  Sravana: 'திருவோணம்',
+  Dhanishta: 'அவிட்டம்',
+  Shatabhisha: 'சதயம்',
+  'Purva Bhadrapada': 'பூரட்டாதி',
+  'Uttara Bhadrapada': 'உத்திரட்டாதி',
+  Revati: 'ரேவதி',
+}
+
+function normalizeNakshatraName(raw: string): string {
+  const trimmed = raw.trim()
+  return NAKSHATRA_ALIASES[trimmed] ?? trimmed
+}
+
+function nakshatraTamil(name: string): string | undefined {
+  return NAKSHATRA_TAMIL[name]
+}
+
+function buildNakshatraPeriods(sunrise: Date, nextSunrise: Date, dayAnchor: Date): LunarPeriod[] {
+  const periods: LunarPeriod[] = []
+  let cursor = new Date(sunrise)
+
+  while (cursor < nextSunrise) {
+    const calc = engine.calculate(cursor)
+    const raw = calc.Nakshatra?.name_en_IN ?? ''
+    const name = normalizeNakshatraName(raw)
+    const end = calc.Nakshatra?.end instanceof Date ? calc.Nakshatra.end : null
+    if (!name || !end) break
+
+    const periodEnd = end < nextSunrise ? end : nextSunrise
+    periods.push({
+      name,
+      tamil: nakshatraTamil(name),
+      end: formatEndTime(periodEnd, dayAnchor),
+    })
+
+    if (end >= nextSunrise) break
+    cursor = new Date(end.getTime() + 60_000)
+  }
+
+  return periods
+}
+
+function buildTithiPeriods(sunrise: Date, nextSunrise: Date, dayAnchor: Date): LunarPeriod[] {
+  const periods: LunarPeriod[] = []
+  let cursor = new Date(sunrise)
+
+  while (cursor < nextSunrise) {
+    const calc = engine.calculate(cursor)
+    const name = calc.Tithi?.name_en_IN ?? ''
+    const end = calc.Tithi?.end instanceof Date ? calc.Tithi.end : null
+    if (!name || !end) break
+
+    const periodEnd = end < nextSunrise ? end : nextSunrise
+    periods.push({ name, end: formatEndTime(periodEnd, dayAnchor) })
+
+    if (end >= nextSunrise) break
+    cursor = new Date(end.getTime() + 60_000)
+  }
+
+  return periods
+}
+
 function formatRange(start: Date, end: Date): string {
   return `${formatTime(start)} – ${formatTime(end)}`
 }
@@ -86,8 +193,11 @@ export interface TimingRow {
 export interface PanchangDay {
   tithi: string
   tithiEnd: string
+  tithiPeriods: LunarPeriod[]
   nakshatra: string
+  nakshatraTamil?: string
   nakshatraEnd: string
+  nakshatraPeriods: LunarPeriod[]
   sunrise: string
   sunset: string
   tamilMonthLabel: string
@@ -133,6 +243,9 @@ const NAKSHATRA_MANTRA: Record<string, string> = {
   Mula: "Chant 'Om Ketave Namah' or 'Om Namah Shivaya' — root, Ketu.",
   'Purva Ashadha': "Chant 'Om Apasve Namah' — invincibility, waters.",
   'Uttara Ashadha': "Chant 'Om Vishve Devaya Namah' — victory, tenacity.",
+  Bharani: "Chant 'Om Yamaya Namah' — Yama's star, release and renewal.",
+  Mrigashira: "Chant 'Om Chandraya Namah' — Soma / gentle growth.",
+  Revati: "Chant 'Om Pushne Namah' — Pushan, safe journey, completion.",
   Sravana: "Chant 'Om Vishnu Namah' — Vishnu’s hearing, wisdom.",
   Dhanishta: "Chant 'Om Vasubhyo Namah' — the Vasus, rhythm.",
   Shatabhisha: "Chant 'Om Varunaya Namah' — Varuna, healing.",
@@ -142,7 +255,7 @@ const NAKSHATRA_MANTRA: Record<string, string> = {
 }
 
 function mantraForNakshatra(nakName: string | undefined): string {
-  const key = (nakName || '').trim()
+  const key = normalizeNakshatraName((nakName || '').trim())
   if (key && NAKSHATRA_MANTRA[key]) return NAKSHATRA_MANTRA[key]
   const lower = key.toLowerCase()
   const found = Object.keys(NAKSHATRA_MANTRA).find((k) => k.toLowerCase() === lower)
@@ -174,44 +287,55 @@ export function getPanchangForDate(
 ): PanchangDay {
   const localNoon = new Date(date)
   localNoon.setHours(12, 0, 0, 0)
+  const dayAnchor = new Date(date)
+  dayAnchor.setHours(0, 0, 0, 0)
 
-  const calc = engine.calculate(localNoon)
-  const cal = engine.calendar(localNoon, lat, lng)
   const sun = engine.sunTimer(localNoon, lat, lng)
-
-  const tithi = calc.Tithi?.name_en_IN ?? '—'
-  const nak = calc.Nakshatra?.name_en_IN ?? '—'
-  const tEnd = calc.Tithi?.end instanceof Date ? formatTime(calc.Tithi.end) : '—'
-  const nEnd = calc.Nakshatra?.end instanceof Date ? formatTime(calc.Nakshatra.end) : '—'
-
   const sunrise = sun.sunRise instanceof Date ? sun.sunRise : null
   const sunset = sun.sunSet instanceof Date ? sun.sunSet : null
   const solarNoon = sun.solarNoon instanceof Date ? sun.solarNoon : null
+
+  const nextDay = new Date(localNoon)
+  nextDay.setDate(nextDay.getDate() + 1)
+  const nextSun = engine.sunTimer(nextDay, lat, lng)
+  const nextSunrise =
+    nextSun.sunRise instanceof Date ? nextSun.sunRise : sunrise ? new Date(sunrise.getTime() + 24 * 60 * 60 * 1000) : null
+
+  const calcSunrise = sunrise ? engine.calculate(sunrise) : engine.calculate(localNoon)
+  const cal = engine.calendar(sunrise ?? localNoon, lat, lng)
+
+  const tithiPeriods =
+    sunrise && nextSunrise ? buildTithiPeriods(sunrise, nextSunrise, dayAnchor) : []
+  const nakshatraPeriods =
+    sunrise && nextSunrise ? buildNakshatraPeriods(sunrise, nextSunrise, dayAnchor) : []
+
+  const primaryTithi = tithiPeriods[0]
+  const primaryNak = nakshatraPeriods[0]
+
+  const tithi = primaryTithi?.name ?? calcSunrise.Tithi?.name_en_IN ?? '—'
+  const tEnd = primaryTithi?.end ?? '—'
+  const nak = primaryNak?.name ?? normalizeNakshatraName(calcSunrise.Nakshatra?.name_en_IN ?? '—')
+  const nakTamil = primaryNak?.tamil ?? nakshatraTamil(nak)
+  const nEnd = primaryNak?.end ?? '—'
 
   const raasiName = (cal.Raasi?.name_en_UK as string) || ''
   const { tamil: tamilMonth, roman: tamilMonthRoman, raasi } = resolveTamilSolarMonth(raasiName)
   const lunarMasaName = (cal.MoonMasa?.name_en_IN as string) || ''
 
-  const mantra = getDailyMantraLine(calc)
+  const mantra = getDailyMantraLine(calcSunrise)
 
   const auspiciousTimings: TimingRow[] = []
   const inauspiciousTimings: TimingRow[] = []
   let gowriPanchangam: GowriPanchangam | null = null
 
-  if (sunrise && sunset) {
+  if (sunrise && sunset && nextSunrise) {
     const wd = sunrise.getDay()
     const rahu = daySegmentRange(sunrise, sunset, RAHU_SEGMENT[wd])
     const yama = daySegmentRange(sunrise, sunset, YAMA_SEGMENT[wd])
     const gulikai = daySegmentRange(sunrise, sunset, GULIKAI_SEGMENT[wd])
 
-    const nextDay = new Date(localNoon)
-    nextDay.setDate(nextDay.getDate() + 1)
-    const nextSun = engine.sunTimer(nextDay, lat, lng)
-    const nextSunrise =
-      nextSun.sunRise instanceof Date ? nextSun.sunRise : new Date(sunset.getTime() + 12 * 60 * 60 * 1000)
-
     gowriPanchangam = computeGowriPanchangam(sunrise, sunset, nextSunrise, wd)
-    
+
     // Inauspicious timings
     inauspiciousTimings.push({
       name: 'Rahu Kaal',
@@ -269,8 +393,11 @@ export function getPanchangForDate(
   return {
     tithi,
     tithiEnd: tEnd,
+    tithiPeriods,
     nakshatra: nak,
+    nakshatraTamil: nakTamil,
     nakshatraEnd: nEnd,
+    nakshatraPeriods,
     sunrise: sunrise ? formatTime(sunrise) : '—',
     sunset: sunset ? formatTime(sunset) : '—',
     tamilMonthLabel: tamilMonth,
@@ -286,14 +413,16 @@ export function getPanchangForDate(
     auspiciousDays,
     gowriPanchangam,
     sourceNote:
-      'Panchang is computed for your location using astronomical algorithms. Regional almanacs may differ slightly.',
+      'Tithi and nakshatra from sunrise to next sunrise. Regional almanacs may differ slightly.',
   }
 }
 
-/** Today’s mantra line for Ritual (nakshatra-based for variety). */
+/** Today’s mantra line for Ritual (nakshatra at sunrise). */
 export function getTodayMantra(): string {
   const d = new Date()
   d.setHours(12, 0, 0, 0)
-  const calc = engine.calculate(d)
+  const sun = engine.sunTimer(d, DEFAULT_LAT, DEFAULT_LNG)
+  const at = sun.sunRise instanceof Date ? sun.sunRise : d
+  const calc = engine.calculate(at)
   return getDailyMantraLine(calc)
 }

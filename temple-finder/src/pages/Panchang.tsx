@@ -4,24 +4,13 @@ import {
   getPanchangForDate,
   DEFAULT_LAT,
   DEFAULT_LNG,
+  type LunarPeriod,
 } from "@/services/panchangService";
 
-// Day-specific deity info
-const getDayDeity = (date: Date) => {
-  const dayOfWeek = date.getDay(); // 0=Sunday, 6=Saturday
-  
-  const dayDeities = {
-    0: { name: "Surya", emoji: "☀️", color: "#FF6B35", mantra: "Om Suryaya Namah" },
-    1: { name: "Chandra", emoji: "🌙", color: "#A8DADC", mantra: "Om Somaya Namah" },
-    2: { name: "Mangal", emoji: "🔱", color: "#E63946", mantra: "Om Angarakaya Namah" },
-    3: { name: "Budha", emoji: "🕉️", color: "#06D6A0", mantra: "Om Budhaya Namah" },
-    4: { name: "Guru", emoji: "🪔", color: "#FFD60A", mantra: "Om Brihaspataye Namah" },
-    5: { name: "Shukra", emoji: "💐", color: "#F72585", mantra: "Om Shukraya Namah" },
-    6: { name: "Shani", emoji: "⚫", color: "#457B9D", mantra: "Om Shanaischaraya Namah" },
-  };
-  
-  return dayDeities[dayOfWeek as keyof typeof dayDeities];
-};
+function formatPeriodLine(period: LunarPeriod, showTamil = false): string {
+  const label = showTamil && period.tamil ? `${period.name} (${period.tamil})` : period.name
+  return `${label} until ${period.end}`
+}
 
 const Panchang = () => {
   const today = new Date();
@@ -84,7 +73,6 @@ const Panchang = () => {
   const inauspiciousTimings = data.inauspiciousTimings;
   const auspiciousDays = data.auspiciousDays;
   const gowri = data.gowriPanchangam;
-  const dayDeity = getDayDeity(selectedDate);
 
   const dateTitle = selectedDate.toLocaleDateString("en-US", {
     weekday: "long",
@@ -124,77 +112,70 @@ const Panchang = () => {
         <div className="bg-[hsl(30,40%,97%)] rounded-xl border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm p-5 relative overflow-hidden">
           <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-[hsl(var(--saffron))] via-[hsl(var(--temple-gold))] to-[hsl(var(--saffron-light))]" />
 
-          <div className="flex justify-between items-start pl-3">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-muted-foreground text-sm">📅</span>
-                <h2 className="text-lg font-display font-bold text-foreground">
-                  {selectedDate.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", year: "numeric" })}
-                </h2>
-              </div>
-              <p className="text-sm font-body text-foreground ml-6 mb-1">
-                <span className="font-semibold text-saffron">{data.tamilMonthRoman}</span>
-                <span className="text-muted-foreground"> ({data.tamilMonthLabel})</span>
-                <span className="text-muted-foreground"> · </span>
-                <span className="font-medium">{data.tamilPaksha}</span>
-              </p>
-              <p className="text-xs font-body text-muted-foreground ml-6 mb-4">
-                {data.tithi} · {data.tamilPaksha} · Sun in {data.raasi}
-              </p>
+          <div className="pl-3">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-muted-foreground text-sm">📅</span>
+              <h2 className="text-lg font-display font-bold text-foreground">
+                {selectedDate.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", year: "numeric" })}
+              </h2>
+            </div>
+            <p className="text-sm font-body text-foreground ml-6 mb-1">
+              <span className="font-semibold text-saffron">{data.tamilMonthRoman}</span>
+              <span className="text-muted-foreground"> ({data.tamilMonthLabel})</span>
+              <span className="text-muted-foreground"> · </span>
+              <span className="font-medium">{data.tamilPaksha}</span>
+            </p>
+            <p className="text-xs font-body text-muted-foreground ml-6 mb-4">
+              {data.tithi} · {data.tamilPaksha} · Sun in {data.raasi}
+            </p>
 
-              <div className="space-y-1.5 mb-4">
+            <div className="space-y-2 mb-4">
+              <div>
                 <p className="text-sm font-body text-foreground">
-                  <span className="font-semibold text-saffron">Tithi:</span> {data.tithi} (until {data.tithiEnd})
+                  <span className="font-semibold text-saffron">Tithi</span>
+                  <span className="text-xs text-muted-foreground ml-1">(from sunrise)</span>
                 </p>
-                <p className="text-sm font-body text-foreground">
-                  <span className="font-semibold text-saffron">Nakshatra:</span> {data.nakshatra} (until {data.nakshatraEnd})
-                </p>
-                <p className="text-sm font-body text-foreground">
-                  <span className="font-semibold text-saffron">Yoga:</span> {data.yoga}
-                </p>
-                <p className="text-sm font-body text-foreground">
-                  <span className="font-semibold text-saffron">Paksha:</span> {data.tamilPaksha} ({data.paksha})
-                </p>
+                {data.tithiPeriods.map((period, i) => (
+                  <p key={`tithi-${i}`} className="text-sm font-body text-foreground/90 ml-2">
+                    {i > 0 ? "then " : ""}{formatPeriodLine(period)}
+                  </p>
+                ))}
               </div>
+              <div>
+                <p className="text-sm font-body text-foreground">
+                  <span className="font-semibold text-saffron">Nakshatra</span>
+                  <span className="text-xs text-muted-foreground ml-1">(from sunrise)</span>
+                </p>
+                {data.nakshatraPeriods.map((period, i) => (
+                  <p key={`nak-${i}`} className="text-sm font-body text-foreground/90 ml-2">
+                    {i > 0 ? "then " : ""}{formatPeriodLine(period, true)}
+                  </p>
+                ))}
+              </div>
+              <p className="text-sm font-body text-foreground">
+                <span className="font-semibold text-saffron">Yoga:</span> {data.yoga}
+              </p>
+              <p className="text-sm font-body text-foreground">
+                <span className="font-semibold text-saffron">Paksha:</span> {data.tamilPaksha} ({data.paksha})
+              </p>
+            </div>
 
-              <div className="flex flex-wrap gap-5 mb-4">
-                <div className="flex items-center gap-1.5">
-                  <Sunrise className="w-4 h-4 text-saffron" />
-                  <span className="text-sm font-body text-foreground">Sunrise {data.sunrise}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Sunset className="w-4 h-4 text-saffron" />
-                  <span className="text-sm font-body text-foreground">Sunset {data.sunset}</span>
-                </div>
+            <div className="flex flex-wrap gap-5 mb-4">
+              <div className="flex items-center gap-1.5">
+                <Sunrise className="w-4 h-4 text-saffron" />
+                <span className="text-sm font-body text-foreground">Sunrise {data.sunrise}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Sunset className="w-4 h-4 text-saffron" />
+                <span className="text-sm font-body text-foreground">Sunset {data.sunset}</span>
               </div>
             </div>
 
-            <div className="flex flex-col items-center gap-1 ml-3">
-              <div 
-                className="w-20 h-20 rounded-full flex items-center justify-center shadow-lg"
-                style={{ 
-                  background: `linear-gradient(135deg, ${dayDeity.color}20 0%, ${dayDeity.color}40 100%)`,
-                  border: `2px solid ${dayDeity.color}`,
-                }}
-              >
-                <span className="text-4xl">{dayDeity.emoji}</span>
-              </div>
-              <span 
-                className="text-xs font-body font-bold text-center max-w-[5rem] leading-tight"
-                style={{ color: dayDeity.color }}
-              >
-                {dayDeity.name}
-              </span>
-            </div>
+            <p className="text-sm font-body italic border-t border-[hsl(var(--temple-gold)/0.2)] pt-3 font-medium text-foreground/80">
+              {data.mantra}
+            </p>
+            <p className="text-[10px] text-muted-foreground mt-2 pr-1">{data.sourceNote}</p>
           </div>
-
-          <p 
-            className="text-sm font-body italic border-t border-[hsl(var(--temple-gold)/0.2)] pt-3 pl-3 font-semibold"
-            style={{ color: dayDeity.color }}
-          >
-            ❝ {dayDeity.mantra} ❞
-          </p>
-          <p className="text-[10px] text-muted-foreground mt-2 pl-3 pr-1">{data.sourceNote}</p>
         </div>
       </div>
 
