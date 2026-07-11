@@ -282,7 +282,7 @@ const Panchang = () => {
               Chandrashtama (சந்திராஷ்டமம்)
             </h3>
             <p className="text-[11px] text-muted-foreground mb-3">
-              Which rasi & nakshatra births should avoid new beginnings now
+              Which birth nakshatra should avoid new beginnings — active & upcoming
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -295,21 +295,17 @@ const Panchang = () => {
                     </span>
                   </div>
                   <div className="flex items-start gap-2.5">
-                    <div className="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center text-xl shrink-0">
-                      {chandraActive.rasiSymbol}
+                    <div className="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center text-lg shrink-0 text-violet-700">
+                      ☽
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-lg font-display font-bold text-foreground leading-tight">
-                        {chandraActive.rasiRoman}
-                      </p>
-                      <p className="text-[10px] text-muted-foreground">{chandraActive.rasiTamil}</p>
-                      <p className="text-xs font-semibold text-foreground mt-1">
                         {chandraActive.birthNakshatra}
-                        {chandraActive.birthNakshatraTamil && (
-                          <span className="text-muted-foreground font-normal"> ({chandraActive.birthNakshatraTamil})</span>
-                        )}
                       </p>
-                      <p className="text-[10px] text-red-700 font-medium mt-0.5">Chandrashtama active</p>
+                      {chandraActive.birthNakshatraTamil && (
+                        <p className="text-sm text-muted-foreground">{chandraActive.birthNakshatraTamil}</p>
+                      )}
+                      <p className="text-[10px] text-red-700 font-medium mt-1">Chandrashtama active</p>
                     </div>
                   </div>
                   <div className="mt-3 pt-2 border-t border-red-100 text-right">
@@ -339,21 +335,17 @@ const Panchang = () => {
                     </span>
                   </div>
                   <div className="flex items-start gap-2.5">
-                    <div className="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center text-xl shrink-0">
-                      {chandraNext.rasiSymbol}
+                    <div className="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center text-lg shrink-0 text-violet-700">
+                      ☽
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-lg font-display font-bold text-foreground leading-tight">
-                        {chandraNext.rasiRoman}
-                      </p>
-                      <p className="text-[10px] text-muted-foreground">{chandraNext.rasiTamil}</p>
-                      <p className="text-xs font-semibold text-foreground mt-1">
                         {chandraNext.birthNakshatra}
-                        {chandraNext.birthNakshatraTamil && (
-                          <span className="text-muted-foreground font-normal"> ({chandraNext.birthNakshatraTamil})</span>
-                        )}
                       </p>
-                      <p className="text-[10px] text-amber-800 font-medium mt-0.5">Upcoming transit</p>
+                      {chandraNext.birthNakshatraTamil && (
+                        <p className="text-sm text-muted-foreground">{chandraNext.birthNakshatraTamil}</p>
+                      )}
+                      <p className="text-[10px] text-amber-800 font-medium mt-1">Upcoming transit</p>
                     </div>
                   </div>
                   <div className="mt-3 pt-2 border-t border-amber-100 text-right">
