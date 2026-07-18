@@ -224,83 +224,127 @@ function calculateVimshottariDasha(moonNakshatra: string, moonDegreeInNakshatra:
   }
 }
 
+const NAKSHATRA_ALIASES: Record<string, string> = {
+  Dwija: 'Bharani',
+  Rebati: 'Revati',
+  Mrigashirsha: 'Mrigashira',
+  Sravana: 'Shravana',
+}
+
+function normalizeNakshatra(raw: string): string {
+  const trimmed = (raw || '').trim()
+  return NAKSHATRA_ALIASES[trimmed] ?? trimmed
+}
+
+function signMeta(signName: string): { sign: string; signNumber: number; degree: number } {
+  const idx = SIGNS.findIndex((s) => s.toLowerCase() === signName.trim().toLowerCase())
+  const signNumber = idx >= 0 ? idx + 1 : 1
+  return { sign: SIGNS[signNumber - 1], signNumber, degree: 15 }
+}
+
+function nakshatraPada(birthDateTime: Date, nakStart?: Date, nakEnd?: Date): number {
+  if (!(nakStart instanceof Date) || !(nakEnd instanceof Date)) return 1
+  const span = nakEnd.getTime() - nakStart.getTime()
+  if (span <= 0) return 1
+  const progress = (birthDateTime.getTime() - nakStart.getTime()) / span
+  return Math.min(4, Math.max(1, Math.floor(progress * 4) + 1))
+}
+
+function houseFromSigns(planetSignNumber: number, ascSignNumber: number): number {
+  return ((planetSignNumber - ascSignNumber + 12) % 12) + 1
+}
+
 export function calculateBirthChart(details: BirthDetails): BirthChart {
-  const { dateOfBirth, timeOfBirth, longitude, name, locationName } = details
-  
-  // Combine date and time
+  const { dateOfBirth, timeOfBirth, latitude, longitude, name, locationName } = details
+
   const [hours, minutes] = timeOfBirth.split(':').map(Number)
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+    throw new Error('Invalid birth time. Use HH:mm format.')
+  }
+
   const birthDateTime = new Date(dateOfBirth)
+  if (Number.isNaN(birthDateTime.getTime())) {
+    throw new Error('Invalid birth date.')
+  }
   birthDateTime.setHours(hours, minutes, 0, 0)
-  
-  // Calculate panchang at birth time
+
   const calc = engine.calculate(birthDateTime)
-  
-  // Get planetary positions from Raasi (zodiac) data
-  // mhah-panchang provides zodiac positions in Raasi field
-  const moonLon = (calc.Raasi?.number ?? 1) * 30 - 15 // Approximate center of sign
-  const sunLon = moonLon + 180 // Simplified: Sun is opposite Moon (approximate)
-  
-  // Calculate Ascendant (simplified - using sunrise method)
-  // In real Vedic astrology, this requires more complex calculations
-  const localSiderealTime = (birthDateTime.getTime() / 3600000 + longitude / 15) % 24
-  const ascendantLon = (localSiderealTime * 15) % 360
+  const cal = engine.calendar(birthDateTime, latitude, longitude)
+
+  // Real library values: Moon rashi/nakshatra at birth; Sun rashi from calendar
+  const moonSign = signMeta((calc.Raasi?.name_en_UK as string) || 'Aries')
+  const sunSign = signMeta((cal.Raasi?.name_en_UK as string) || moonSign.sign)
+
+  const nakRaw = normalizeNakshatra((calc.Nakshatra?.name_en_IN as string) || 'Ashwini')
+  const nakIdx = NAKSHATRAS.findIndex((n) => n.name.toLowerCase() === nakRaw.toLowerCase())
+  const nakEntry = NAKSHATRAS[nakIdx >= 0 ? nakIdx : 0]
+  const pada = nakshatraPada(
+    birthDateTime,
+    calc.Nakshatra?.start instanceof Date ? calc.Nakshatra.start : undefined,
+    calc.Nakshatra?.end instanceof Date ? calc.Nakshatra.end : undefined
+  )
+  const moonNakshatra = {
+    name: nakEntry.name,
+    pada,
+    lord: nakEntry.lord,
+  }
+
+  // Approximate lagna (not Swiss-ephemeris grade)
+  const localSiderealTime = (birthDateTime.getTime() / 3_600_000 + longitude / 15) % 24
+  const ascendantLon = ((localSiderealTime * 15) % 360 + 360) % 360
   const ascendant = getLongitudeToSign(ascendantLon)
-  
-  // Get Moon's Nakshatra for Dasha calculation
-  const moonNakshatra = getLongitudeToNakshatra(moonLon)
-  const moonSign = getLongitudeToSign(moonLon)
-  const sunSign = getLongitudeToSign(sunLon)
-  
-  // Calculate houses (Equal house system - each house is 30 degrees from Ascendant)
+
   const houses: { [key: number]: string } = {}
   for (let i = 1; i <= 12; i++) {
     const houseLon = (ascendantLon + (i - 1) * 30) % 360
-    const houseSign = getLongitudeToSign(houseLon)
-    houses[i] = houseSign.sign
+    houses[i] = getLongitudeToSign(houseLon).sign
   }
-  
-  // Simplified planetary positions (using Sun and Moon, approximating others)
+
+  const sunNakApprox = getLongitudeToNakshatra((sunSign.signNumber - 1) * 30 + 15)
   const planets: Planet[] = [
     {
       name: 'Sun',
       sign: sunSign.sign,
       signNumber: sunSign.signNumber,
-      house: Math.floor(((sunLon - ascendantLon + 360) % 360) / 30) + 1,
+      house: houseFromSigns(sunSign.signNumber, ascendant.signNumber),
       degree: sunSign.degree,
       retrograde: false,
-      nakshatra: getLongitudeToNakshatra(sunLon).name,
-      pada: getLongitudeToNakshatra(sunLon).pada
+      nakshatra: sunNakApprox.name,
+      pada: sunNakApprox.pada,
     },
     {
       name: 'Moon',
       sign: moonSign.sign,
       signNumber: moonSign.signNumber,
-      house: Math.floor(((moonLon - ascendantLon + 360) % 360) / 30) + 1,
+      house: houseFromSigns(moonSign.signNumber, ascendant.signNumber),
       degree: moonSign.degree,
       retrograde: false,
       nakshatra: moonNakshatra.name,
-      pada: moonNakshatra.pada
-    }
+      pada: moonNakshatra.pada,
+    },
   ]
-  
-  // Calculate Vimshottari Dasha
-  const moonDegreeInNakshatra = moonLon % 13.333333333333334
+
+  const nakStart = calc.Nakshatra?.start instanceof Date ? calc.Nakshatra.start : birthDateTime
+  const nakEnd = calc.Nakshatra?.end instanceof Date ? calc.Nakshatra.end : birthDateTime
+  const span = Math.max(1, nakEnd.getTime() - nakStart.getTime())
+  const progress = Math.min(1, Math.max(0, (birthDateTime.getTime() - nakStart.getTime()) / span))
+  const moonDegreeInNakshatra = progress * 13.333333333333334
   const dasha = calculateVimshottariDasha(moonNakshatra.name, moonDegreeInNakshatra, birthDateTime)
-  
+
   return {
-    name,
+    name: name.trim() || 'Chart',
     birthDateTime,
-    location: locationName,
+    location: locationName.trim() || 'Unknown',
     ascendant: {
       sign: ascendant.sign,
-      degree: ascendant.degree
+      degree: ascendant.degree,
     },
     moonSign: moonSign.sign,
     sunSign: sunSign.sign,
     nakshatra: moonNakshatra,
     planets,
     houses,
-    dasha
+    dasha,
   }
 }
 
@@ -321,24 +365,46 @@ export function updateBirthChart(index: number, chart: BirthChart) {
 export function getBirthCharts(): BirthChart[] {
   const stored = localStorage.getItem('birthCharts')
   if (!stored) return []
-  
+
   try {
     const charts = JSON.parse(stored)
-    // Convert date strings back to Date objects
-    return charts.map((chart: any) => ({
-      ...chart,
-      birthDateTime: new Date(chart.birthDateTime),
-      dasha: {
-        ...chart.dasha,
-        startDate: new Date(chart.dasha.startDate),
-        endDate: new Date(chart.dasha.endDate),
-        subPeriods: chart.dasha.subPeriods.map((sp: any) => ({
-          ...sp,
-          startDate: new Date(sp.startDate),
-          endDate: new Date(sp.endDate)
-        }))
-      }
-    }))
+    if (!Array.isArray(charts)) return []
+
+    return charts
+      .map((chart: any) => {
+        try {
+          const subPeriods = Array.isArray(chart?.dasha?.subPeriods)
+            ? chart.dasha.subPeriods.map((sp: any) => ({
+                planet: sp.planet || '—',
+                startDate: new Date(sp.startDate),
+                endDate: new Date(sp.endDate),
+              }))
+            : []
+
+          return {
+            ...chart,
+            name: chart.name || 'Chart',
+            location: chart.location || 'Unknown',
+            birthDateTime: new Date(chart.birthDateTime),
+            ascendant: chart.ascendant || { sign: 'Aries', degree: 0 },
+            moonSign: chart.moonSign || '—',
+            sunSign: chart.sunSign || '—',
+            nakshatra: chart.nakshatra || { name: 'Ashwini', pada: 1, lord: 'Ketu' },
+            planets: Array.isArray(chart.planets) ? chart.planets : [],
+            houses: chart.houses || {},
+            dasha: {
+              current: chart?.dasha?.current || chart?.dasha?.lord || '—',
+              lord: chart?.dasha?.lord || '—',
+              startDate: new Date(chart?.dasha?.startDate || Date.now()),
+              endDate: new Date(chart?.dasha?.endDate || Date.now()),
+              subPeriods,
+            },
+          } as BirthChart
+        } catch {
+          return null
+        }
+      })
+      .filter((c: BirthChart | null): c is BirthChart => Boolean(c && !Number.isNaN(c.birthDateTime.getTime())))
   } catch (error) {
     console.error('Error loading birth charts:', error)
     return []

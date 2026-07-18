@@ -10,59 +10,78 @@ import {
   type BirthChart,
 } from '@/services/kundliService'
 
+function formatLocalDate(d: Date): string {
+  if (Number.isNaN(d.getTime())) return ''
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+function parseLocalDate(yyyyMmDd: string): Date {
+  const [y, m, d] = yyyyMmDd.split('-').map(Number)
+  return new Date(y, (m || 1) - 1, d || 1)
+}
+
+const defaultForm = (): BirthDetails => ({
+  name: '',
+  dateOfBirth: new Date(),
+  timeOfBirth: '12:00',
+  latitude: 13.0827,
+  longitude: 80.2707,
+  timezone: 'Asia/Kolkata',
+  locationName: 'Chennai, India',
+})
+
 const Kundli = () => {
   const [showForm, setShowForm] = useState(false)
   const [savedCharts, setSavedCharts] = useState<BirthChart[]>([])
   const [selectedChart, setSelectedChart] = useState<BirthChart | null>(null)
   const [editingIndex, setEditingIndex] = useState<number | null>(null)
+  const [formError, setFormError] = useState('')
+  const [isCalculating, setIsCalculating] = useState(false)
   
-  const [formData, setFormData] = useState<BirthDetails>({
-    name: '',
-    dateOfBirth: new Date(),
-    timeOfBirth: '12:00',
-    latitude: 13.0827,
-    longitude: 80.2707,
-    timezone: 'Asia/Kolkata',
-    locationName: 'Chennai, India'
-  })
+  const [formData, setFormData] = useState<BirthDetails>(defaultForm)
 
   useEffect(() => {
-    const charts = getBirthCharts()
-    setSavedCharts(charts)
-    if (charts.length > 0 && !selectedChart) {
-      setSelectedChart(charts[0])
+    try {
+      const charts = getBirthCharts()
+      setSavedCharts(charts)
+      if (charts.length > 0) setSelectedChart(charts[0])
+    } catch (err) {
+      console.error(err)
+      setSavedCharts([])
     }
   }, [])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    const chart = calculateBirthChart(formData)
-    
-    if (editingIndex !== null) {
-      // Update existing chart
-      updateBirthChart(editingIndex, chart)
-      const updated = getBirthCharts()
-      setSavedCharts(updated)
-      setSelectedChart(updated[editingIndex])
-      setEditingIndex(null)
-    } else {
-      // Create new chart
-      saveBirthChart(chart)
-      setSavedCharts([...savedCharts, chart])
-      setSelectedChart(chart)
+    setFormError('')
+    setIsCalculating(true)
+    try {
+      const chart = calculateBirthChart(formData)
+
+      if (editingIndex !== null) {
+        updateBirthChart(editingIndex, chart)
+        const updated = getBirthCharts()
+        setSavedCharts(updated)
+        setSelectedChart(updated[editingIndex] ?? chart)
+        setEditingIndex(null)
+      } else {
+        saveBirthChart(chart)
+        const updated = getBirthCharts()
+        setSavedCharts(updated)
+        setSelectedChart(chart)
+      }
+
+      setShowForm(false)
+      setFormData(defaultForm())
+    } catch (err) {
+      console.error(err)
+      setFormError(err instanceof Error ? err.message : 'Could not calculate birth chart. Please try again.')
+    } finally {
+      setIsCalculating(false)
     }
-    
-    setShowForm(false)
-    // Reset form
-    setFormData({
-      name: '',
-      dateOfBirth: new Date(),
-      timeOfBirth: '12:00',
-      latitude: 13.0827,
-      longitude: 80.2707,
-      timezone: 'Asia/Kolkata',
-      locationName: 'Chennai, India'
-    })
   }
 
   const handleEdit = (index: number, chart: BirthChart) => {
@@ -83,16 +102,8 @@ const Kundli = () => {
   const handleCancelEdit = () => {
     setShowForm(false)
     setEditingIndex(null)
-    // Reset form
-    setFormData({
-      name: '',
-      dateOfBirth: new Date(),
-      timeOfBirth: '12:00',
-      latitude: 13.0827,
-      longitude: 80.2707,
-      timezone: 'Asia/Kolkata',
-      locationName: 'Chennai, India'
-    })
+    setFormError('')
+    setFormData(defaultForm())
   }
 
   const handleDelete = (index: number) => {
@@ -182,8 +193,10 @@ const Kundli = () => {
                   <input
                     type="date"
                     required
-                    value={formData.dateOfBirth.toISOString().split('T')[0]}
-                    onChange={(e) => setFormData({ ...formData, dateOfBirth: new Date(e.target.value) })}
+                    value={formatLocalDate(formData.dateOfBirth)}
+                    onChange={(e) =>
+                      setFormData({ ...formData, dateOfBirth: parseLocalDate(e.target.value) })
+                    }
                     className="w-full px-3 py-2 rounded-lg border border-[hsl(var(--temple-gold)/0.3)] text-sm font-body focus:outline-none focus:ring-2 focus:ring-saffron"
                   />
                 </div>
@@ -221,12 +234,23 @@ const Kundli = () => {
                 </p>
               </div>
 
+              {formError && (
+                <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                  {formError}
+                </p>
+              )}
+
               <div className="flex gap-2 pt-2">
                 <button
                   type="submit"
-                  className="flex-1 py-2 rounded-lg bg-gradient-to-br from-[hsl(var(--saffron))] to-[hsl(var(--saffron-light))] text-white text-sm font-body font-medium shadow-temple"
+                  disabled={isCalculating}
+                  className="flex-1 py-2 rounded-lg bg-gradient-to-br from-[hsl(var(--saffron))] to-[hsl(var(--saffron-light))] text-white text-sm font-body font-medium shadow-temple disabled:opacity-60"
                 >
-                  {editingIndex !== null ? 'Update Chart' : 'Calculate Chart'}
+                  {isCalculating
+                    ? 'Calculating…'
+                    : editingIndex !== null
+                      ? 'Update Chart'
+                      : 'Calculate Chart'}
                 </button>
                 <button
                   type="button"

@@ -1,4 +1,7 @@
-import { getPanchangForDate, DEFAULT_LAT, DEFAULT_LNG } from './panchangService'
+import { MhahPanchang } from 'mhah-panchang'
+import { DEFAULT_LAT, DEFAULT_LNG } from './panchangService'
+
+const engine = new MhahPanchang()
 
 export interface ZodiacSign {
   name: string
@@ -297,17 +300,54 @@ function resolveNakshatraAdvice(nakshatra: string): string {
 let cachedPanchang: any = null
 let cachedDate: string | null = null
 
+/** Lightweight snapshot for horoscope — avoid full-day Gowri/Varjyam work. */
 function getTodaysPanchang() {
-  const today = new Date()
   const dateStr = getTodayDateKey()
-  
+
   if (cachedPanchang && cachedDate === dateStr) {
     return cachedPanchang
   }
 
   try {
-    const panchang = getPanchangForDate(today, DEFAULT_LAT, DEFAULT_LNG)
-    
+    const today = new Date()
+    today.setHours(12, 0, 0, 0)
+    const sun = engine.sunTimer(today, DEFAULT_LAT, DEFAULT_LNG)
+    const sunrise = sun.sunRise instanceof Date ? sun.sunRise : today
+    const sunset = sun.sunSet instanceof Date ? sun.sunSet : null
+    const solarNoon = sun.solarNoon instanceof Date ? sun.solarNoon : null
+    const calc = engine.calculate(sunrise)
+    const cal = engine.calendar(sunrise, DEFAULT_LAT, DEFAULT_LNG)
+
+    const auspiciousTimings: Array<{ name: string; time: string }> = []
+    if (solarNoon) {
+      const abStart = new Date(solarNoon.getTime() - 24 * 60 * 1000)
+      const abEnd = new Date(solarNoon.getTime() + 24 * 60 * 1000)
+      const fmt = (d: Date) =>
+        d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit', hour12: true })
+      auspiciousTimings.push({
+        name: 'Abhijit Muhurta',
+        time: `${fmt(abStart)} – ${fmt(abEnd)}`,
+      })
+    }
+    if (sunrise && sunset) {
+      const brahmaStart = new Date(sunrise.getTime() - 96 * 60 * 1000)
+      const brahmaEnd = new Date(sunrise.getTime() - 48 * 60 * 1000)
+      const fmt = (d: Date) =>
+        d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit', hour12: true })
+      auspiciousTimings.push({
+        name: 'Brahma Muhurta',
+        time: `${fmt(brahmaStart)} – ${fmt(brahmaEnd)}`,
+      })
+    }
+
+    const panchang = {
+      nakshatra: calc.Nakshatra?.name_en_IN || 'Ashwini',
+      tithi: calc.Tithi?.name_en_IN || 'Pratipada',
+      paksha: cal.Paksha?.name_en_IN || 'Shukla',
+      yoga: cal.Yoga?.name_en_IN || 'Vishkumbha',
+      auspiciousTimings,
+    }
+
     cachedPanchang = panchang
     cachedDate = dateStr
     return panchang

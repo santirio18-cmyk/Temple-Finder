@@ -41,8 +41,12 @@ const Horoscope = () => {
   }, [])
 
   useEffect(() => {
-    if (selectedSign) {
+    if (!selectedSign) return
+    try {
       setHoroscope(getDailyHoroscope(selectedSign))
+    } catch (err) {
+      console.error('Horoscope failed:', err)
+      setHoroscope(null)
     }
   }, [selectedSign, dateKey])
 
