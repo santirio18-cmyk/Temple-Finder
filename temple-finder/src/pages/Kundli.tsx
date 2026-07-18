@@ -393,6 +393,64 @@ const Kundli = () => {
             </div>
           </div>
 
+          {/* Panchang on birth day */}
+          {selectedChart.birthPanchang && (
+            <div className="px-3 mb-4">
+              <div className="bg-[hsl(30,40%,97%)] rounded-xl border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm p-5 relative overflow-hidden">
+                <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-gradient-to-b from-[hsl(var(--saffron))] via-[hsl(var(--temple-gold))] to-[hsl(var(--saffron-light))]" />
+                <div className="pl-3">
+                  <h3 className="text-base font-display font-semibold text-foreground mb-1">
+                    Panchang on Birth Day
+                  </h3>
+                  <p className="text-[11px] text-muted-foreground mb-3">
+                    Tithi, paksha &amp; more at the moment of birth
+                  </p>
+
+                  <div className="rounded-lg border border-[hsl(var(--temple-gold)/0.2)] overflow-hidden mb-3">
+                    <table className="w-full text-sm font-body">
+                      <tbody>
+                        {[
+                          { label: 'Tithi', value: selectedChart.birthPanchang.tithi },
+                          {
+                            label: 'Paksha',
+                            value: `${selectedChart.birthPanchang.pakshaTamil} (${selectedChart.birthPanchang.paksha})`,
+                          },
+                          { label: 'Nakshatra', value: selectedChart.birthPanchang.nakshatra },
+                          { label: 'Yoga', value: selectedChart.birthPanchang.yoga },
+                          { label: 'Karana', value: selectedChart.birthPanchang.karana },
+                          { label: 'Weekday', value: selectedChart.birthPanchang.weekday },
+                          {
+                            label: 'Tamil month',
+                            value: `${selectedChart.birthPanchang.tamilMonthRoman} (${selectedChart.birthPanchang.tamilMonthTamil})`,
+                          },
+                        ].map((row) => (
+                          <tr
+                            key={row.label}
+                            className="border-b border-[hsl(var(--temple-gold)/0.1)] last:border-b-0"
+                          >
+                            <td className="px-3 py-2.5 align-top font-semibold text-saffron w-[6.5rem] whitespace-nowrap">
+                              {row.label}
+                            </td>
+                            <td className="px-3 py-2.5 align-top text-foreground font-medium">
+                              {row.value}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {selectedChart.birthPanchang.specialNote && (
+                    <div className="rounded-lg bg-[hsl(var(--saffron)/0.08)] border border-[hsl(var(--temple-gold)/0.25)] px-3 py-2.5 text-sm text-foreground">
+                      <span className="font-semibold text-saffron">Note · </span>
+                      {selectedChart.birthPanchang.specialNote}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Planetary Positions */}
           <div className="px-3 mb-4">
             <div className="bg-[hsl(30,40%,97%)] rounded-xl border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm p-5 relative overflow-hidden">

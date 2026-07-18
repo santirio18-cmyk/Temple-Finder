@@ -23,6 +23,21 @@ export interface Planet {
   pada: number
 }
 
+/** Panchang snapshot at birth moment */
+export interface BirthPanchang {
+  tithi: string
+  tithiRaw: string
+  paksha: string
+  pakshaTamil: string
+  nakshatra: string
+  yoga: string
+  karana: string
+  weekday: string
+  tamilMonthRoman: string
+  tamilMonthTamil: string
+  specialNote?: string
+}
+
 export interface BirthChart {
   name: string
   birthDateTime: Date
@@ -53,6 +68,7 @@ export interface BirthChart {
       endDate: Date
     }>
   }
+  birthPanchang: BirthPanchang
 }
 
 const SIGNS = [
@@ -254,6 +270,118 @@ function houseFromSigns(planetSignNumber: number, ascSignNumber: number): number
   return ((planetSignNumber - ascSignNumber + 12) % 12) + 1
 }
 
+const RAASI_TO_TAMIL_MONTH: Record<string, { tamil: string; roman: string }> = {
+  Aries: { tamil: 'சித்திரை', roman: 'Chithirai' },
+  Taurus: { tamil: 'வைகாசி', roman: 'Vaikasi' },
+  Gemini: { tamil: 'ஆனி', roman: 'Aani' },
+  Cancer: { tamil: 'ஆடி', roman: 'Aadi' },
+  Leo: { tamil: 'ஆவணி', roman: 'Avani' },
+  Virgo: { tamil: 'புரட்டாசி', roman: 'Purattasi' },
+  Libra: { tamil: 'ஐப்பசி', roman: 'Aippasi' },
+  Scorpio: { tamil: 'கார்த்திகை', roman: 'Karthigai' },
+  Sagittarius: { tamil: 'மார்கழி', roman: 'Margazhi' },
+  Capricorn: { tamil: 'தை', roman: 'Thai' },
+  Aquarius: { tamil: 'மாசி', roman: 'Masi' },
+  Pisces: { tamil: 'பங்குனி', roman: 'Panguni' },
+}
+
+const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+function displayTithiName(raw: string): string {
+  const lower = raw.toLowerCase()
+  const map: Array<[string, string]> = [
+    ['punnami', 'Pournami'],
+    ['pournami', 'Pournami'],
+    ['purnima', 'Pournami'],
+    ['poornima', 'Pournami'],
+    ['amavasya', 'Amavasya'],
+    ['amavasai', 'Amavasya'],
+    ['prathama', 'Prathama'],
+    ['pratipada', 'Prathama'],
+    ['padyami', 'Prathama'],
+    ['dwitiya', 'Dwitiya'],
+    ['vidhiya', 'Dwitiya'],
+    ['tritiya', 'Tritiya'],
+    ['chaturthi', 'Chaturthi'],
+    ['panchami', 'Panchami'],
+    ['shashthi', 'Shashti'],
+    ['shashti', 'Shashti'],
+    ['saptami', 'Saptami'],
+    ['sapthami', 'Saptami'],
+    ['ashtami', 'Ashtami'],
+    ['navami', 'Navami'],
+    ['dashami', 'Dashami'],
+    ['dasami', 'Dashami'],
+    ['ekadashi', 'Ekadashi'],
+    ['ekadasi', 'Ekadashi'],
+    ['dwadashi', 'Dwadashi'],
+    ['dvadasi', 'Dwadashi'],
+    ['trayodashi', 'Trayodashi'],
+    ['chaturdashi', 'Chaturdashi'],
+    ['chaturdasi', 'Chaturdashi'],
+  ]
+  for (const [key, label] of map) {
+    if (lower.includes(key)) return label
+  }
+  return raw.trim() || '—'
+}
+
+function resolveTamilPaksha(pakshaName: string): string {
+  const t = pakshaName.toLowerCase()
+  if (t.includes('shukla')) return 'Valarpirai'
+  if (t.includes('krishna')) return 'Theipirai'
+  return pakshaName.trim() || '—'
+}
+
+function specialTithiNote(tithi: string, paksha: string): string | undefined {
+  const t = tithi.toLowerCase()
+  if (t.includes('ekadashi')) return 'Ekadashi — sacred fasting day for Vishnu'
+  if (t.includes('pournami') || t.includes('purnima')) return 'Pournami — full moon, very auspicious'
+  if (t.includes('amavasya')) return 'Amavasya — ancestral day'
+  if (t.includes('shashti')) return 'Shashti — sacred to Lord Murugan'
+  if (t.includes('chaturthi')) return 'Chaturthi — sacred to Lord Ganesha'
+  if (t.includes('ashtami')) return 'Ashtami — sacred to Devi / Krishna'
+  if (t.includes('navami')) return 'Navami — sacred to Rama / Devi'
+  if (t.includes('trayodashi') || t.includes('pradosham')) return 'Trayodashi — Pradosham for Shiva'
+  if (t.includes('saptami') && paksha.toLowerCase().includes('shukla')) {
+    return 'Saptami — auspicious for Surya'
+  }
+  return undefined
+}
+
+export function computeBirthPanchang(
+  birthDateTime: Date,
+  latitude = 13.0827,
+  longitude = 80.2707
+): BirthPanchang {
+  const calc = engine.calculate(birthDateTime)
+  const cal = engine.calendar(birthDateTime, latitude, longitude)
+
+  const tithiRaw = (calc.Tithi?.name_en_IN as string) || '—'
+  const tithi = displayTithiName(tithiRaw)
+  const paksha = (cal.Paksha?.name_en_IN as string) || (calc.Paksha?.name_en_IN as string) || '—'
+  const pakshaTamil = resolveTamilPaksha(paksha)
+  const yoga = (cal.Yoga?.name_en_IN as string) || (calc.Yoga?.name_en_IN as string) || '—'
+  const karana = (calc.Karna?.name_en_IN as string) || '—'
+  const nakshatra = normalizeNakshatra((calc.Nakshatra?.name_en_IN as string) || '—')
+  const sunRaasi = (cal.Raasi?.name_en_UK as string) || ''
+  const month = RAASI_TO_TAMIL_MONTH[sunRaasi.trim()] || { tamil: sunRaasi || '—', roman: sunRaasi || '—' }
+
+  return {
+    tithi,
+    tithiRaw,
+    paksha,
+    pakshaTamil,
+    nakshatra,
+    yoga,
+    karana,
+    weekday: WEEKDAYS[birthDateTime.getDay()] || '—',
+    tamilMonthRoman: month.roman,
+    tamilMonthTamil: month.tamil,
+    specialNote: specialTithiNote(tithi, paksha),
+  }
+}
+
 export function calculateBirthChart(details: BirthDetails): BirthChart {
   const { dateOfBirth, timeOfBirth, latitude, longitude, name, locationName } = details
 
@@ -330,6 +458,7 @@ export function calculateBirthChart(details: BirthDetails): BirthChart {
   const progress = Math.min(1, Math.max(0, (birthDateTime.getTime() - nakStart.getTime()) / span))
   const moonDegreeInNakshatra = progress * 13.333333333333334
   const dasha = calculateVimshottariDasha(moonNakshatra.name, moonDegreeInNakshatra, birthDateTime)
+  const birthPanchang = computeBirthPanchang(birthDateTime, latitude, longitude)
 
   return {
     name: name.trim() || 'Chart',
@@ -345,6 +474,7 @@ export function calculateBirthChart(details: BirthDetails): BirthChart {
     planets,
     houses,
     dasha,
+    birthPanchang,
   }
 }
 
@@ -381,11 +511,17 @@ export function getBirthCharts(): BirthChart[] {
               }))
             : []
 
+          const birthDateTime = new Date(chart.birthDateTime)
+          const birthPanchang: BirthPanchang =
+            chart.birthPanchang?.tithi
+              ? chart.birthPanchang
+              : computeBirthPanchang(birthDateTime)
+
           return {
             ...chart,
             name: chart.name || 'Chart',
             location: chart.location || 'Unknown',
-            birthDateTime: new Date(chart.birthDateTime),
+            birthDateTime,
             ascendant: chart.ascendant || { sign: 'Aries', degree: 0 },
             moonSign: chart.moonSign || '—',
             sunSign: chart.sunSign || '—',
@@ -399,6 +535,7 @@ export function getBirthCharts(): BirthChart[] {
               endDate: new Date(chart?.dasha?.endDate || Date.now()),
               subPeriods,
             },
+            birthPanchang,
           } as BirthChart
         } catch {
           return null
