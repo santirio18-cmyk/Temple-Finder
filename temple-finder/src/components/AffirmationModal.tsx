@@ -10,7 +10,6 @@ interface AffirmationModalProps {
   deityImage: string;
 }
 
-// Affirmations for each deity
 const deityAffirmations: Record<string, string[]> = {
   Surya: [
     "I am filled with divine light and energy",
@@ -80,7 +79,7 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
     "I am surrounded by divine grace"
   ];
 
-  const numberOfCards = Math.min(affirmations.length, 5);
+  const numberOfCards = Math.min(affirmations.length, 4);
   const cardsToShow = Array.from({ length: numberOfCards }, (_, i) => i);
 
   const handleCardClick = (cardIndex: number) => {
@@ -88,244 +87,176 @@ const AffirmationModal = ({ isOpen, onClose, deity, deityImage }: AffirmationMod
     setSelectedCard(cardIndex);
   };
 
-  const handleReset = () => {
-    setSelectedCard(null);
-  };
-
   return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/55"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-sm mx-auto rounded-3xl shadow-2xl overflow-hidden"
+        className="relative w-full max-w-sm mx-auto rounded-2xl overflow-hidden shadow-card-warm border border-[hsl(var(--temple-gold)/0.35)]"
         onClick={(e) => e.stopPropagation()}
         style={{
-          background: '#FFFFFF',
+          background: 'linear-gradient(160deg, hsl(30,40%,98%) 0%, hsl(28,50%,94%) 55%, hsl(25,45%,92%) 100%)',
           maxHeight: '92vh',
-          border: `3px solid ${deity.color}`,
-          boxShadow: `0 30px 80px -15px ${deity.color}60, 0 15px 40px -10px rgba(0,0,0,0.3)`,
         }}
       >
+        <div className="absolute left-0 top-4 bottom-4 w-[3px] rounded-full bg-gradient-to-b from-[hsl(var(--saffron))] via-[hsl(var(--temple-gold))] to-[hsl(var(--saffron-light))]" />
+
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-3 right-3 z-20 w-10 h-10 rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition-all active:scale-95 bg-white border-2"
+          className="absolute top-3 right-3 z-20 w-9 h-9 rounded-full bg-white/90 border border-[hsl(var(--temple-gold)/0.35)] shadow-sm flex items-center justify-center hover:bg-[hsl(var(--saffron)/0.08)] transition-colors"
           aria-label="Close"
-          style={{
-            borderColor: deity.color,
-            boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-          }}
         >
-          <X className="w-6 h-6" style={{ color: deity.color }} strokeWidth={3} />
+          <X className="w-5 h-5 text-saffron" strokeWidth={2.5} />
         </button>
 
-        <div className="relative p-6 pb-4 flex flex-col items-center">
-          <div
-            className="w-32 h-32 rounded-full overflow-hidden shadow-2xl mb-4 mx-auto"
-            style={{
-              border: `5px solid ${deity.color}`,
-              boxShadow: `0 8px 32px ${deity.color}60, 0 0 0 12px ${deity.color}20`,
-            }}
-          >
+        <div className="relative px-5 pt-6 pb-3 flex flex-col items-center">
+          <div className="w-24 h-24 rounded-full overflow-hidden mb-3 ring-2 ring-[hsl(var(--saffron)/0.45)] shadow-temple bg-[hsl(30,40%,96%)]">
             <img
               src={deityImage}
               alt={deity.name}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover object-top"
             />
           </div>
 
           <div className="text-center w-full">
-            <div className="flex items-center justify-center gap-2 mb-1.5">
-              <Sparkles className="w-4 h-4" style={{ color: deity.color }} />
-              <h2 className="text-[11px] font-body font-bold uppercase tracking-wider" style={{ color: deity.color }}>
+            <div className="flex items-center justify-center gap-1.5 mb-1">
+              <Sparkles className="w-3.5 h-3.5 text-saffron" />
+              <h2 className="text-[10px] font-body font-bold uppercase tracking-[0.14em] text-saffron">
                 Daily Affirmations
               </h2>
             </div>
-            <h3 className="font-display text-2xl font-bold leading-tight mb-1.5" style={{ color: deity.color }}>
+            <h3 className="font-display text-xl font-bold text-foreground leading-tight">
               Lord {deity.name}
             </h3>
-            <p className="text-sm font-body font-medium text-foreground/70">
-              {deity.dayName}'s Blessings ✨
+            <p className="text-xs font-body text-muted-foreground mt-0.5">
+              {deity.dayName}&apos;s Blessings
             </p>
           </div>
         </div>
 
-        <div className="px-4 pb-4 overflow-y-auto" style={{ maxHeight: 'calc(92vh - 140px)' }}>
+        <div className="px-4 pb-4 overflow-y-auto" style={{ maxHeight: 'calc(92vh - 160px)' }}>
           {selectedCard === null ? (
             <div className="space-y-3">
-              <div className="text-center px-4">
-                <p className="text-lg font-display font-bold mb-1" style={{ color: deity.color }}>
-                  🙏 Pick Your Blessing Card
+              <div className="text-center px-2">
+                <p className="text-base font-display font-bold text-foreground mb-0.5">
+                  Pick your blessing card
                 </p>
-                <p className="text-xs font-body font-medium text-foreground/60">
-                  Trust your intuition and choose a card
+                <p className="text-xs font-body text-muted-foreground">
+                  Trust your intuition and choose one
                 </p>
               </div>
 
-              <div className="relative h-56 flex items-center justify-center">
+              <div className="relative h-52 flex items-center justify-center">
                 {cardsToShow.map((cardIndex, arrayIndex) => {
                   const totalCards = cardsToShow.length;
                   const middleIndex = (totalCards - 1) / 2;
                   const offset = arrayIndex - middleIndex;
-                  const rotation = offset * 8;
-                  const translateX = offset * 35;
-                  const translateY = Math.abs(offset) * 15;
+                  const rotation = offset * 7;
+                  const translateX = offset * 42;
+                  const translateY = Math.abs(offset) * 10;
 
                   return (
                     <button
                       key={cardIndex}
                       type="button"
                       onClick={() => handleCardClick(cardIndex)}
-                      className="absolute w-28 transition-all duration-300 hover:scale-110 hover:-translate-y-4 cursor-pointer group"
+                      className="absolute w-[5.75rem] transition-transform duration-300 hover:-translate-y-3 hover:scale-105 active:scale-95 cursor-pointer"
                       style={{
                         transform: `translateX(${translateX}px) translateY(${translateY}px) rotate(${rotation}deg)`,
-                        zIndex: arrayIndex === Math.floor(middleIndex) ? 10 : 5,
+                        zIndex: 5 + arrayIndex,
                       }}
+                      aria-label={`Blessing card ${cardIndex + 1}`}
                     >
                       <div
-                        className="relative overflow-hidden rounded-2xl"
+                        className="relative overflow-hidden rounded-xl border-2 border-[hsl(var(--temple-gold)/0.55)] shadow-card-warm"
                         style={{
                           aspectRatio: '2/3',
-                          background: `linear-gradient(135deg, ${deity.color} 0%, ${deity.color}cc 100%)`,
-                          boxShadow: `0 25px 50px -12px ${deity.color}60, 0 12px 24px -8px rgba(0,0,0,0.4)`,
-                          border: `2px solid ${deity.color}`,
+                          background:
+                            'linear-gradient(145deg, hsl(var(--saffron)) 0%, hsl(28, 70%, 42%) 45%, hsl(var(--temple-gold)) 100%)',
                         }}
                       >
-                        <div className="absolute inset-0 opacity-25">
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <Sparkles className="w-20 h-20 text-white drop-shadow-lg" />
-                          </div>
-                          <div className="absolute top-4 left-4">
-                            <Sparkles className="w-7 h-7 text-white" />
-                          </div>
-                          <div className="absolute bottom-4 right-4">
-                            <Sparkles className="w-7 h-7 text-white" />
-                          </div>
-                        </div>
-
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="w-14 h-14 rounded-full border-3 border-white/60 flex items-center justify-center bg-white/10 backdrop-blur-sm">
-                            <span className="text-3xl font-display font-bold text-white">?</span>
-                          </div>
-                        </div>
-
                         <div
-                          className="absolute inset-0 opacity-0 group-hover:opacity-40 transition-opacity duration-300"
+                          className="absolute inset-[6px] rounded-lg border border-white/25"
                           style={{
-                            background: 'radial-gradient(circle at center, rgba(255,255,255,0.9) 0%, transparent 60%)',
+                            background:
+                              'linear-gradient(160deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.04) 100%)',
                           }}
                         />
+                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                          <span className="text-3xl text-white/95 font-display leading-none drop-shadow-sm">
+                            ॐ
+                          </span>
+                          <span className="w-8 h-[2px] rounded-full bg-white/50" />
+                          <span className="text-[10px] font-body font-semibold tracking-[0.2em] text-white/90 uppercase">
+                            Blessing
+                          </span>
+                        </div>
                       </div>
                     </button>
                   );
                 })}
               </div>
 
-              <div className="text-center">
-                <p className="text-xs font-body font-medium text-foreground/60 italic">
-                  ✨ Each card holds a divine message
-                </p>
-              </div>
+              <p className="text-center text-[11px] font-body text-muted-foreground italic">
+                Each card holds a divine message
+              </p>
             </div>
           ) : (
-            <div className="flex flex-col items-center w-full space-y-2">
-              <div className="w-full flex justify-center">
-                <div
-                  className="relative w-[min(100%,260px)] overflow-hidden rounded-2xl"
-                  style={{
-                    aspectRatio: '4/5',
-                    maxHeight: '240px',
-                    boxShadow: '0 15px 30px rgba(0,0,0,0.25), 0 6px 12px rgba(0,0,0,0.15)',
-                    animation: 'cardFlip 0.8s ease-out',
-                  }}
-                >
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      backgroundImage: `url(${deityImage})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                    }}
-                  />
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.4) 100%)',
-                    }}
-                  />
-                  <div className="relative z-10 flex flex-col justify-between h-full p-3">
-                    <div className="text-center">
-                      <p
-                        className="font-display text-sm font-bold text-white tracking-wide"
-                        style={{
-                          textShadow: '0 2px 8px rgba(0,0,0,0.5)',
-                          fontStyle: 'italic',
-                        }}
-                      >
-                        {deity.name}
-                      </p>
-                    </div>
-                    <div className="flex-1 flex items-center justify-center px-1">
-                      <p
-                        className="font-display text-xs font-semibold text-white leading-snug text-center"
-                        style={{
-                          textShadow: '0 3px 10px rgba(0,0,0,0.6)',
-                          letterSpacing: '0.02em',
-                        }}
-                      >
-                        {affirmations[selectedCard]}
-                      </p>
-                    </div>
-                    <div className="flex justify-center">
-                      <Sparkles className="w-5 h-5 text-white opacity-80 animate-pulse" />
-                    </div>
+            <div className="flex flex-col items-center w-full space-y-3">
+              <div
+                className="relative w-[min(100%,240px)] overflow-hidden rounded-xl border border-[hsl(var(--temple-gold)/0.4)] shadow-card-warm"
+                style={{ aspectRatio: '4/5', maxHeight: '250px' }}
+              >
+                <img
+                  src={deityImage}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover object-top"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/50 to-black/65" />
+                <div className="relative z-10 flex flex-col justify-between h-full p-4">
+                  <p className="text-center font-display text-sm font-bold text-white/95">
+                    {deity.name}
+                  </p>
+                  <p className="font-display text-sm font-semibold text-white leading-snug text-center px-1">
+                    {affirmations[selectedCard]}
+                  </p>
+                  <div className="flex justify-center">
+                    <Sparkles className="w-4 h-4 text-[hsl(var(--temple-gold))]" />
                   </div>
                 </div>
               </div>
 
               <button
                 type="button"
-                onClick={handleReset}
-                className="w-[min(100%,260px)] py-1.5 rounded-full font-body text-xs font-semibold border-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                style={{
-                  borderColor: deity.color,
-                  color: deity.color,
-                  background: `${deity.color}10`,
-                }}
+                onClick={() => setSelectedCard(null)}
+                className="w-[min(100%,240px)] py-2 rounded-full font-body text-xs font-semibold border border-[hsl(var(--temple-gold)/0.45)] text-saffron bg-white/70 hover:bg-[hsl(var(--saffron)/0.08)] transition-colors"
               >
-                🔄 Pick Another Card
+                Pick another card
               </button>
             </div>
           )}
 
-          <div
-            className="mt-2 p-2 rounded-xl border-2"
-            style={{
-              borderColor: `${deity.color}40`,
-              background: `linear-gradient(135deg, ${deity.color}10 0%, ${deity.color}05 100%)`,
-            }}
-          >
-            <p className="text-[8px] font-body font-semibold uppercase tracking-wider text-muted-foreground mb-0.5 text-center">
-              Chant Today
+          <div className="mt-3 rounded-xl border border-[hsl(var(--temple-gold)/0.3)] bg-white/55 px-3 py-2.5">
+            <p className="text-[9px] font-body font-semibold uppercase tracking-wider text-muted-foreground text-center mb-0.5">
+              Chant today
             </p>
-            <p
-              className="text-xs font-display font-bold text-center italic leading-tight"
-              style={{ color: deity.color }}
-            >
+            <p className="text-sm font-display font-bold text-center text-saffron italic leading-tight">
               {deity.mantra}
             </p>
           </div>
 
           <button
+            type="button"
             onClick={onClose}
-            className="w-full mt-2 py-2 rounded-full font-body text-sm font-semibold text-primary-foreground transition-all hover:brightness-110 active:scale-[0.98]"
+            className="w-full mt-3 py-2.5 rounded-full font-body text-sm font-semibold text-primary-foreground transition-all hover:brightness-110 active:scale-[0.98]"
             style={{
-              background: `linear-gradient(135deg, ${deity.color} 0%, ${deity.color}dd 100%)`,
-              boxShadow: `0 4px 12px -2px ${deity.color}40`,
+              background: 'linear-gradient(135deg, hsl(var(--saffron)) 0%, hsl(var(--saffron-light)) 100%)',
+              boxShadow: '0 4px 14px -3px hsl(var(--saffron) / 0.4)',
             }}
           >
-            Close & Reflect
+            Close & reflect
           </button>
         </div>
       </div>
