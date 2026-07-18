@@ -36,7 +36,7 @@ function parseTithi(tithiName: string): TithiInfo | null {
     'Dwadashi': 12, 'Dvadashi': 12,
     'Trayodashi': 13, 'Trayodasi': 13,
     'Chaturdashi': 14,
-    'Purnima': 15, 'Poornima': 15,
+    'Purnima': 15, 'Poornima': 15, 'Pournami': 15, 'Punnami': 15,
     'Amavasya': 30, 'Amavasai': 30
   }
 
@@ -84,26 +84,119 @@ function daysBetween(date1: Date, date2: Date): number {
 
 /**
  * Get current tithi information for "Sacred Today" display.
+ * Every tithi maps to a distinct deity so the home card image changes daily.
  */
-export type TithiDeityKey = 'vishnu' | 'shiva' | 'murugan' | 'ganesha' | 'devi' | 'surya' | 'divine'
+export type TithiDeityKey =
+  | 'vishnu'
+  | 'shiva'
+  | 'murugan'
+  | 'ganesha'
+  | 'devi'
+  | 'surya'
+  | 'lakshmi'
+  | 'hanuman'
+  | 'rama'
 
 function getTithiDeityKey(tithiNumber: number): TithiDeityKey {
   switch (tithiNumber) {
-    case 11:
-      return 'vishnu'
-    case 13:
-      return 'shiva'
-    case 6:
-      return 'murugan'
+    case 1:
+      return 'ganesha' // beginnings
+    case 2:
+      return 'hanuman'
+    case 3:
+      return 'lakshmi' // Gauri / Lakshmi
     case 4:
-      return 'ganesha'
-    case 8:
-      return 'devi'
+      return 'ganesha' // Chaturthi
+    case 5:
+      return 'lakshmi' // Panchami — Saraswati / prosperity
+    case 6:
+      return 'murugan' // Shashti
     case 7:
-      return 'surya'
+      return 'surya' // Saptami
+    case 8:
+      return 'devi' // Ashtami
+    case 9:
+      return 'rama' // Navami
+    case 10:
+      return 'devi' // Dashami / Vijaya
+    case 11:
+      return 'vishnu' // Ekadashi
+    case 12:
+      return 'vishnu' // Dwadashi
+    case 13:
+      return 'shiva' // Pradosham
+    case 14:
+      return 'shiva' // Chaturdashi
+    case 15:
+      return 'lakshmi' // Pournami
+    case 30:
+      return 'hanuman' // Amavasya — strength / ancestral day
     default:
-      return 'divine'
+      return 'vishnu'
   }
+}
+
+function getTithiDescription(tithiNumber: number): string {
+  switch (tithiNumber) {
+    case 1:
+      return 'A sacred day to begin with Lord Ganesha'
+    case 2:
+      return 'A sacred day for Hanuman’s blessings and courage'
+    case 3:
+      return 'Auspicious for Goddess Lakshmi and prosperity'
+    case 4:
+      return 'Sacred for Lord Ganesha worship'
+    case 5:
+      return 'Sacred for Goddess Lakshmi and learning'
+    case 6:
+      return 'Sacred day for Lord Murugan worship'
+    case 7:
+      return 'A sacred day to worship Lord Surya, the Sun God'
+    case 8:
+      return 'Auspicious for Goddess Durga and Devi worship'
+    case 9:
+      return 'Sacred day for Lord Rama’s blessings'
+    case 10:
+      return 'A day of victory — honor the Goddess'
+    case 11:
+      return 'A sacred day to connect with Lord Vishnu'
+    case 12:
+      return 'Auspicious for Lord Vishnu worship'
+    case 13:
+      return 'Sacred evening for Lord Shiva worship'
+    case 14:
+      return 'A sacred day for Lord Shiva and deep prayer'
+    case 15:
+      return 'Full moon — auspicious for Lakshmi and all worship'
+    case 30:
+      return 'New moon — ancestral prayers and Hanuman’s protection'
+    default:
+      return 'A sacred day to connect with the Divine'
+  }
+}
+
+/** Short display label: "Shukla Panchami" → "Panchami" */
+function displayTithiName(raw: string, info: TithiInfo | null): string {
+  if (!info) return raw || 'Tithi'
+  const labels: Record<number, string> = {
+    1: 'Prathama',
+    2: 'Dwitiya',
+    3: 'Tritiya',
+    4: 'Chaturthi',
+    5: 'Panchami',
+    6: 'Shashti',
+    7: 'Saptami',
+    8: 'Ashtami',
+    9: 'Navami',
+    10: 'Dashami',
+    11: 'Ekadashi',
+    12: 'Dwadashi',
+    13: 'Trayodashi',
+    14: 'Chaturdashi',
+    15: 'Pournami',
+    30: 'Amavasya',
+  }
+  return labels[info.number] ?? raw
 }
 
 export function getTithiDeityFilterParam(deityKey: TithiDeityKey): string | null {
@@ -114,7 +207,9 @@ export function getTithiDeityFilterParam(deityKey: TithiDeityKey): string | null
     ganesha: 'Ganesha',
     devi: 'Devi',
     surya: 'Surya',
-    divine: null,
+    lakshmi: 'Lakshmi',
+    hanuman: 'Hanuman',
+    rama: 'Rama',
   }
   return map[deityKey]
 }
@@ -127,54 +222,24 @@ export function getCurrentTithi(): {
 } {
   const today = new Date()
   today.setHours(12, 0, 0, 0)
-  
+
   const calc = engine.calculate(today)
   const tithiName = calc.Tithi?.name_en_IN ?? 'Unknown'
   const tithiInfo = parseTithi(tithiName)
-  
-  // Find next Ekadashi
+
   const nextEkadashiDate = findNextTithi(11, today)
   const daysToEkadashi = nextEkadashiDate ? daysBetween(today, nextEkadashiDate) : 15
-  
-  // Provide appropriate description based on current tithi
-  let description = 'A sacred day to connect with the Divine'
-  
-  if (tithiInfo) {
-    switch (tithiInfo.number) {
-      case 11:
-        description = 'A sacred day to connect with Lord Vishnu'
-        break
-      case 13:
-        description = 'Sacred evening for Lord Shiva worship'
-        break
-      case 30:
-        description = 'Day for ancestral prayers and offerings'
-        break
-      case 15:
-        description = 'Full moon - auspicious for all worship'
-        break
-      case 8:
-        description = 'Auspicious for Lord Krishna or Ganesha'
-        break
-      case 4:
-        description = 'Sacred for Lord Ganesha worship'
-        break
-      case 6:
-        description = 'Sacred day for Lord Murugan worship'
-        break
-      case 7:
-        description = 'A sacred day to worship Lord Surya, the Sun God'
-        break
-      default:
-        description = 'A sacred day to connect with the Divine'
-    }
-  }
-  
+
+  const deityKey = tithiInfo ? getTithiDeityKey(tithiInfo.number) : 'vishnu'
+  const description = tithiInfo
+    ? getTithiDescription(tithiInfo.number)
+    : 'A sacred day to connect with the Divine'
+
   return {
-    tithi: tithiName,
+    tithi: displayTithiName(tithiName, tithiInfo),
     description,
     nextEkadashi: daysToEkadashi,
-    deityKey: tithiInfo ? getTithiDeityKey(tithiInfo.number) : 'divine'
+    deityKey,
   }
 }
 

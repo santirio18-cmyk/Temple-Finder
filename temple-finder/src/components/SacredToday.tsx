@@ -5,9 +5,11 @@ import vishnuImg from "@/assets/deities/vishnu-sacred.png";
 import shivaImg from "@/assets/deities/shiva.jpg";
 import muruganImg from "@/assets/deities/murugan-sacred.jpg";
 import ganeshaImg from "@/assets/deities/ganpati.jpg";
-import deviImg from "@/assets/deities/shakti.jpg";
+import deviImg from "@/assets/deities/amman-kumkum.png";
 import suryaImg from "@/assets/deities/surya-deity.jpg";
-import divineImg from "@/assets/deities/vishnu-watercolor.png";
+import lakshmiImg from "@/assets/deities/lakshmi-deity.jpg";
+import hanumanImg from "@/assets/deities/hanuman.jpg";
+import ramaImg from "@/assets/deities/ram.jpg";
 import { getCurrentTithi, getTithiDeityFilterParam, type TithiDeityKey } from "@/services/festivalService";
 
 const tithiDeityImages: Record<TithiDeityKey, string> = {
@@ -17,7 +19,9 @@ const tithiDeityImages: Record<TithiDeityKey, string> = {
   ganesha: ganeshaImg,
   devi: deviImg,
   surya: suryaImg,
-  divine: divineImg,
+  lakshmi: lakshmiImg,
+  hanuman: hanumanImg,
+  rama: ramaImg,
 };
 
 const SacredToday = () => {
@@ -30,30 +34,31 @@ const SacredToday = () => {
   });
 
   useEffect(() => {
-    // Get current tithi on mount and update daily
     const updateTithi = () => {
-      const data = getCurrentTithi();
-      setTithiData(data);
+      setTithiData(getCurrentTithi());
     };
 
     updateTithi();
 
-    // Update at midnight each day
     const now = new Date();
     const tomorrow = new Date(now);
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(0, 0, 0, 0);
     const msUntilMidnight = tomorrow.getTime() - now.getTime();
 
+    let dailyInterval: ReturnType<typeof setInterval> | undefined;
     const midnightTimer = setTimeout(() => {
       updateTithi();
-      // Set up daily interval after first midnight update
-      const dailyInterval = setInterval(updateTithi, 24 * 60 * 60 * 1000);
-      return () => clearInterval(dailyInterval);
+      dailyInterval = setInterval(updateTithi, 24 * 60 * 60 * 1000);
     }, msUntilMidnight);
 
-    return () => clearTimeout(midnightTimer);
+    return () => {
+      clearTimeout(midnightTimer);
+      if (dailyInterval) clearInterval(dailyInterval);
+    };
   }, []);
+
+  const deityImage = tithiDeityImages[tithiData.deityKey];
 
   return (
     <section
@@ -61,24 +66,22 @@ const SacredToday = () => {
       style={{ borderRadius: '28px 28px 0 0' }}
     >
       <div className="px-3 pt-6">
-        {/* Main Sacred Today Card */}
         <div
           className="relative overflow-hidden rounded-2xl border border-saffron-glow/20"
           style={{
             background: "linear-gradient(135deg, hsl(var(--warm-cream)) 0%, hsl(28 60% 92%) 40%, hsl(25 55% 90%) 100%)",
           }}
         >
-          {/* Deity illustration */}
           <div className="absolute right-0 top-0 bottom-0 w-[40%] pointer-events-none flex items-end justify-end pr-1 pb-1">
             <img
-              src={tithiDeityImages[tithiData.deityKey]}
+              key={tithiData.deityKey}
+              src={deityImage}
               alt=""
               className="h-full w-auto max-w-full object-contain object-bottom opacity-90 drop-shadow-sm"
             />
           </div>
 
           <div className="relative z-10 px-4 py-4">
-            {/* Header row */}
             <div className="flex items-center gap-1.5 mb-1">
               <span className="text-sm">🪔</span>
               <span className="text-[10px] font-body font-semibold text-saffron-deep tracking-wider uppercase">
@@ -86,20 +89,17 @@ const SacredToday = () => {
               </span>
             </div>
 
-            {/* Headline */}
             <h3 className="font-display text-2xl font-bold text-foreground leading-snug">
               {tithiData.tithi}
             </h3>
 
-            {/* Description */}
             <p className="text-sm font-body text-foreground/75 mt-1.5 max-w-[58%] leading-relaxed">
               {tithiData.description}
             </p>
             <p className="text-sm font-body text-foreground/75 mt-0.5 max-w-[58%]">
-              Follow today's <span className="font-semibold text-saffron-deep">வழிபாடு</span>
+              Follow today&apos;s <span className="font-semibold text-saffron-deep">worship</span>
             </p>
 
-            {/* Visit Nearby Temple CTA */}
             <button
               type="button"
               onClick={() => {
@@ -118,7 +118,6 @@ const SacredToday = () => {
           </div>
         </div>
 
-        {/* Can't visit temple? Section */}
         <div
           className="mt-2.5 rounded-2xl border border-saffron-glow/15 px-4 py-4"
           style={{
@@ -126,13 +125,12 @@ const SacredToday = () => {
           }}
         >
           <p className="font-display text-base font-semibold text-foreground leading-snug">
-            Can't visit temple?
+            Can&apos;t visit temple?
           </p>
           <p className="text-sm font-body text-foreground/70 mt-1">
-            <span className="font-semibold text-foreground/85">Begin</span> today's sacred practice from home.
+            <span className="font-semibold text-foreground/85">Begin</span> today&apos;s sacred practice from home.
           </p>
 
-          {/* Steps row */}
           <div className="flex items-center gap-2 mt-3 flex-wrap">
             <span className="flex items-center gap-1 text-xs font-body text-foreground/70">
               <span className="text-sm">🪔</span> Prepare
@@ -151,8 +149,8 @@ const SacredToday = () => {
             </span>
           </div>
 
-          {/* Begin Today CTA */}
           <button
+            type="button"
             onClick={() => navigate("/ritual")}
             className="mt-4 flex items-center justify-center gap-2 w-full px-5 py-3 rounded-full font-body text-sm font-bold text-primary-foreground transition-all hover:brightness-110 active:scale-[0.98]"
             style={{
@@ -160,12 +158,11 @@ const SacredToday = () => {
               boxShadow: "0 4px 14px -3px hsl(var(--saffron) / 0.35)",
             }}
           >
-            Begin Today's வழிபாடு
+            Begin Today&apos;s Worship
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Footer italic */}
         <p className="text-[11px] font-body text-muted-foreground mt-3 mb-1 italic text-center">
           {tithiData.tithi.toLowerCase().includes('ekadashi') ? 'Fasting observed today' : 'Sacred observances recommended'} · Next Ekadashi in {tithiData.nextEkadashi} {tithiData.nextEkadashi === 1 ? 'day' : 'days'}
         </p>
