@@ -4,8 +4,8 @@ import { getTodayDeity, type DeityOfDay } from '@/services/deityOfDayService';
 import { ChevronRight, Sparkles } from 'lucide-react';
 import AffirmationModal from './AffirmationModal';
 
-// Import deity images
-import vishnuImg from '@/assets/deities/vishnu.jpg';
+// Warm sacred-style assets (match Sacred Today / Panchang tone)
+import vishnuImg from '@/assets/deities/vishnu-sacred.png';
 import shivaImg from '@/assets/deities/shiva.jpg';
 import hanumanImg from '@/assets/deities/hanuman.jpg';
 import ganeshaImg from '@/assets/deities/ganpati.jpg';
@@ -98,13 +98,16 @@ const DeityOfTheDay = () => {
           <div className="flex items-start gap-4">
             {/* Deity Circle Image */}
             <div
-              className="w-16 h-16 rounded-full overflow-hidden border-2 shadow-md flex-shrink-0"
-              style={{ borderColor: deity.color }}
+              className="w-16 h-16 rounded-full overflow-hidden border-2 shadow-md flex-shrink-0 flex items-center justify-center"
+              style={{
+                borderColor: 'hsl(var(--temple-gold) / 0.45)',
+                background: 'linear-gradient(145deg, hsl(35, 50%, 94%) 0%, hsl(28, 40%, 90%) 100%)',
+              }}
             >
               <img
                 src={deityImage}
                 alt={deity.name}
-                className="w-full h-full object-cover"
+                className="w-[90%] h-[90%] object-contain object-bottom"
               />
             </div>
 

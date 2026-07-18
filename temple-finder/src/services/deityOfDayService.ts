@@ -75,7 +75,7 @@ const deityMapping: Record<number, DeityOfDay> = {
     imageKey: 'vishnu',
     mantra: 'Om Namo Narayanaya',
     benefits: 'Worship Vishnu for wealth, prosperity, and overall well-being',
-    color: 'hsl(200, 70%, 50%)'
+    color: 'hsl(28, 70%, 45%)' // saffron-brown — matches temple UI (was harsh blue)
   }
 }
 
