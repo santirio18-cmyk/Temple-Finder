@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { ArrowLeft, Heart, Calendar, Clock, MapPin, Sparkles, User } from 'lucide-react'
+import { ArrowLeft, Heart, Calendar, Clock, MapPin, Sparkles, User, Star } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { calculateCompatibility, type PersonDetails, type CompatibilityResult } from '@/services/compatibilityService'
 
 interface BirthDetails {
   date: string
@@ -20,38 +21,40 @@ const MarriageCompatibility = () => {
     time: '',
     place: ''
   })
-  const [result, setResult] = useState<any>(null)
+  const [result, setResult] = useState<CompatibilityResult | null>(null)
   const [calculating, setCalculating] = useState(false)
+  const [error, setError] = useState<string>('')
 
   const handleCalculate = async () => {
     if (!maleDetails.date || !maleDetails.time || !femaleDetails.date || !femaleDetails.time) {
-      alert('Please fill all required fields (Date and Time for both)')
+      setError('Please fill all required fields (Date and Time for both)')
       return
     }
 
     setCalculating(true)
+    setError('')
     
-    // Simulate calculation
-    setTimeout(() => {
-      const score = Math.floor(Math.random() * 12) + 24 // Random score between 24-36
-      setResult({
-        totalScore: score,
-        maxScore: 36,
-        percentage: Math.round((score / 36) * 100),
-        recommendation: score >= 28 ? 'Excellent Match' : score >= 24 ? 'Good Match' : 'Average Match',
-        details: [
-          { name: 'Varna (Status)', score: Math.min(1, Math.floor(Math.random() * 2)), max: 1 },
-          { name: 'Vashya (Dominance)', score: Math.min(2, Math.floor(Math.random() * 3)), max: 2 },
-          { name: 'Tara (Birth Star)', score: Math.min(3, Math.floor(Math.random() * 4)), max: 3 },
-          { name: 'Yoni (Nature)', score: Math.min(4, Math.floor(Math.random() * 5)), max: 4 },
-          { name: 'Graha Maitri (Friendship)', score: Math.min(5, Math.floor(Math.random() * 6)), max: 5 },
-          { name: 'Gana (Temperament)', score: Math.min(6, Math.floor(Math.random() * 7)), max: 6 },
-          { name: 'Bhakoot (Love)', score: Math.min(7, Math.floor(Math.random() * 8)), max: 7 },
-          { name: 'Nadi (Health)', score: Math.min(8, Math.floor(Math.random() * 9)), max: 8 }
-        ]
-      })
+    try {
+      // Use REAL Vedic astrology calculations
+      const maleData: PersonDetails = {
+        date: maleDetails.date,
+        time: maleDetails.time,
+        place: maleDetails.place || 'Chennai'
+      }
+      
+      const femaleData: PersonDetails = {
+        date: femaleDetails.date,
+        time: femaleDetails.time,
+        place: femaleDetails.place || 'Chennai'
+      }
+      
+      const compatibility = calculateCompatibility(maleData, femaleData)
+      setResult(compatibility)
+    } catch (err: any) {
+      setError(err.message || 'Error calculating compatibility')
+    } finally {
       setCalculating(false)
-    }, 1500)
+    }
   }
 
   const handleReset = () => {
@@ -83,6 +86,12 @@ const MarriageCompatibility = () => {
       </div>
 
       <div className="p-4 space-y-4">
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm font-body text-red-600">
+            {error}
+          </div>
+        )}
+        
         {!result ? (
           <>
             {/* Male Details */}
@@ -216,12 +225,64 @@ const MarriageCompatibility = () => {
           <>
             {/* Results */}
             <div className="bg-gradient-to-br from-[hsl(var(--warm-cream))] to-[hsl(var(--warm-beige))] rounded-2xl p-6 border border-[hsl(var(--temple-gold)/0.3)] shadow-temple">
-              <div className="text-center mb-6">
-                <div className="text-6xl mb-4">💑</div>
-                <h2 className="text-2xl font-display font-bold text-saffron mb-2">
+              <div className="text-center mb-4">
+                <div className="text-6xl mb-3">💑</div>
+                <h2 className="text-2xl font-display font-bold text-saffron mb-1">
                   {result.recommendation}
                 </h2>
-                <p className="text-sm font-body text-foreground/70">Based on Ashtakoot Guna Milan</p>
+                <p className="text-xs font-body text-foreground/70">Based on Ashtakoot Guna Milan</p>
+                <p className="text-[10px] font-body text-foreground/60 mt-1">{result.source}</p>
+              </div>
+
+              {/* Rasi & Nakshatra Info */}
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                {/* Male */}
+                <div className="bg-white rounded-xl p-3 border border-[hsl(var(--saffron)/0.2)] shadow-sm">
+                  <div className="flex items-center gap-2 mb-2">
+                    <User className="w-4 h-4 text-saffron" />
+                    <h3 className="text-xs font-display font-bold text-saffron">Male</h3>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-start gap-1.5">
+                      <Star className="w-3 h-3 text-temple-gold mt-0.5" />
+                      <div>
+                        <p className="text-[10px] font-body text-foreground/60">Rasi (Moon Sign)</p>
+                        <p className="text-xs font-body font-semibold text-foreground">{result.male.moonSign}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-1.5">
+                      <Sparkles className="w-3 h-3 text-temple-gold mt-0.5" />
+                      <div>
+                        <p className="text-[10px] font-body text-foreground/60">Nakshatra</p>
+                        <p className="text-xs font-body font-semibold text-foreground">{result.male.nakshatra} ({result.male.pada})</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Female */}
+                <div className="bg-white rounded-xl p-3 border border-[hsl(var(--temple-gold)/0.2)] shadow-sm">
+                  <div className="flex items-center gap-2 mb-2">
+                    <User className="w-4 h-4 text-temple-gold" />
+                    <h3 className="text-xs font-display font-bold text-temple-gold">Female</h3>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-start gap-1.5">
+                      <Star className="w-3 h-3 text-saffron mt-0.5" />
+                      <div>
+                        <p className="text-[10px] font-body text-foreground/60">Rasi (Moon Sign)</p>
+                        <p className="text-xs font-body font-semibold text-foreground">{result.female.moonSign}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-1.5">
+                      <Sparkles className="w-3 h-3 text-saffron mt-0.5" />
+                      <div>
+                        <p className="text-[10px] font-body text-foreground/60">Nakshatra</p>
+                        <p className="text-xs font-body font-semibold text-foreground">{result.female.nakshatra} ({result.female.pada})</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Score Circle */}
@@ -272,22 +333,23 @@ const MarriageCompatibility = () => {
               <div className="bg-white rounded-xl p-4 space-y-2 border border-[hsl(var(--temple-gold)/0.2)] shadow-card-warm">
                 <h3 className="font-display font-bold text-foreground mb-3 flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-saffron" />
-                  Guna Breakdown
+                  Guna Breakdown (Ashtakoot)
                 </h3>
-                {result.details.map((guna: any, index: number) => (
-                  <div key={index} className="flex items-center justify-between py-2 border-b border-border/30 last:border-0">
-                    <span className="text-sm font-body text-foreground/80">{guna.name}</span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 h-2 bg-[hsl(var(--temple-gold)/0.2)] rounded-full overflow-hidden">
-                        <div 
-                          className="h-full gradient-saffron rounded-full transition-all"
-                          style={{ width: `${(guna.score / guna.max) * 100}%` }}
-                        />
-                      </div>
-                      <span className="text-sm font-semibold font-body text-foreground min-w-[3rem] text-right">
+                {result.gunas.map((guna, index) => (
+                  <div key={index} className="py-2 border-b border-border/30 last:border-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-body font-semibold text-foreground/80">{guna.name}</span>
+                      <span className="text-sm font-semibold font-body text-foreground">
                         {guna.score}/{guna.max}
                       </span>
                     </div>
+                    <div className="w-full h-2 bg-[hsl(var(--temple-gold)/0.2)] rounded-full overflow-hidden mb-1">
+                      <div 
+                        className="h-full gradient-saffron rounded-full transition-all"
+                        style={{ width: `${(guna.score / guna.max) * 100}%` }}
+                      />
+                    </div>
+                    <p className="text-[10px] font-body text-foreground/60">{guna.description}</p>
                   </div>
                 ))}
               </div>
