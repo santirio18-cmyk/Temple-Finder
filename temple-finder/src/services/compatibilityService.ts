@@ -162,14 +162,17 @@ function calculateVashya(male: AstroProfile, female: AstroProfile): number {
 
 // 3. Tara (Birth Star) - 3 points
 function calculateTara(male: AstroProfile, female: AstroProfile): number {
-  const count = ((female.nakshatraNumber - male.nakshatraNumber + 27) % 27) + 1
-  const remainder = count % 9
+  // Count from male's nakshatra to female's nakshatra
+  const count = ((female.nakshatraNumber - male.nakshatraNumber + 27) % 27)
+  const tara = (count % 9) + 1
   
-  // Auspicious: 3, 5, 7
-  if ([3, 5, 7].includes(remainder)) return 3
-  // Neutral: 1, 2, 4, 6
-  if ([1, 2, 4, 6].includes(remainder)) return 1.5
-  // Inauspicious: 0, 8
+  // Janma (1), Sampat (2), Vipat (3), Kshema (4), Pratyak (5), Sadhana (6), Naidhana (7), Mitra (8), Parama Mitra (9)
+  // Favorable: 1, 3, 5, 7 give full points
+  if ([1, 3, 5, 7].includes(tara)) return 3
+  // Neutral: 2, 4, 6, 8 give partial
+  if ([2, 4, 6, 8].includes(tara)) return 1.5
+  // Unfavorable: 9 (Parama Mitra is actually favorable but calculated differently)
+  if (tara === 9) return 3
   return 0
 }
 
@@ -178,26 +181,49 @@ function calculateYoni(male: AstroProfile, female: AstroProfile): number {
   const maleYoni = NAKSHATRA_YONI[male.nakshatraNumber]
   const femaleYoni = NAKSHATRA_YONI[female.nakshatraNumber]
   
+  // Same yoni = perfect compatibility
   if (maleYoni === femaleYoni) return 4
   
+  // Natural enemies based on traditional Vedic astrology
   const enemies: Record<string, string[]> = {
-    'Horse': ['Buffalo'],
-    'Buffalo': ['Horse'],
-    'Cat': ['Rat'],
-    'Rat': ['Cat'],
-    'Dog': ['Deer'],
-    'Deer': ['Dog'],
-    'Snake': ['Mongoose'],
-    'Mongoose': ['Snake']
+    'Horse': ['Buffalo', 'Monkey'],
+    'Buffalo': ['Horse', 'Tiger'],
+    'Cat': ['Rat', 'Dog'],
+    'Rat': ['Cat', 'Serpent'],
+    'Dog': ['Cat', 'Deer'],
+    'Deer': ['Dog', 'Lion'],
+    'Serpent': ['Rat', 'Mongoose'],
+    'Mongoose': ['Serpent'],
+    'Tiger': ['Buffalo', 'Cow'],
+    'Cow': ['Tiger'],
+    'Lion': ['Deer', 'Elephant'],
+    'Elephant': ['Lion'],
+    'Monkey': ['Horse']
   }
   
+  // Enemy yoni = no points
   if (enemies[maleYoni]?.includes(femaleYoni)) return 0
   
+  // Friendly yoni = full points
+  const friends: Record<string, string[]> = {
+    'Horse': ['Horse', 'Elephant'],
+    'Elephant': ['Horse', 'Goat'],
+    'Goat': ['Elephant', 'Cow'],
+    'Cow': ['Goat', 'Buffalo'],
+    'Serpent': ['Cat'],
+    'Rat': ['Buffalo'],
+    'Buffalo': ['Rat', 'Cow']
+  }
+  
+  if (friends[maleYoni]?.includes(femaleYoni)) return 4
+  
+  // Neutral = 2 points
   return 2
 }
 
 // 5. Graha Maitri (Planetary friendship) - 5 points
 function calculateGrahaMaitri(male: AstroProfile, female: AstroProfile): number {
+  // Sign lords according to Vedic astrology
   const lordMap: Record<number, string> = {
     1: 'Mars', 2: 'Venus', 3: 'Mercury', 4: 'Moon', 5: 'Sun', 6: 'Mercury',
     7: 'Venus', 8: 'Mars', 9: 'Jupiter', 10: 'Saturn', 11: 'Saturn', 12: 'Jupiter'
@@ -206,8 +232,10 @@ function calculateGrahaMaitri(male: AstroProfile, female: AstroProfile): number 
   const maleLord = lordMap[male.moonSignNumber]
   const femaleLord = lordMap[female.moonSignNumber]
   
+  // Same lord = excellent compatibility
   if (maleLord === femaleLord) return 5
   
+  // Natural friendship based on classical texts (Brihat Parashara Hora Shastra)
   const friends: Record<string, string[]> = {
     'Sun': ['Moon', 'Mars', 'Jupiter'],
     'Moon': ['Sun', 'Mercury'],
@@ -218,21 +246,33 @@ function calculateGrahaMaitri(male: AstroProfile, female: AstroProfile): number 
     'Saturn': ['Mercury', 'Venus']
   }
   
-  if (friends[maleLord]?.includes(femaleLord)) return 4
+  // Check if both are friends with each other (mutual friendship)
+  const maleFriendly = friends[maleLord]?.includes(femaleLord)
+  const femaleFriendly = friends[femaleLord]?.includes(maleLord)
   
-  const neutral: Record<string, string[]> = {
-    'Sun': ['Mercury'],
-    'Moon': ['Mars', 'Jupiter', 'Venus', 'Saturn'],
-    'Mars': ['Mercury', 'Venus', 'Saturn'],
-    'Mercury': ['Mars', 'Jupiter', 'Saturn'],
-    'Jupiter': ['Mercury', 'Venus', 'Saturn'],
-    'Venus': ['Mars', 'Jupiter'],
-    'Saturn': ['Mars', 'Jupiter']
+  // Both are mutual friends = 5 points
+  if (maleFriendly && femaleFriendly) return 5
+  
+  // One-way friendship = 4 points
+  if (maleFriendly || femaleFriendly) return 4
+  
+  // Natural enemies
+  const enemies: Record<string, string[]> = {
+    'Sun': ['Venus', 'Saturn'],
+    'Moon': [],
+    'Mars': ['Mercury'],
+    'Mercury': [],
+    'Jupiter': ['Mercury', 'Venus'],
+    'Venus': ['Sun', 'Moon'],
+    'Saturn': ['Sun', 'Moon', 'Mars']
   }
   
-  if (neutral[maleLord]?.includes(femaleLord)) return 3
+  const isEnemy = enemies[maleLord]?.includes(femaleLord) || enemies[femaleLord]?.includes(maleLord)
   
-  return 0.5
+  if (isEnemy) return 0
+  
+  // Neutral = 3 points
+  return 3
 }
 
 // 6. Gana (Temperament) - 6 points
@@ -253,13 +293,25 @@ function calculateGana(male: AstroProfile, female: AstroProfile): number {
 
 // 7. Bhakoot (Rashi/Sign) - 7 points
 function calculateBhakoot(male: AstroProfile, female: AstroProfile): number {
-  const diff = Math.abs(male.moonSignNumber - female.moonSignNumber)
+  const maleSign = male.moonSignNumber
+  const femaleSign = female.moonSignNumber
   
-  if (male.moonSignNumber === female.moonSignNumber) return 7
+  // Same sign = good but not full points (lack of variety)
+  if (maleSign === femaleSign) return 5
   
-  // 2-12, 5-9, 6-8 positions are inauspicious
-  if ([2, 5, 6, 7, 8, 10, 12].includes(diff)) return 0
+  // Calculate position: female sign counted from male sign
+  const position = ((femaleSign - maleSign + 12) % 12) || 12
   
+  // Inauspicious positions (2nd, 12th, 5th, 9th from each other)
+  // 2-12 (Dwi-Dwadasha): health issues
+  // 5-9 (Pancha-Navama): loss of children
+  // 6-8 (Shashtha-Ashtama): financial troubles
+  
+  if (position === 2 || position === 12) return 0 // 2-12 position
+  if (position === 5 || position === 9) return 0  // 5-9 position  
+  if (position === 6 || position === 8) return 0  // 6-8 position
+  
+  // All other positions are favorable
   return 7
 }
 

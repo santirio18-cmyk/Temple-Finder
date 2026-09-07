@@ -225,16 +225,6 @@ const MarriageCompatibility = () => {
           <>
             {/* Results */}
             <div className="bg-gradient-to-br from-[hsl(var(--warm-cream))] to-[hsl(var(--warm-beige))] rounded-2xl p-6 border border-[hsl(var(--temple-gold)/0.3)] shadow-temple">
-              {/* Source Badge */}
-              <div className="bg-white rounded-lg p-2 mb-4 border border-[hsl(var(--temple-gold)/0.2)] shadow-sm">
-                <p className="text-[10px] font-body text-foreground/70 text-center">
-                  📚 <span className="font-semibold">Source:</span> {result.source}
-                </p>
-                <p className="text-[9px] font-body text-foreground/60 text-center mt-0.5">
-                  Traditional Vedic Astrology • Verified Calculations
-                </p>
-              </div>
-
               <div className="text-center mb-4">
                 <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-3 gradient-saffron shadow-temple">
                   <Heart className="w-10 h-10 text-white" />
@@ -376,17 +366,6 @@ const MarriageCompatibility = () => {
                   </div>
                 ))}
               </div>
-            </div>
-
-            {/* Verification Info */}
-            <div className="bg-gradient-to-r from-[hsl(var(--saffron)/0.05)] to-[hsl(var(--temple-gold)/0.05)] rounded-xl p-3 border border-[hsl(var(--temple-gold)/0.2)] mb-4">
-              <p className="text-xs font-display font-bold text-saffron mb-2">✓ How to Verify Results:</p>
-              <ul className="space-y-1 text-[10px] font-body text-foreground/70">
-                <li>• Check Rasi & Nakshatra with any Vedic astrology website</li>
-                <li>• Compare with traditional astrologer calculations</li>
-                <li>• Use birth time & place for accurate results</li>
-                <li>• Guna scores follow standard Ashtakoot rules</li>
-              </ul>
             </div>
 
             {/* Action Buttons */}
