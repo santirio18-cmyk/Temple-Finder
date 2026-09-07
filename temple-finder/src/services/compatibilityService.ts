@@ -87,19 +87,15 @@ function normalizeNakshatra(name: string): string {
 }
 
 function getAstroProfile(details: PersonDetails): AstroProfile {
-  const { date, time, latitude, longitude } = details
+  const { date, time } = details
   const [hours, minutes] = time.split(':').map(Number)
   
   const birthDate = new Date(date)
   birthDate.setHours(hours, minutes, 0, 0)
   
-  // Use latitude and longitude for accurate calculations
-  const lat = latitude || 13.0827 // Default to Chennai
-  const lng = longitude || 80.2707
-  
-  // Calculate with location for accurate Moon position
+  // Note: MhahPanchang calculate() uses date/time for calculations
+  // Location affects rising sign (Lagna) but Moon sign is primarily time-based
   const calc = engine.calculate(birthDate)
-  const cal = engine.calendar(birthDate, lat, lng)
   
   // Get Moon Sign (Rasi) from calculation - more accurate with location
   const moonSignName = (calc.Raasi?.name_en_UK as string) || 'Aries'
