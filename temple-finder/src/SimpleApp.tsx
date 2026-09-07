@@ -12,6 +12,7 @@ import SimpleNearby from './pages/SimpleNearby'
 import SimpleCategories from './pages/SimpleCategories'
 import SimpleFestivals from './pages/SimpleFestivals'
 import Panchang from './pages/Panchang'
+import MarriageCompatibility from './pages/MarriageCompatibility'
 import Horoscope from './pages/Horoscope'
 import Kundli from './pages/Kundli'
 import Ritual from './pages/Ritual'
@@ -38,6 +39,7 @@ function AppShell() {
         <Route path="/categories" element={<SimpleCategories />} />
         <Route path="/festivals" element={<SimpleFestivals />} />
         <Route path="/panchang" element={<Panchang />} />
+        <Route path="/compatibility" element={<MarriageCompatibility />} />
         <Route path="/horoscope" element={<Horoscope />} />
         <Route path="/kundli" element={<Kundli />} />
         <Route path="/ritual" element={<Ritual />} />
