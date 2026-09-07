@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ArrowLeft, Heart, Calendar, Clock, MapPin, Sparkles, User, Star } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { calculateCompatibility, type PersonDetails, type CompatibilityResult } from '@/services/compatibilityService'
+import { INDIAN_CITIES, getCityByName, getDefaultCity } from '@/data/cities'
 
 interface BirthDetails {
   date: string
@@ -26,8 +27,9 @@ const MarriageCompatibility = () => {
   const [error, setError] = useState<string>('')
 
   const handleCalculate = async () => {
-    if (!maleDetails.date || !maleDetails.time || !femaleDetails.date || !femaleDetails.time) {
-      setError('Please fill all required fields (Date and Time for both)')
+    if (!maleDetails.date || !maleDetails.time || !maleDetails.place || 
+        !femaleDetails.date || !femaleDetails.time || !femaleDetails.place) {
+      setError('Please fill all required fields including city for both')
       return
     }
 
@@ -35,17 +37,25 @@ const MarriageCompatibility = () => {
     setError('')
     
     try {
-      // Use REAL Vedic astrology calculations
+      // Get city coordinates for accurate calculations
+      const maleCity = getCityByName(maleDetails.place) || getDefaultCity()
+      const femaleCity = getCityByName(femaleDetails.place) || getDefaultCity()
+      
+      // Use REAL Vedic astrology calculations WITH LOCATION
       const maleData: PersonDetails = {
         date: maleDetails.date,
         time: maleDetails.time,
-        place: maleDetails.place || 'Chennai'
+        place: maleCity.name,
+        latitude: maleCity.latitude,
+        longitude: maleCity.longitude
       }
       
       const femaleData: PersonDetails = {
         date: femaleDetails.date,
         time: femaleDetails.time,
-        place: femaleDetails.place || 'Chennai'
+        place: femaleCity.name,
+        latitude: femaleCity.latitude,
+        longitude: femaleCity.longitude
       }
       
       const compatibility = calculateCompatibility(maleData, femaleData)
@@ -135,15 +145,21 @@ const MarriageCompatibility = () => {
                 <div>
                   <label className="flex items-center gap-2 text-sm font-body font-semibold text-foreground/80 mb-2">
                     <MapPin className="w-4 h-4 text-saffron" />
-                    Place of Birth (Optional)
+                    Place of Birth *
                   </label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Chennai, Tamil Nadu"
+                  <select
                     value={maleDetails.place}
                     onChange={(e) => setMaleDetails({ ...maleDetails, place: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-border focus:border-saffron focus:outline-none focus:ring-2 focus:ring-[hsl(var(--saffron)/0.2)] transition-all font-body bg-background placeholder:text-muted-foreground"
-                  />
+                    className="w-full px-4 py-3 rounded-xl border border-border focus:border-saffron focus:outline-none focus:ring-2 focus:ring-[hsl(var(--saffron)/0.2)] transition-all font-body bg-background"
+                    required
+                  >
+                    <option value="">Select City</option>
+                    {INDIAN_CITIES.map(city => (
+                      <option key={`${city.name}-${city.state}`} value={city.name}>
+                        {city.name}, {city.state}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>
@@ -189,15 +205,21 @@ const MarriageCompatibility = () => {
                 <div>
                   <label className="flex items-center gap-2 text-sm font-body font-semibold text-foreground/80 mb-2">
                     <MapPin className="w-4 h-4 text-temple-gold" />
-                    Place of Birth (Optional)
+                    Place of Birth *
                   </label>
-                  <input
-                    type="text"
-                    placeholder="e.g., Chennai, Tamil Nadu"
+                  <select
                     value={femaleDetails.place}
                     onChange={(e) => setFemaleDetails({ ...femaleDetails, place: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border border-border focus:border-temple-gold focus:outline-none focus:ring-2 focus:ring-[hsl(var(--temple-gold)/0.2)] transition-all font-body bg-background placeholder:text-muted-foreground"
-                  />
+                    className="w-full px-4 py-3 rounded-xl border border-border focus:border-temple-gold focus:outline-none focus:ring-2 focus:ring-[hsl(var(--temple-gold)/0.2)] transition-all font-body bg-background"
+                    required
+                  >
+                    <option value="">Select City</option>
+                    {INDIAN_CITIES.map(city => (
+                      <option key={`${city.name}-${city.state}`} value={city.name}>
+                        {city.name}, {city.state}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>

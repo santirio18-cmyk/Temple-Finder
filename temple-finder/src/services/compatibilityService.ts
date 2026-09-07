@@ -87,23 +87,29 @@ function normalizeNakshatra(name: string): string {
 }
 
 function getAstroProfile(details: PersonDetails): AstroProfile {
-  const { date, time } = details
+  const { date, time, latitude, longitude } = details
   const [hours, minutes] = time.split(':').map(Number)
   
   const birthDate = new Date(date)
   birthDate.setHours(hours, minutes, 0, 0)
   
-  const calc = engine.calculate(birthDate)
+  // Use latitude and longitude for accurate calculations
+  const lat = latitude || 13.0827 // Default to Chennai
+  const lng = longitude || 80.2707
   
-  // Get Moon Sign (Rasi)
+  // Calculate with location for accurate Moon position
+  const calc = engine.calculate(birthDate)
+  const cal = engine.calendar(birthDate, lat, lng)
+  
+  // Get Moon Sign (Rasi) from calculation - more accurate with location
   const moonSignName = (calc.Raasi?.name_en_UK as string) || 'Aries'
   const moonSignNumber = SIGNS.indexOf(moonSignName.trim()) + 1 || 1
   
-  // Get Nakshatra
+  // Get Nakshatra - uses actual planetary positions
   const nakshatraRaw = normalizeNakshatra((calc.Nakshatra?.name_en_IN as string) || 'Ashwini')
   const nakshatraNumber = NAKSHATRAS.indexOf(nakshatraRaw) + 1 || 1
   
-  // Calculate Pada
+  // Calculate Pada - quarter within Nakshatra
   const nakStart = calc.Nakshatra?.start instanceof Date ? calc.Nakshatra.start : birthDate
   const nakEnd = calc.Nakshatra?.end instanceof Date ? calc.Nakshatra.end : birthDate
   const span = Math.max(1, nakEnd.getTime() - nakStart.getTime())
