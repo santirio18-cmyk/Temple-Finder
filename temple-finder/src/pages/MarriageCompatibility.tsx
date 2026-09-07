@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowLeft, Heart, Calendar, Clock, MapPin, Sparkles } from 'lucide-react'
+import { ArrowLeft, Heart, Calendar, Clock, MapPin, Sparkles, User } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 interface BirthDetails {
@@ -63,7 +63,7 @@ const MarriageCompatibility = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-gradient-to-r from-pink-500 via-red-500 to-pink-600 text-white shadow-lg">
+      <div className="sticky top-0 z-10 gradient-saffron-header text-white shadow-temple">
         <div className="flex items-center gap-3 px-4 py-4">
           <button
             onClick={() => navigate('/')}
@@ -76,7 +76,7 @@ const MarriageCompatibility = () => {
               <Heart className="w-5 h-5" />
               <h1 className="text-lg font-display font-bold">Marriage Compatibility</h1>
             </div>
-            <p className="text-xs text-white/90">Kundli Matching - 36 Guna Milan</p>
+            <p className="text-xs text-white/90 font-body">Kundli Matching - 36 Guna Milan</p>
           </div>
           <Sparkles className="w-6 h-6" />
         </div>
@@ -86,10 +86,10 @@ const MarriageCompatibility = () => {
         {!result ? (
           <>
             {/* Male Details */}
-            <div className="bg-card rounded-2xl p-4 border-2 border-blue-200 shadow-lg">
-              <h2 className="text-lg font-display font-bold text-blue-600 mb-4 flex items-center gap-2">
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                  👨
+            <div className="bg-card rounded-2xl p-4 border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm">
+              <h2 className="text-base font-display font-bold text-saffron mb-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[hsl(var(--saffron)/0.1)] to-[hsl(var(--temple-gold)/0.1)] flex items-center justify-center border border-[hsl(var(--saffron)/0.3)]">
+                  <User className="w-5 h-5 text-saffron" />
                 </div>
                 Male Details
               </h2>
@@ -97,35 +97,35 @@ const MarriageCompatibility = () => {
               <div className="space-y-3">
                 <div>
                   <label className="flex items-center gap-2 text-sm font-body font-semibold text-foreground/80 mb-2">
-                    <Calendar className="w-4 h-4 text-blue-500" />
+                    <Calendar className="w-4 h-4 text-saffron" />
                     Date of Birth *
                   </label>
                   <input
                     type="date"
                     value={maleDetails.date}
                     onChange={(e) => setMaleDetails({ ...maleDetails, date: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-blue-500 focus:outline-none transition-colors font-body"
+                    className="w-full px-4 py-3 rounded-xl border border-border focus:border-saffron focus:outline-none focus:ring-2 focus:ring-[hsl(var(--saffron)/0.2)] transition-all font-body bg-background"
                     required
                   />
                 </div>
 
                 <div>
                   <label className="flex items-center gap-2 text-sm font-body font-semibold text-foreground/80 mb-2">
-                    <Clock className="w-4 h-4 text-blue-500" />
+                    <Clock className="w-4 h-4 text-saffron" />
                     Time of Birth *
                   </label>
                   <input
                     type="time"
                     value={maleDetails.time}
                     onChange={(e) => setMaleDetails({ ...maleDetails, time: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-blue-500 focus:outline-none transition-colors font-body"
+                    className="w-full px-4 py-3 rounded-xl border border-border focus:border-saffron focus:outline-none focus:ring-2 focus:ring-[hsl(var(--saffron)/0.2)] transition-all font-body bg-background"
                     required
                   />
                 </div>
 
                 <div>
                   <label className="flex items-center gap-2 text-sm font-body font-semibold text-foreground/80 mb-2">
-                    <MapPin className="w-4 h-4 text-blue-500" />
+                    <MapPin className="w-4 h-4 text-saffron" />
                     Place of Birth (Optional)
                   </label>
                   <input
@@ -133,17 +133,17 @@ const MarriageCompatibility = () => {
                     placeholder="e.g., Chennai, Tamil Nadu"
                     value={maleDetails.place}
                     onChange={(e) => setMaleDetails({ ...maleDetails, place: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-blue-500 focus:outline-none transition-colors font-body"
+                    className="w-full px-4 py-3 rounded-xl border border-border focus:border-saffron focus:outline-none focus:ring-2 focus:ring-[hsl(var(--saffron)/0.2)] transition-all font-body bg-background placeholder:text-muted-foreground"
                   />
                 </div>
               </div>
             </div>
 
             {/* Female Details */}
-            <div className="bg-card rounded-2xl p-4 border-2 border-pink-200 shadow-lg">
-              <h2 className="text-lg font-display font-bold text-pink-600 mb-4 flex items-center gap-2">
-                <div className="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center">
-                  👩
+            <div className="bg-card rounded-2xl p-4 border border-[hsl(var(--temple-gold)/0.3)] shadow-card-warm">
+              <h2 className="text-base font-display font-bold text-temple-gold mb-4 flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[hsl(var(--temple-gold)/0.1)] to-[hsl(var(--saffron-light)/0.1)] flex items-center justify-center border border-[hsl(var(--temple-gold)/0.3)]">
+                  <User className="w-5 h-5 text-temple-gold" />
                 </div>
                 Female Details
               </h2>
@@ -151,35 +151,35 @@ const MarriageCompatibility = () => {
               <div className="space-y-3">
                 <div>
                   <label className="flex items-center gap-2 text-sm font-body font-semibold text-foreground/80 mb-2">
-                    <Calendar className="w-4 h-4 text-pink-500" />
+                    <Calendar className="w-4 h-4 text-temple-gold" />
                     Date of Birth *
                   </label>
                   <input
                     type="date"
                     value={femaleDetails.date}
                     onChange={(e) => setFemaleDetails({ ...femaleDetails, date: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-pink-500 focus:outline-none transition-colors font-body"
+                    className="w-full px-4 py-3 rounded-xl border border-border focus:border-temple-gold focus:outline-none focus:ring-2 focus:ring-[hsl(var(--temple-gold)/0.2)] transition-all font-body bg-background"
                     required
                   />
                 </div>
 
                 <div>
                   <label className="flex items-center gap-2 text-sm font-body font-semibold text-foreground/80 mb-2">
-                    <Clock className="w-4 h-4 text-pink-500" />
+                    <Clock className="w-4 h-4 text-temple-gold" />
                     Time of Birth *
                   </label>
                   <input
                     type="time"
                     value={femaleDetails.time}
                     onChange={(e) => setFemaleDetails({ ...femaleDetails, time: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-pink-500 focus:outline-none transition-colors font-body"
+                    className="w-full px-4 py-3 rounded-xl border border-border focus:border-temple-gold focus:outline-none focus:ring-2 focus:ring-[hsl(var(--temple-gold)/0.2)] transition-all font-body bg-background"
                     required
                   />
                 </div>
 
                 <div>
                   <label className="flex items-center gap-2 text-sm font-body font-semibold text-foreground/80 mb-2">
-                    <MapPin className="w-4 h-4 text-pink-500" />
+                    <MapPin className="w-4 h-4 text-temple-gold" />
                     Place of Birth (Optional)
                   </label>
                   <input
@@ -187,7 +187,7 @@ const MarriageCompatibility = () => {
                     placeholder="e.g., Chennai, Tamil Nadu"
                     value={femaleDetails.place}
                     onChange={(e) => setFemaleDetails({ ...femaleDetails, place: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border-2 border-border focus:border-pink-500 focus:outline-none transition-colors font-body"
+                    className="w-full px-4 py-3 rounded-xl border border-border focus:border-temple-gold focus:outline-none focus:ring-2 focus:ring-[hsl(var(--temple-gold)/0.2)] transition-all font-body bg-background placeholder:text-muted-foreground"
                   />
                 </div>
               </div>
@@ -197,10 +197,7 @@ const MarriageCompatibility = () => {
             <button
               onClick={handleCalculate}
               disabled={calculating}
-              className="w-full py-4 rounded-2xl font-body text-base font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-              style={{
-                background: 'linear-gradient(135deg, #ec4899 0%, #ef4444 50%, #ec4899 100%)',
-              }}
+              className="w-full py-4 rounded-2xl font-body text-base font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-temple gradient-saffron"
             >
               {calculating ? (
                 <span className="flex items-center justify-center gap-2">
@@ -218,13 +215,13 @@ const MarriageCompatibility = () => {
         ) : (
           <>
             {/* Results */}
-            <div className="bg-gradient-to-br from-pink-50 to-red-50 rounded-2xl p-6 border-2 border-pink-200 shadow-xl">
+            <div className="bg-gradient-to-br from-[hsl(var(--warm-cream))] to-[hsl(var(--warm-beige))] rounded-2xl p-6 border border-[hsl(var(--temple-gold)/0.3)] shadow-temple">
               <div className="text-center mb-6">
                 <div className="text-6xl mb-4">💑</div>
-                <h2 className="text-2xl font-display font-bold text-pink-600 mb-2">
+                <h2 className="text-2xl font-display font-bold text-saffron mb-2">
                   {result.recommendation}
                 </h2>
-                <p className="text-sm text-foreground/70">Based on Ashtakoot Guna Milan</p>
+                <p className="text-sm font-body text-foreground/70">Based on Ashtakoot Guna Milan</p>
               </div>
 
               {/* Score Circle */}
@@ -235,7 +232,7 @@ const MarriageCompatibility = () => {
                       cx="80"
                       cy="80"
                       r="70"
-                      stroke="#fecdd3"
+                      stroke="hsl(var(--temple-gold) / 0.2)"
                       strokeWidth="12"
                       fill="none"
                     />
@@ -252,42 +249,42 @@ const MarriageCompatibility = () => {
                     />
                     <defs>
                       <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#ec4899" />
-                        <stop offset="100%" stopColor="#ef4444" />
+                        <stop offset="0%" stopColor="hsl(var(--saffron))" />
+                        <stop offset="100%" stopColor="hsl(var(--temple-gold))" />
                       </linearGradient>
                     </defs>
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <div className="text-4xl font-bold text-pink-600">{result.totalScore}</div>
-                    <div className="text-sm text-foreground/60">out of {result.maxScore}</div>
+                    <div className="text-4xl font-bold font-display text-saffron">{result.totalScore}</div>
+                    <div className="text-sm font-body text-foreground/60">out of {result.maxScore}</div>
                   </div>
                 </div>
               </div>
 
               <div className="text-center mb-6">
-                <div className="inline-block px-6 py-2 bg-white rounded-full shadow-md">
-                  <span className="text-2xl font-bold text-pink-600">{result.percentage}%</span>
-                  <span className="text-sm text-foreground/70 ml-2">Compatible</span>
+                <div className="inline-block px-6 py-2 bg-white rounded-full shadow-card-warm border border-[hsl(var(--temple-gold)/0.3)]">
+                  <span className="text-2xl font-bold font-display text-saffron">{result.percentage}%</span>
+                  <span className="text-sm font-body text-foreground/70 ml-2">Compatible</span>
                 </div>
               </div>
 
               {/* Detailed Breakdown */}
-              <div className="bg-white rounded-xl p-4 space-y-2">
+              <div className="bg-white rounded-xl p-4 space-y-2 border border-[hsl(var(--temple-gold)/0.2)] shadow-card-warm">
                 <h3 className="font-display font-bold text-foreground mb-3 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-pink-500" />
+                  <Sparkles className="w-4 h-4 text-saffron" />
                   Guna Breakdown
                 </h3>
                 {result.details.map((guna: any, index: number) => (
                   <div key={index} className="flex items-center justify-between py-2 border-b border-border/30 last:border-0">
                     <span className="text-sm font-body text-foreground/80">{guna.name}</span>
                     <div className="flex items-center gap-2">
-                      <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="w-24 h-2 bg-[hsl(var(--temple-gold)/0.2)] rounded-full overflow-hidden">
                         <div 
-                          className="h-full bg-gradient-to-r from-pink-500 to-red-500 rounded-full transition-all"
+                          className="h-full gradient-saffron rounded-full transition-all"
                           style={{ width: `${(guna.score / guna.max) * 100}%` }}
                         />
                       </div>
-                      <span className="text-sm font-semibold text-foreground min-w-[3rem] text-right">
+                      <span className="text-sm font-semibold font-body text-foreground min-w-[3rem] text-right">
                         {guna.score}/{guna.max}
                       </span>
                     </div>
@@ -300,13 +297,13 @@ const MarriageCompatibility = () => {
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={handleReset}
-                className="py-3 rounded-xl font-body text-sm font-semibold border-2 border-pink-500 text-pink-600 hover:bg-pink-50 transition-colors"
+                className="py-3 rounded-xl font-body text-sm font-semibold border-2 border-saffron text-saffron hover:bg-[hsl(var(--saffron)/0.05)] transition-colors"
               >
                 New Match
               </button>
               <button
                 onClick={() => navigate('/kundli')}
-                className="py-3 rounded-xl font-body text-sm font-semibold bg-gradient-to-r from-pink-500 to-red-500 text-white hover:opacity-90 transition-opacity"
+                className="py-3 rounded-xl font-body text-sm font-semibold gradient-saffron text-white hover:opacity-90 transition-opacity shadow-card-warm"
               >
                 View Kundli
               </button>
