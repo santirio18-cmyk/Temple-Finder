@@ -72,16 +72,16 @@ const SacredToday = () => {
             background: "linear-gradient(135deg, hsl(var(--warm-cream)) 0%, hsl(28 60% 92%) 40%, hsl(25 55% 90%) 100%)",
           }}
         >
-          <div className="absolute right-0 top-0 bottom-0 w-[40%] pointer-events-none flex items-end justify-end pr-1 pb-1">
+          <div className="absolute right-0 top-0 bottom-0 w-[35%] pointer-events-none flex items-end justify-end z-0">
             <img
               key={tithiData.deityKey}
               src={deityImage}
               alt=""
-              className="h-full w-auto max-w-full object-contain object-bottom opacity-90 drop-shadow-sm"
+              className="h-[90%] w-auto max-w-full object-contain object-bottom opacity-90 drop-shadow-sm"
             />
           </div>
 
-          <div className="relative z-10 px-4 py-4">
+          <div className="relative z-10 px-4 py-4 pr-[40%]">
             <div className="flex items-center gap-1.5 mb-1">
               <span className="text-sm">🪔</span>
               <span className="text-[10px] font-body font-semibold text-saffron-deep tracking-wider uppercase">
@@ -93,10 +93,10 @@ const SacredToday = () => {
               {tithiData.tithi}
             </h3>
 
-            <p className="text-sm font-body text-foreground/75 mt-1.5 max-w-[58%] leading-relaxed">
+            <p className="text-sm font-body text-foreground/75 mt-1.5 leading-relaxed">
               {tithiData.description}
             </p>
-            <p className="text-sm font-body text-foreground/75 mt-0.5 max-w-[58%]">
+            <p className="text-sm font-body text-foreground/75 mt-0.5">
               Follow today&apos;s <span className="font-semibold text-saffron-deep">worship</span>
             </p>
 
@@ -106,14 +106,14 @@ const SacredToday = () => {
                 const deity = getTithiDeityFilterParam(tithiData.deityKey)
                 navigate(deity ? `/nearby?deity=${encodeURIComponent(deity)}` : '/nearby')
               }}
-              className="mt-3.5 flex items-center gap-1.5 px-5 py-2.5 rounded-full font-body text-sm font-semibold text-primary-foreground transition-all hover:brightness-110 active:scale-[0.98] w-fit"
+              className="mt-3 flex items-center gap-1.5 px-3.5 py-2 rounded-full font-body text-[13px] font-semibold text-primary-foreground transition-all hover:brightness-110 active:scale-[0.98] w-fit max-w-full"
               style={{
                 background: "linear-gradient(135deg, hsl(var(--saffron)) 0%, hsl(var(--saffron-light)) 100%)",
                 boxShadow: "0 4px 14px -3px hsl(var(--saffron) / 0.4)",
               }}
             >
-              Visit Nearby Temple
-              <ChevronRight className="w-4 h-4" />
+              <span className="whitespace-nowrap">Visit Nearby</span>
+              <ChevronRight className="w-4 h-4 flex-shrink-0" />
             </button>
           </div>
         </div>
