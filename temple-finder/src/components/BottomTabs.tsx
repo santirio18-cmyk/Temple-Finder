@@ -23,7 +23,7 @@ export default function BottomTabs() {
     <div className="fixed bottom-0 left-0 right-0 z-50 max-w-lg mx-auto">
       <div className="h-[1.5px] bg-gradient-to-r from-transparent via-temple-gold/40 to-transparent" />
       <div className="bg-card/95 backdrop-blur-md border-t border-border/50">
-        <div className="flex items-center justify-around py-2 pb-[max(8px,env(safe-area-inset-bottom,8px))]">
+        <div className="flex items-center justify-between px-1 py-2 pb-[max(8px,env(safe-area-inset-bottom,8px))]">
           {tabs.map((tab) => {
             const active = isActive(tab.path)
             return (
@@ -31,15 +31,15 @@ export default function BottomTabs() {
                 key={tab.path}
                 type="button"
                 onClick={() => navigate(tab.path)}
-                className={`flex flex-col items-center gap-0.5 px-4 py-1.5 transition-all duration-200 relative ${
+                className={`flex flex-col items-center gap-0.5 px-1 py-1 transition-all duration-200 relative min-w-0 flex-1 ${
                   active ? 'text-saffron' : 'text-muted-foreground hover:text-saffron/60'
                 }`}
               >
                 {active && (
-                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full bg-saffron" />
+                  <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full bg-saffron" />
                 )}
-                <tab.icon className="w-5 h-5" />
-                <span className="text-[10px] font-body font-medium">{tab.label}</span>
+                <tab.icon className="w-[18px] h-[18px]" />
+                <span className="text-[9px] font-body font-medium whitespace-nowrap">{tab.label}</span>
               </button>
             )
           })}
