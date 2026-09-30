@@ -9,6 +9,7 @@ import {
   type BirthDetails,
   type BirthChart,
 } from '@/services/kundliService'
+import { getRasiWithTamil, getNakshatraWithTamil } from '@/data/tamilAstrology'
 
 function formatLocalDate(d: Date): string {
   if (Number.isNaN(d.getTime())) return ''
@@ -336,11 +337,11 @@ const Kundli = () => {
                     <div className="flex items-center gap-2 mb-1">
                       <Sun className="w-4 h-4 text-saffron" />
                       <p className="text-xs font-body font-semibold text-muted-foreground">
-                        Ascendant (Lagna)
+                        Ascendant (Lagna / லக்னம்)
                       </p>
                     </div>
                     <p className="text-base font-display font-bold text-foreground">
-                      {selectedChart.ascendant.sign}
+                      {getRasiWithTamil(selectedChart.ascendant.sign)}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {selectedChart.ascendant.degree.toFixed(2)}°
@@ -351,14 +352,14 @@ const Kundli = () => {
                     <div className="flex items-center gap-2 mb-1">
                       <Moon className="w-4 h-4 text-saffron" />
                       <p className="text-xs font-body font-semibold text-muted-foreground">
-                        Moon Sign
+                        Moon Sign (ராசி)
                       </p>
                     </div>
                     <p className="text-base font-display font-bold text-foreground">
-                      {selectedChart.moonSign}
+                      {getRasiWithTamil(selectedChart.moonSign)}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {selectedChart.nakshatra.name}
+                      {getNakshatraWithTamil(selectedChart.nakshatra.name)}
                     </p>
                   </div>
 
@@ -370,7 +371,7 @@ const Kundli = () => {
                       </p>
                     </div>
                     <p className="text-base font-display font-bold text-foreground">
-                      {selectedChart.sunSign}
+                      {getRasiWithTamil(selectedChart.sunSign)}
                     </p>
                   </div>
 
@@ -378,11 +379,11 @@ const Kundli = () => {
                     <div className="flex items-center gap-2 mb-1">
                       <Star className="w-4 h-4 text-saffron" />
                       <p className="text-xs font-body font-semibold text-muted-foreground">
-                        Birth Nakshatra
+                        Birth Nakshatra (நட்சத்திரம்)
                       </p>
                     </div>
                     <p className="text-sm font-body font-semibold text-foreground">
-                      {selectedChart.nakshatra.name}
+                      {getNakshatraWithTamil(selectedChart.nakshatra.name)}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       Pada {selectedChart.nakshatra.pada} • Lord: {selectedChart.nakshatra.lord}
@@ -415,7 +416,7 @@ const Kundli = () => {
                             label: 'Paksha',
                             value: `${selectedChart.birthPanchang.pakshaTamil} (${selectedChart.birthPanchang.paksha})`,
                           },
-                          { label: 'Nakshatra', value: selectedChart.birthPanchang.nakshatra },
+                          { label: 'Nakshatra (நட்சத்திரம்)', value: getNakshatraWithTamil(selectedChart.birthPanchang.nakshatra) },
                           { label: 'Yoga', value: selectedChart.birthPanchang.yoga },
                           { label: 'Karana', value: selectedChart.birthPanchang.karana },
                           { label: 'Weekday', value: selectedChart.birthPanchang.weekday },
@@ -468,12 +469,12 @@ const Kundli = () => {
                           {planet.name}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          House {planet.house} • {planet.nakshatra}
+                          House {planet.house} • {getNakshatraWithTamil(planet.nakshatra)}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-body font-semibold text-saffron">
-                          {planet.sign}
+                          {getRasiWithTamil(planet.sign)}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {planet.degree.toFixed(2)}°

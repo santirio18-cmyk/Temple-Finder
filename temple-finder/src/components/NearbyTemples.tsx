@@ -34,13 +34,36 @@ export default function NearbyTemples() {
             className="flex-shrink-0 w-[150px] rounded-2xl overflow-hidden bg-card shadow-card-warm cursor-pointer group border border-border/30 text-left"
             style={{ scrollSnapAlign: 'start' }}
           >
-            <div className="relative h-[120px]">
-              <img
-                src={temple.image}
-                alt=""
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                loading="lazy"
-              />
+            <div className="relative h-[120px] bg-gradient-to-br from-warm-cream to-warm-beige overflow-hidden">
+              {temple.image ? (
+                <>
+                  <img
+                    src={temple.image}
+                    alt={temple.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                    onError={(e) => {
+                      const img = e.target as HTMLImageElement;
+                      const parent = img.parentElement;
+                      if (parent) {
+                        parent.classList.add('image-failed');
+                        img.style.display = 'none';
+                        const fallback = parent.querySelector('.fallback-icon');
+                        if (fallback) {
+                          (fallback as HTMLElement).style.display = 'flex';
+                        }
+                      }
+                    }}
+                  />
+                  <div className="fallback-icon hidden w-full h-full absolute inset-0 items-center justify-center text-6xl opacity-20">
+                    🛕
+                  </div>
+                </>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-6xl opacity-20">
+                  🛕
+                </div>
+              )}
               <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-body font-medium bg-background/80 backdrop-blur-sm text-foreground/90 border border-border/30">
                 {temple.deity}
               </span>

@@ -1,14 +1,18 @@
-import { useState } from 'react'
-import { ArrowLeft, Heart, Calendar, Clock, MapPin, Sparkles, User, Star } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { ArrowLeft, Heart, Calendar, Clock, MapPin, Sparkles, User, Star, Save } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { calculateCompatibility, type PersonDetails, type CompatibilityResult } from '@/services/compatibilityService'
 import { INDIAN_CITIES, getCityByName, getDefaultCity } from '@/data/cities'
+import { getRasiWithTamil, getNakshatraWithTamil } from '@/data/tamilAstrology'
 
 interface BirthDetails {
   date: string
   time: string
   place: string
 }
+
+const MALE_STORAGE_KEY = 'compatibility_male_details'
+const FEMALE_STORAGE_KEY = 'compatibility_female_details'
 
 const MarriageCompatibility = () => {
   const navigate = useNavigate()
@@ -22,9 +26,33 @@ const MarriageCompatibility = () => {
     time: '',
     place: ''
   })
+  const [saveMaleDetails, setSaveMaleDetails] = useState(false)
+  const [saveFemaleDetails, setSaveFemaleDetails] = useState(false)
   const [result, setResult] = useState<CompatibilityResult | null>(null)
   const [calculating, setCalculating] = useState(false)
   const [error, setError] = useState<string>('')
+
+  // Load saved details on mount
+  useEffect(() => {
+    try {
+      const savedMale = localStorage.getItem(MALE_STORAGE_KEY)
+      const savedFemale = localStorage.getItem(FEMALE_STORAGE_KEY)
+      
+      if (savedMale) {
+        const parsed = JSON.parse(savedMale)
+        setMaleDetails(parsed)
+        setSaveMaleDetails(true)
+      }
+      
+      if (savedFemale) {
+        const parsed = JSON.parse(savedFemale)
+        setFemaleDetails(parsed)
+        setSaveFemaleDetails(true)
+      }
+    } catch (err) {
+      console.error('Error loading saved details:', err)
+    }
+  }, [])
 
   const handleCalculate = async () => {
     if (!maleDetails.date || !maleDetails.time || !maleDetails.place || 
@@ -37,6 +65,19 @@ const MarriageCompatibility = () => {
     setError('')
     
     try {
+      // Save details if checkboxes are checked
+      if (saveMaleDetails) {
+        localStorage.setItem(MALE_STORAGE_KEY, JSON.stringify(maleDetails))
+      } else {
+        localStorage.removeItem(MALE_STORAGE_KEY)
+      }
+      
+      if (saveFemaleDetails) {
+        localStorage.setItem(FEMALE_STORAGE_KEY, JSON.stringify(femaleDetails))
+      } else {
+        localStorage.removeItem(FEMALE_STORAGE_KEY)
+      }
+      
       // Get city coordinates for accurate calculations
       const maleCity = getCityByName(maleDetails.place) || getDefaultCity()
       const femaleCity = getCityByName(femaleDetails.place) || getDefaultCity()
@@ -161,6 +202,21 @@ const MarriageCompatibility = () => {
                     ))}
                   </select>
                 </div>
+                
+                {/* Save Male Details Checkbox */}
+                <div className="flex items-center gap-2 pt-2">
+                  <input
+                    type="checkbox"
+                    id="saveMale"
+                    checked={saveMaleDetails}
+                    onChange={(e) => setSaveMaleDetails(e.target.checked)}
+                    className="w-4 h-4 rounded border-saffron text-saffron focus:ring-saffron"
+                  />
+                  <label htmlFor="saveMale" className="text-xs font-body text-muted-foreground flex items-center gap-1.5 cursor-pointer">
+                    <Save className="w-3.5 h-3.5 text-saffron" />
+                    Save male details for next time
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -221,6 +277,21 @@ const MarriageCompatibility = () => {
                     ))}
                   </select>
                 </div>
+                
+                {/* Save Female Details Checkbox */}
+                <div className="flex items-center gap-2 pt-2">
+                  <input
+                    type="checkbox"
+                    id="saveFemale"
+                    checked={saveFemaleDetails}
+                    onChange={(e) => setSaveFemaleDetails(e.target.checked)}
+                    className="w-4 h-4 rounded border-temple-gold text-temple-gold focus:ring-temple-gold"
+                  />
+                  <label htmlFor="saveFemale" className="text-xs font-body text-muted-foreground flex items-center gap-1.5 cursor-pointer">
+                    <Save className="w-3.5 h-3.5 text-temple-gold" />
+                    Save female details for next time
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -273,16 +344,16 @@ const MarriageCompatibility = () => {
                       <div className="bg-white/80 rounded-lg p-2 backdrop-blur-sm">
                         <div className="flex items-center gap-1.5 mb-1">
                           <Star className="w-3.5 h-3.5 text-saffron" />
-                          <p className="text-[10px] font-body font-semibold text-foreground/70 uppercase tracking-wide">Rasi</p>
+                          <p className="text-[10px] font-body font-semibold text-foreground/70 uppercase tracking-wide">Rasi (ராசி)</p>
                         </div>
-                        <p className="text-sm font-display font-bold text-foreground">{result.male.moonSign}</p>
+                        <p className="text-sm font-display font-bold text-foreground">{getRasiWithTamil(result.male.moonSign)}</p>
                       </div>
                       <div className="bg-white/80 rounded-lg p-2 backdrop-blur-sm">
                         <div className="flex items-center gap-1.5 mb-1">
                           <Sparkles className="w-3.5 h-3.5 text-temple-gold" />
-                          <p className="text-[10px] font-body font-semibold text-foreground/70 uppercase tracking-wide">Nakshatra</p>
+                          <p className="text-[10px] font-body font-semibold text-foreground/70 uppercase tracking-wide">Nakshatra (நட்சத்திரம்)</p>
                         </div>
-                        <p className="text-sm font-display font-bold text-foreground">{result.male.nakshatra}</p>
+                        <p className="text-sm font-display font-bold text-foreground">{getNakshatraWithTamil(result.male.nakshatra)}</p>
                         <p className="text-[10px] font-body text-foreground/60 mt-0.5">Pada {result.male.pada}/4</p>
                       </div>
                     </div>
@@ -303,16 +374,16 @@ const MarriageCompatibility = () => {
                       <div className="bg-white/80 rounded-lg p-2 backdrop-blur-sm">
                         <div className="flex items-center gap-1.5 mb-1">
                           <Star className="w-3.5 h-3.5 text-temple-gold" />
-                          <p className="text-[10px] font-body font-semibold text-foreground/70 uppercase tracking-wide">Rasi</p>
+                          <p className="text-[10px] font-body font-semibold text-foreground/70 uppercase tracking-wide">Rasi (ராசி)</p>
                         </div>
-                        <p className="text-sm font-display font-bold text-foreground">{result.female.moonSign}</p>
+                        <p className="text-sm font-display font-bold text-foreground">{getRasiWithTamil(result.female.moonSign)}</p>
                       </div>
                       <div className="bg-white/80 rounded-lg p-2 backdrop-blur-sm">
                         <div className="flex items-center gap-1.5 mb-1">
                           <Sparkles className="w-3.5 h-3.5 text-saffron" />
-                          <p className="text-[10px] font-body font-semibold text-foreground/70 uppercase tracking-wide">Nakshatra</p>
+                          <p className="text-[10px] font-body font-semibold text-foreground/70 uppercase tracking-wide">Nakshatra (நட்சத்திரம்)</p>
                         </div>
-                        <p className="text-sm font-display font-bold text-foreground">{result.female.nakshatra}</p>
+                        <p className="text-sm font-display font-bold text-foreground">{getNakshatraWithTamil(result.female.nakshatra)}</p>
                         <p className="text-[10px] font-body text-foreground/60 mt-0.5">Pada {result.female.pada}/4</p>
                       </div>
                     </div>
